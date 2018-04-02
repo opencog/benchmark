@@ -40,5 +40,21 @@ ELSE (ATOMSPACE_FOUND)
         MESSAGE(FATAL_ERROR "AtomSpace missing: it is needed for everything!")
 ENDIF (ATOMSPACE_FOUND)
 
+# This is required for Guile
+FIND_LIBRARY(GMP_LIBRARY gmp)
+FIND_PATH(GMP_INCLUDE_DIR gmp.h)
+
+# Gnu Guile scheme interpreter
+# Version 2.0.9 is needed for mrs io ports, compilation, etc.
+FIND_PACKAGE(Guile 2.0.9)
+IF (GUILE_FOUND AND GMP_LIBRARY AND GMP_INCLUDE_DIR)
+	ADD_DEFINITIONS(-DHAVE_GUILE)
+	SET(HAVE_GUILE 1)
+	INCLUDE_DIRECTORIES(${GUILE_INCLUDE_DIR})
+ELSE (GUILE_FOUND AND GMP_LIBRARY AND GMP_INCLUDE_DIR)
+	SET(GUILE_DIR_MESSAGE "Guile was not found; the scheme shell will not be built.\nTo over-ride, make sure GUILE_LIBRARIES and GUILE_INCLUDE_DIRS are set.")
+	MESSAGE(STATUS "${GUILE_DIR_MESSAGE}")
+ENDIF (GUILE_FOUND AND GMP_LIBRARY AND GMP_INCLUDE_DIR)
+
 ADD_SUBDIRECTORY(atomspace)
 
