@@ -15,6 +15,28 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8)
 
 PROJECT(benchmark)
 
+# uncomment to be in Release mode [default]
+# SET(CMAKE_BUILD_TYPE Release)
+
+# uncomment to build in debug mode
+# SET(CMAKE_BUILD_TYPE Debug)
+
+# uncomment to be in coverage testing mode
+# SET(CMAKE_BUILD_TYPE Coverage)
+
+# uncomment to build in profile mode
+# SET(CMAKE_BUILD_TYPE Profile)
+
+# uncomment to build in release mode with debug information
+# SET(CMAKE_BUILD_TYPE RelWithDebInfo)
+
+# default build type
+IF (CMAKE_BUILD_TYPE STREQUAL "")
+	SET(CMAKE_BUILD_TYPE Release)
+ENDIF (CMAKE_BUILD_TYPE STREQUAL "")
+
+MESSAGE(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+
 # add the 'lib' dir to cmake's module search path
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/lib/")
 
