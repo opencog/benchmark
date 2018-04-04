@@ -1,4 +1,4 @@
-# Build file for the atomspace benchmark
+# Build file for the atomspace microbenchmarks
 
 ADD_EXECUTABLE (atomspace_bm
         AtomSpaceBenchmark.cc
@@ -19,14 +19,3 @@ IF (HAVE_CYTHON)
                 ${PYTHON_LIBRARIES}
         )
 ENDIF(HAVE_CYTHON)
-
-IF (HAVE_GUILE)
-        ADD_EXECUTABLE (profile_bindlink
-                profile_bindlink.cc
-        )
-
-        TARGET_LINK_LIBRARIES (profile_bindlink
-                ${ATOMSPACE_LIBRARIES}
-                ${COGUTIL_LIBRARY}
-        )
-ENDIF (HAVE_GUILE)
