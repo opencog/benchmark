@@ -262,7 +262,6 @@ ENDIF(HAVE_PY_INTERP)
 # Add subdirectories
 
 ADD_SUBDIRECTORY(atomspace)
-ADD_SUBDIRECTORY(query)
 
 # ===================================================================
 # Show a summary of what we got
