@@ -1,11 +1,11 @@
 # Build file for the atomspace pattern matching benchmarks
 
 IF (HAVE_GUILE)
-        ADD_EXECUTABLE (profile_bindlink
-                profile_bindlink.cc
+        ADD_EXECUTABLE (benchmark
+                benchmark.cc
         )
 
-        TARGET_LINK_LIBRARIES (profile_bindlink
+        TARGET_LINK_LIBRARIES (benchmark
                 ${ATOMSPACE_LIBRARIES}
                 ${COGUTIL_LIBRARY}
         )
