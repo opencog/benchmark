@@ -1,0 +1,2 @@
+ADD_SUBDIRECTORY (atomspace)
+ADD_SUBDIRECTORY (query)
