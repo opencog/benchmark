@@ -1,5 +1,5 @@
 /*
- * benchmark/profile_bindlink.cc
+ * query/bindlink_bm.cc
  *
  * Copyright (C) 2016 Linas Vepstas
  * All Rights Reserved
@@ -30,6 +30,9 @@ using namespace opencog;
 AtomSpace* atomspace;
 SchemeEval* scheme;
 
+int iteration_count = 1;
+std::string testcase = "";
+
 void load_scheme()
 {
     // Load some scheme for the setup
@@ -37,35 +40,65 @@ void load_scheme()
     scheme->eval("(add-to-load-path \".\")");
 }
 
-void load_scheme_atomspace(const std::string& testcase) {
+void load_scheme_atomspace(const std::string& testcase)
+{
     std::string atomspace_filename = testcase + ".atomspace.scm";
     scheme->eval("(load-from-path \"" + atomspace_filename + "\")");
 }
 
-Handle load_scheme_query(const std::string& testcase) {
+Handle load_scheme_query(const std::string& testcase)
+{
     std::string query_filename = testcase + ".query.scm";
     return scheme->eval_h("(load-from-path \"" + query_filename + "\")");
 }
 
-void run_test(const std::string& testcase, int iteration_count) {
+void run_test(const std::string& testcase, int iteration_count)
+{
     load_scheme_atomspace(testcase);
     Handle query = load_scheme_query(testcase);
 
     Handle result;
-    for (int iteration = 0; iteration < iteration_count; iteration++ ) {
+    for (int iteration = 0; iteration < iteration_count; iteration++)
+    {
         result = bindlink(atomspace, query);
     }
 
-    if (result->is_link())
-    {
-        size_t total_results = result->getOutgoingSet().size();
-        std::cout << "total results = " << total_results << std::endl;
-    }
     std::cout << "results are: " << result->to_string() << std::endl;
 }
 
-int main(void)
+int main(int argc, char** argv)
 {
+    const char* description = "BindLink query benchmark tool\n"
+        "Usage: bindlink_bm [-m <testcase>] [options]\n"
+        "-m <testcase>\tTestcase to run: benchmark will use <testcase>.(atomspace|query).scm\n"
+        "-r <int>  \tNumber of iterations; how many times a query is looped\n"
+        "          \t(default: 1)\n";
+    int c;
+
+    if (argc == 1)
+    {
+        fprintf (stderr, "%s", description);
+        return 0;
+    }
+    opterr = 0;
+    while ((c = getopt (argc, argv, "t:r:")) != -1) {
+       switch (c)
+       {
+           case 't':
+             testcase = optarg;
+             break;
+           case 'r':
+             iteration_count = (unsigned int) atoi(optarg);
+             break;
+           case '?':
+             fprintf (stderr, "%s", description);
+             return 0;
+           default:
+             fprintf (stderr, "Unknown option %c ", optopt);
+             return 0;
+       }
+    }
+
     // Create the atomspace and scheme evaluator.
     atomspace = new AtomSpace();
     scheme = new SchemeEval(atomspace);
@@ -74,7 +107,7 @@ int main(void)
     load_scheme();
 
     // run the test
-    run_test("animals", 100000);
+    run_test(testcase, iteration_count);
 
     return 0;
 }
