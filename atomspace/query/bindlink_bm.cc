@@ -30,8 +30,8 @@ using namespace opencog;
 AtomSpace* atomspace;
 SchemeEval* scheme;
 
-int iteration_count = 1;
-std::string testcase = "";
+int iterations_count = 1;
+std::string testcase = "animals";
 
 void load_scheme()
 {
@@ -52,13 +52,15 @@ Handle load_scheme_query(const std::string& testcase)
     return scheme->eval_h("(load-from-path \"" + query_filename + "\")");
 }
 
-void run_test(const std::string& testcase, int iteration_count)
+void run_test(const std::string& testcase, int iterations_count)
 {
+    std::cout << "running testcase: " << testcase << ", number of iterations: " << iterations_count << std::endl;
+
     load_scheme_atomspace(testcase);
     Handle query = load_scheme_query(testcase);
 
     Handle result;
-    for (int iteration = 0; iteration < iteration_count; iteration++)
+    for (int iteration = 0; iteration < iterations_count; iteration++)
     {
         result = bindlink(atomspace, query);
     }
@@ -88,7 +90,7 @@ int main(int argc, char** argv)
              testcase = optarg;
              break;
            case 'r':
-             iteration_count = (unsigned int) atoi(optarg);
+             iterations_count = (unsigned int) atoi(optarg);
              break;
            case '?':
              fprintf (stderr, "%s", description);
@@ -107,7 +109,7 @@ int main(int argc, char** argv)
     load_scheme();
 
     // run the test
-    run_test(testcase, iteration_count);
+    run_test(testcase, iterations_count);
 
     return 0;
 }
