@@ -35,7 +35,6 @@ std::string testcase = "animals";
 
 void load_scheme()
 {
-    // Load some scheme for the setup
     scheme->eval("(use-modules (opencog))");
     scheme->eval("(add-to-load-path \".\")");
 }
@@ -101,14 +100,14 @@ int main(int argc, char** argv)
        }
     }
 
-    // Create the atomspace and scheme evaluator.
+    // Switch Guile autocompilation off to prevent compilation on big data sets
+    setenv("GUILE_AUTO_COMPILE", "0", 1);
+
     atomspace = new AtomSpace();
     scheme = new SchemeEval(atomspace);
 
-    // Load the scheme.
     load_scheme();
 
-    // run the test
     run_test(testcase, iterations_count);
 
     return 0;
