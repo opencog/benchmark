@@ -1,8 +1,10 @@
 /*
- * query/query_benchmark.cc
+ * atomspace/query/query_benchmark.cc
  *
- * Copyright (C) 2016 Linas Vepstas
- * All Rights Reserved
+ * Copyright (C) 2016-2018 OpenCog Foundation
+ *
+ * Authors: Linas Vepstas 2016
+ *          Vitaly Bogdanov 2018
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License v3 as
@@ -52,6 +54,10 @@ Handle load_scheme_query(SchemeEval& scheme, const std::string& query_filename)
     return scheme.eval_h("(load-from-path \"" + query_filename + "\")");
 }
 
+double duration_in_secs(clock_t start, clock_t end) {
+    return (double)(clock() - start) / CLOCKS_PER_SEC;
+}
+
 void run_test(const std::string& id)
 {
     std::string atomspace_file = configuration.get(id + "_atomspace_file", id + ".atomspace.scm");
@@ -70,7 +76,11 @@ void run_test(const std::string& id)
     clock_t start = clock();
     load_scheme_atomspace(scheme, atomspace_file);
     Handle query = load_scheme_query(scheme, query_file);
-    std::cout << "atomspace and query are loadded in: " << (double)(clock() - start)/CLOCKS_PER_SEC << " secs" << std::endl;
+    if (!query) {
+        std::cerr << "could not load query, stopping test" << std::endl;
+        return;
+    }
+    std::cout << "atomspace and query are loadded in: " << duration_in_secs(start, clock()) << " secs" << std::endl;
 
     Handle result;
     start = clock();
@@ -78,7 +88,7 @@ void run_test(const std::string& id)
     {
         result = satisfying_set(&atomspace, query);
     }
-    std::cout << "query executed: " << (double)(clock() - start)/CLOCKS_PER_SEC << " secs" << std::endl;
+    std::cout << "query executed " << iterations_count << " time(s) in: " << duration_in_secs(start, clock()) << " secs" << std::endl;
 
     std::cout << "results are: " << result->to_string() << std::endl;
 }
@@ -91,7 +101,7 @@ int parse_command_line(int argc, char** argv) {
     int c;
 
     if (argc == 1) {
-        std::cout << description;
+        std::cerr << description;
         return -1;
     }
 
@@ -106,10 +116,10 @@ int parse_command_line(int argc, char** argv) {
                 config_file_name = optarg;
                 break;
             case '?':
-                std::cout << description;
+                std::cerr << description;
                 return -1;
             default:
-                std::cout << "Unknown option: " << optopt << std::endl;
+                std::cerr << "Unknown option: " << optopt << std::endl;
                 return -1;
         }
     }
