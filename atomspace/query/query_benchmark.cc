@@ -66,14 +66,19 @@ void run_test(const std::string& id)
     AtomSpace atomspace;
     SchemeEval scheme(&atomspace);
     load_scheme(scheme);
+
+    clock_t start = clock();
     load_scheme_atomspace(scheme, atomspace_file);
     Handle query = load_scheme_query(scheme, query_file);
+    std::cout << "atomspace and query are loadded in: " << (double)(clock() - start)/CLOCKS_PER_SEC << " secs" << std::endl;
 
     Handle result;
+    start = clock();
     for (int iteration = 0; iteration < iterations_count; iteration++)
     {
         result = satisfying_set(&atomspace, query);
     }
+    std::cout << "query executed: " << (double)(clock() - start)/CLOCKS_PER_SEC << " secs" << std::endl;
 
     std::cout << "results are: " << result->to_string() << std::endl;
 }
@@ -115,7 +120,7 @@ int parse_command_line(int argc, char** argv) {
 void load_all_benchmarks() {
     benchmarks_to_run.clear();
     for (int i = 0; i < configuration.get_int("number_of_benchmarks", 0); ++i) {
-        const std::string& benchmark_id = configuration.get("benchmark_id_" + std::to_string(i));
+        std::string benchmark_id = configuration.get("benchmark_id_" + std::to_string(i));
         benchmarks_to_run.push_back(benchmark_id);
     }
 }
