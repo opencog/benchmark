@@ -12,6 +12,6 @@ IF (HAVE_GUILE)
 
     ADD_CUSTOM_TARGET(benchmark
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMAND ${CMAKE_CURRENT_BINARY_DIR}/query_benchmark -c query_benchmark.conf -t all
+        COMMAND ${CMAKE_CURRENT_BINARY_DIR}/query_benchmark -c query_benchmark.conf
         )
 ENDIF (HAVE_GUILE)

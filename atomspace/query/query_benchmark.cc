@@ -31,10 +31,13 @@
 #include <opencog/atomspace/AtomSpace.h>
 #include <opencog/query/BindLinkAPI.h>
 
+#define DEFAULT_CONFIG_FILE_NAME "query_benchmark.conf"
+#define BENCHMARKS_TO_RUN_PROPERTY "benchmarks_to_run"
+
 using namespace opencog;
 
-std::string config_file_name = "query_benchmark.conf";
-std::vector<std::string> benchmarks_to_run;
+std::string config_file_name = DEFAULT_CONFIG_FILE_NAME;
+std::string benchmarks_to_run = "";
 
 Config configuration;
 
@@ -44,7 +47,8 @@ void load_scheme(SchemeEval& scheme)
     scheme.eval("(add-to-load-path \".\")");
 }
 
-void load_scheme_atomspace(SchemeEval& scheme, const std::string& atomspace_filename)
+void load_scheme_atomspace(SchemeEval& scheme,
+                           const std::string& atomspace_filename)
 {
     scheme.eval("(load-from-path \"" + atomspace_filename + "\")");
 }
@@ -54,20 +58,23 @@ Handle load_scheme_query(SchemeEval& scheme, const std::string& query_filename)
     return scheme.eval_h("(load-from-path \"" + query_filename + "\")");
 }
 
-double duration_in_secs(clock_t start, clock_t end) {
+double duration_in_secs(clock_t start, clock_t end)
+{
     return (double)(clock() - start) / CLOCKS_PER_SEC;
 }
 
-void run_test(const std::string& id)
+void run_benchmark(const std::string& id)
 {
-    std::string atomspace_file = configuration.get(id + "_atomspace_file", id + ".atomspace.scm");
-    std::string query_file = configuration.get(id + "_query_file", id + ".query.scm");
+    std::string atomspace_file = configuration.get(id + "_atomspace_file",
+                                 id + ".atomspace.scm");
+    std::string query_file = configuration.get(id + "_query_file",
+                             id + ".query.scm");
     int iterations_count = configuration.get_int(id + "_iterations_count", 1);
 
-    std::cout << "running testcase id: " << id << std::endl;
-    std::cout << "number of iterations: " << iterations_count << std::endl;
+    std::cout << "running benchmark id: " << id << std::endl;
     std::cout << "atomspace file: " << atomspace_file << std::endl;
     std::cout << "query file: " << query_file << std::endl;
+    std::cout << "number of iterations: " << iterations_count << std::endl;
 
     AtomSpace atomspace;
     SchemeEval scheme(&atomspace);
@@ -80,58 +87,72 @@ void run_test(const std::string& id)
         std::cerr << "could not load query, stopping test" << std::endl;
         return;
     }
-    std::cout << "atomspace and query are loadded in: " << duration_in_secs(start, clock()) << " secs" << std::endl;
+    std::cout << "atomspace and query are loadded in: "
+        << duration_in_secs(start, clock()) << " secs" << std::endl;
 
     Handle result;
     start = clock();
-    for (int iteration = 0; iteration < iterations_count; iteration++)
-    {
+    for (int iteration = 0; iteration < iterations_count; iteration++) {
         result = satisfying_set(&atomspace, query);
     }
-    std::cout << "query executed " << iterations_count << " time(s) in: " << duration_in_secs(start, clock()) << " secs" << std::endl;
+    std::cout << "query executed " << iterations_count << " time(s) in: "
+        << duration_in_secs(start, clock()) << " secs" << std::endl;
 
     std::cout << "results are: " << result->to_string() << std::endl;
 }
 
-int parse_command_line(int argc, char** argv) {
-    const std::string description = "Query benchmark tool\n"
-        "Usage: query_benchmark -t <benchmark_id> [-c <config>]\n"
-        "-c <config>\t\tConfiguration file to load (default: query_benchmark.conf)\n"
-        "-t <benchmark_id>\tBenchmark id to run, \"all\" run all benchmarks\n";
+int parse_command_line(int argc, char** argv)
+{
+    const std::string description =
+        "Query benchmark tool\n"
+        "Usage: query_benchmark [-c <config>] [-t <benchmark_id>]\n"
+        "Options:\n"
+        "  -c <config> - configuration file to load\n"
+        "                Default: query_benchmark.conf\n"
+        "\n"
+        "    Configuration file properties:\n"
+        "      - guile_auto_compile=(true|false) # whether guile autocompilation should be enabled\n"
+        "      - benchmarks_to_run=benchmark1,benchmark2 # comma separated list of benchmarks to run\n"
+        "      - <benchmark>_atomspace_file=<filename.scm> # scheme file describing atomspace to load\n"
+        "      - <benchmark>_query_file=<filename.scm> # scheme file describing query to execute\n"
+        "      - <benchmark>_iterations_count=<number> # number of times to execute query\n"
+        "\n"
+        "  -t <benchmark_id>,... - comma separated list of benchmarks to run\n"
+        "                          Default: run all benchmarks from config\n";
     int c;
 
-    if (argc == 1) {
-        std::cerr << description;
-        return -1;
-    }
-
     opterr = 0;
-    while ((c = getopt(argc, argv, "t:c:")) != -1) {
-        switch (c)
-        {
-            case 't':
-                benchmarks_to_run.push_back(optarg);
-                break;
-            case 'c':
-                config_file_name = optarg;
-                break;
-            case '?':
-                std::cerr << description;
-                return -1;
-            default:
-                std::cerr << "Unknown option: " << optopt << std::endl;
-                return -1;
+    while ((c = getopt(argc, argv, "t:c:")) != -1)
+    {
+        switch (c) {
+        case 't':
+            benchmarks_to_run = optarg;
+            break;
+        case 'c':
+            config_file_name = optarg;
+            break;
+        case '?':
+            std::cerr << description;
+            return -1;
+        default:
+            std::cerr << "Unknown option: " << optopt << std::endl;
+            return -1;
         }
     }
 
     return 0;
 }
 
-void load_all_benchmarks() {
-    benchmarks_to_run.clear();
-    for (int i = 0; i < configuration.get_int("number_of_benchmarks", 0); ++i) {
-        std::string benchmark_id = configuration.get("benchmark_id_" + std::to_string(i));
-        benchmarks_to_run.push_back(benchmark_id);
+void load_benchmarks_from_configuration(std::vector<std::string>& benchmarks_to_run)
+{
+    if (configuration.has(BENCHMARKS_TO_RUN_PROPERTY)) {
+        std::istringstream istream(configuration.get(BENCHMARKS_TO_RUN_PROPERTY));
+
+        while (istream.good()) {
+            std::string benchmark_id;
+            std::getline(istream, benchmark_id, ',');
+            benchmarks_to_run.push_back(benchmark_id);
+        }
     }
 }
 
@@ -141,19 +162,26 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    configuration.load(config_file_name.c_str());
+    configuration.load(config_file_name.c_str(), false);
+    if (!benchmarks_to_run.empty()) {
+        configuration.set(BENCHMARKS_TO_RUN_PROPERTY, benchmarks_to_run);
+    }
 
     // Switch Guile autocompilation off to prevent compilation on big data sets
     if (!configuration.get_bool("guile_auto_compile", true)) {
         setenv("GUILE_AUTO_COMPILE", "0", 1);
     }
 
-    if (std::find(benchmarks_to_run.begin(), benchmarks_to_run.end(), "all") != benchmarks_to_run.end()) {
-        load_all_benchmarks();
+    std::vector<std::string> benchmarks_to_run;
+    load_benchmarks_from_configuration(benchmarks_to_run);
+
+    if (benchmarks_to_run.empty()) {
+        std::cerr << "no benchmarks to run" << std::endl;
+        return 0;
     }
 
     for (const std::string& benchmark_id : benchmarks_to_run) {
-        run_test(benchmark_id);
+        run_benchmark(benchmark_id);
     }
 
     return 0;
