@@ -98,7 +98,9 @@ void run_benchmark(const std::string& id)
     std::cout << "query executed " << iterations_count << " time(s) in: "
         << duration_in_secs(start, clock()) << " secs" << std::endl;
 
-    std::cout << "results are: " << result->to_string() << std::endl;
+    if (configuration.get_bool("print_results", true)) {
+        std::cout << "results are: " << result->to_string() << std::endl;
+    }
 }
 
 int parse_command_line(int argc, char** argv)
@@ -112,6 +114,7 @@ int parse_command_line(int argc, char** argv)
         "\n"
         "    Configuration file properties:\n"
         "      - guile_auto_compile=(true|false) # whether guile autocompilation should be enabled\n"
+        "      - print_results=(true|false) # print query results after last execution\n"
         "      - benchmarks_to_run=benchmark1,benchmark2 # comma separated list of benchmarks to run\n"
         "      - <benchmark>_atomspace_file=<filename.scm> # scheme file describing atomspace to load\n"
         "      - <benchmark>_query_file=<filename.scm> # scheme file describing query to execute\n"
