@@ -10,7 +10,7 @@ IF (HAVE_GUILE)
         ${COGUTIL_LIBRARY}
         )
 
-    ADD_CUSTOM_TARGET(benchmark
+    ADD_CUSTOM_TARGET(run_query_benchmark
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMAND ${CMAKE_CURRENT_BINARY_DIR}/query_benchmark -c query_benchmark.conf
         )

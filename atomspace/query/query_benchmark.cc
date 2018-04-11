@@ -36,6 +36,7 @@
 
 using namespace opencog;
 
+std::string working_dir = ".";
 std::string config_file_name = DEFAULT_CONFIG_FILE_NAME;
 std::string benchmarks_to_run = "";
 
@@ -107,10 +108,11 @@ int parse_command_line(int argc, char** argv)
 {
     const std::string description =
         "Query benchmark tool\n"
-        "Usage: query_benchmark [-c <config>] [-t <benchmark_id>]\n"
+        "Usage: query_benchmark [-d <working_dir>] [-c <config>] [-t <benchmark_id>]\n"
         "Options:\n"
-        "  -c <config> - configuration file to load\n"
-        "                Default: query_benchmark.conf\n"
+        "  -d <working_dir> - working dir, default: current dir\n"
+        "\n"
+        "  -c <config> - configuration file to load, default: query_benchmark.conf\n"
         "\n"
         "    Configuration file properties:\n"
         "      - guile_auto_compile=(true|false) # whether guile autocompilation should be enabled\n"
@@ -120,14 +122,17 @@ int parse_command_line(int argc, char** argv)
         "      - <benchmark>_query_file=<filename.scm> # scheme file describing query to execute\n"
         "      - <benchmark>_iterations_count=<number> # number of times to execute query\n"
         "\n"
-        "  -t <benchmark_id>,... - comma separated list of benchmarks to run\n"
-        "                          Default: run all benchmarks from config\n";
+        "  -t <benchmark_id>,... - comma separated list of benchmarks to run,\n"
+        "                          default: run all benchmarks from config\n";
     int c;
 
     opterr = 0;
-    while ((c = getopt(argc, argv, "t:c:")) != -1)
+    while ((c = getopt(argc, argv, "d:t:c:")) != -1)
     {
         switch (c) {
+        case 'd':
+            working_dir = optarg;
+            break;
         case 't':
             benchmarks_to_run = optarg;
             break;
@@ -165,6 +170,10 @@ int main(int argc, char** argv)
         return 0;
     }
 
+    if (chdir(working_dir.c_str())) {
+        std::cerr << "could not change dir to: " << working_dir << std::endl;
+        return 0;
+    }
     configuration.load(config_file_name.c_str(), false);
     if (!benchmarks_to_run.empty()) {
         configuration.set(BENCHMARKS_TO_RUN_PROPERTY, benchmarks_to_run);
