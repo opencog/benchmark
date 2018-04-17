@@ -58,7 +58,7 @@ Install:
 apt-get install linux-tools
 ```
 
-When you are in <benchmark_source_root>/build folder run:
+From the build folder run:
 ```
 QUERY_BENCHMARK="./atomspace/query/query_benchmark -d ../atomspace/query"
 perf record $QUERY_BENCHMARK
@@ -82,7 +82,7 @@ firefox perf.svg
 
 ### Using valgrind ###
 
-When you are in <benchmark_source_root>/build folder run:
+From the build folder run:
 ```
 valgrind --tool=callgrind $QUERY_BENCHMARK
 ```
