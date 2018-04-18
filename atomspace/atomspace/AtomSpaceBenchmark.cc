@@ -197,6 +197,7 @@ void AtomSpaceBenchmark::showMethods()
 #endif
     cout << "  getOutgoingSet" << endl;
     cout << "  getIncomingSet" << endl;
+    cout << "  getIncomingSetSize" << endl;
     cout << "  addNode" << endl;
     cout << "  addLink" << endl;
     cout << "  removeAtom" << endl;
@@ -250,6 +251,12 @@ void AtomSpaceBenchmark::setMethod(std::string methodToTest)
     if (methodToTest == "all" or methodToTest == "getIncomingSet") {
         methodsToTest.push_back( &AtomSpaceBenchmark::bm_getIncomingSet);
         methodNames.push_back("getIncomingSet");
+        foundMethod = true;
+    }
+
+    if (methodToTest == "all" or methodToTest == "getIncomingSetSize") {
+        methodsToTest.push_back( &AtomSpaceBenchmark::bm_getIncomingSetSize);
+        methodNames.push_back("getIncomingSetSize");
         foundMethod = true;
     }
 
@@ -1246,6 +1253,35 @@ timepair_t AtomSpaceBenchmark::bm_getIncomingSet()
         clock_t t_begin = clock();
         for (unsigned int i=0; i<Nclock; i++)
             hs[i]->getIncomingSet();
+        clock_t time_taken = clock() - t_begin;
+        return timepair_t(time_taken,0);
+    }
+    }
+    return timepair_t(0,0);
+}
+
+timepair_t AtomSpaceBenchmark::bm_getIncomingSetSize()
+{
+    Handle hs[Nclock];
+    for (unsigned int i=0; i<Nclock; i++)
+        hs[i] = getRandomHandle();
+
+    switch (testKind) {
+#if HAVE_CYTHON
+    case BENCH_PYTHON: {
+        return timepair_t(0,0);
+    }
+#endif /* HAVE_CYTHON */
+#if HAVE_GUILE
+    case BENCH_SCM: {
+        return timepair_t(0,0);
+    }
+#endif /* HAVE_GUILE */
+    case BENCH_AS:
+    case BENCH_TABLE: {
+        clock_t t_begin = clock();
+        for (unsigned int i=0; i<Nclock; i++)
+            hs[i]->getIncomingSetSize();
         clock_t time_taken = clock() - t_begin;
         return timepair_t(time_taken,0);
     }
