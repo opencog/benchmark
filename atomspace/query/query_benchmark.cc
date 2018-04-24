@@ -62,9 +62,9 @@ Handle load_scheme_query(SchemeEval& scheme, const std::string& query_filename)
     return scheme.eval_h("(load-from-path \"" + query_filename + "\")");
 }
 
-double duration_in_secs(TimePoint start, TimePoint end)
+double duration_in_millis(TimePoint start, TimePoint end)
 {
-    return std::chrono::duration_cast<std::chrono::duration<double>>(
+    return std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(
             end - start).count();
 }
 
@@ -97,7 +97,7 @@ void run_benchmark(const std::string& id)
             return;
         }
         std::cout << "atomspace and query are loadded in: "
-                << duration_in_secs(start, end) << " secs" << std::endl;
+                << duration_in_millis(start, end) << " ms" << std::endl;
     }
 
     {
@@ -107,8 +107,11 @@ void run_benchmark(const std::string& id)
             result = satisfying_set(&atomspace, query);
         }
         TimePoint end = std::chrono::high_resolution_clock::now();
+        double duration_ms = duration_in_millis(start, end);
         std::cout << "query executed " << iterations_count << " time(s) in: "
-                << duration_in_secs(start, end) << " secs" << std::endl;
+                <<  duration_ms << " ms" << std::endl;
+        std::cout << "1 iteration duration is: "
+                << duration_ms / iterations_count << " ms" << std::endl;
 
         if (configuration.get_bool("print_results", true)) {
             std::cout << "results are: " << result->to_string() << std::endl;
