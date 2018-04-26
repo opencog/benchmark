@@ -123,7 +123,7 @@ int parse_command_line(int argc, char** argv)
 {
     const std::string description =
         "Query benchmark tool\n"
-        "Usage: query_benchmark [-d <working_dir>] [-c <config>] [-t <benchmark_id>]\n"
+        "Usage: query_benchmark [-d <working_dir>] [-c <config>] [-t <benchmark_id>] [p <number>]\n"
         "Options:\n"
         "  -d <working_dir> - working dir, default: current dir\n"
         "\n"
@@ -132,13 +132,15 @@ int parse_command_line(int argc, char** argv)
         "    Configuration file properties:\n"
         "      - guile_auto_compile=(true|false) # whether guile autocompilation should be enabled\n"
         "      - print_results=(true|false) # print query results after last execution\n"
+        "      - log_level=(ERROR|WARN|INFO|DEBUG|FINE) # set log level\n"
         "      - benchmarks_to_run=benchmark1,benchmark2 # comma separated list of benchmarks to run\n"
         "      - <benchmark>_atomspace_file=<filename.scm> # scheme file describing atomspace to load\n"
         "      - <benchmark>_query_file=<filename.scm> # scheme file describing query to execute\n"
         "      - <benchmark>_iterations_count=<number> # number of times to execute query\n"
         "\n"
         "  -t <benchmark_id>,... - comma separated list of benchmarks to run,\n"
-        "                          default: run all benchmarks from config\n";
+        "                          default: run all benchmarks from config\n"
+        "  -p <number> - set number of OpenMP threads when running test, default: 1\n";
     int c;
 
     opterr = 0;
@@ -202,6 +204,7 @@ int main(int argc, char** argv)
     std::cout << "set log level to: " << log_level << std::endl;
     logger().set_level(log_level);
 
+    std::cout << "set OpenMP threads number to: " << omp_number_of_threads << std::endl;
     setting_omp(omp_number_of_threads);
 
     // Switch Guile autocompilation off to prevent compilation on big data sets

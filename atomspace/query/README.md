@@ -11,7 +11,7 @@ Tool command line options:
 
 ```
 Query benchmark tool
-Usage: query_benchmark [-d <working_dir>] [-c <config>] [-t <benchmark_id>]
+Usage: query_benchmark [-d <working_dir>] [-c <config>] [-t <benchmark_id>] [p <number>]
 Options:
   -d <working_dir> - working dir, default: current dir
 
@@ -20,6 +20,7 @@ Options:
     Configuration file properties:
       - guile_auto_compile=(true|false) # whether guile autocompilation should be enabled
       - print_results=(true|false) # print query results after last execution
+      - log_level=(ERROR|WARN|INFO|DEBUG|FINE) # set log level
       - benchmarks_to_run=benchmark1,benchmark2 # comma separated list of benchmarks to run
       - <benchmark>_atomspace_file=<filename.scm> # scheme file describing atomspace to load
       - <benchmark>_query_file=<filename.scm> # scheme file describing query to execute
@@ -27,6 +28,7 @@ Options:
 
   -t <benchmark_id>,... - comma separated list of benchmarks to run,
                           default: run all benchmarks from config
+  -p <number> - set number of OpenMP threads when running test, default: 1
 ```
 
 Example of configuration file:
