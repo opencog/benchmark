@@ -9,7 +9,7 @@ the resident set size (memory) of the benchmark process.
 A simple example:
 
 ```bash
-$ cd <BUILD_DIR>/opencog/benchmark
+$ cd <BUILD_DIR>/atomspace/atomspace
 $ ./atomspace_bm -m "addLink" -k -S 100 -n 10000 -f
 ```
 
@@ -98,16 +98,16 @@ the cython directory:
 $ export PYTHONPATH="${PYTHONPATH}:${HOME}/atomspace/build/opencog/cython"
 ```
 
-and then run (from the atomspace directory, `/home/opencog/atomspace` on Docker):
+and then run (from the benchmark directory):
 
 ```bash
-$ python ./opencog/benchmark/benchmark.py
+$ python ./atomspace/atomspace/benchmark.py
 ```
 
 or execute directly with:
 
 ```bash
-$ ./opencog/benchmark/benchmark.py
+$ ./atomspace/atomspace/benchmark.py
 ```
 
 The test will run and produce its output automatically if no options are

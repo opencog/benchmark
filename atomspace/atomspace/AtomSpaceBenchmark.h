@@ -149,6 +149,7 @@ public:
 
     timepair_t bm_pointerCast();
     timepair_t bm_getIncomingSet();
+    timepair_t bm_getIncomingSetSize();
     timepair_t bm_getOutgoingSet();
     timepair_t bm_getHandlesByType();
 

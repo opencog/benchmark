@@ -36,9 +36,12 @@
 
 using namespace opencog;
 
+typedef std::chrono::high_resolution_clock::time_point TimePoint;
+
 std::string working_dir = ".";
 std::string config_file_name = DEFAULT_CONFIG_FILE_NAME;
 std::string benchmarks_to_run = "";
+int omp_number_of_threads = 1;
 
 Config configuration;
 
@@ -49,7 +52,7 @@ void load_scheme(SchemeEval& scheme)
 }
 
 void load_scheme_atomspace(SchemeEval& scheme,
-                           const std::string& atomspace_filename)
+        const std::string& atomspace_filename)
 {
     scheme.eval("(load-from-path \"" + atomspace_filename + "\")");
 }
@@ -59,17 +62,18 @@ Handle load_scheme_query(SchemeEval& scheme, const std::string& query_filename)
     return scheme.eval_h("(load-from-path \"" + query_filename + "\")");
 }
 
-double duration_in_secs(clock_t start, clock_t end)
+double duration_in_millis(TimePoint start, TimePoint end)
 {
-    return (double)(clock() - start) / CLOCKS_PER_SEC;
+    return std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(
+            end - start).count();
 }
 
 void run_benchmark(const std::string& id)
 {
     std::string atomspace_file = configuration.get(id + "_atomspace_file",
-                                 id + ".atomspace.scm");
+            id + ".atomspace.scm");
     std::string query_file = configuration.get(id + "_query_file",
-                             id + ".query.scm");
+            id + ".query.scm");
     int iterations_count = configuration.get_int(id + "_iterations_count", 1);
 
     std::cout << "running benchmark id: " << id << std::endl;
@@ -79,28 +83,39 @@ void run_benchmark(const std::string& id)
 
     AtomSpace atomspace;
     SchemeEval scheme(&atomspace);
+    Handle query;
+
     load_scheme(scheme);
 
-    clock_t start = clock();
-    load_scheme_atomspace(scheme, atomspace_file);
-    Handle query = load_scheme_query(scheme, query_file);
-    if (!query) {
-        std::cerr << "could not load query, stopping test" << std::endl;
-        return;
+    {
+        TimePoint start = std::chrono::high_resolution_clock::now();
+        load_scheme_atomspace(scheme, atomspace_file);
+        query = load_scheme_query(scheme, query_file);
+        TimePoint end = std::chrono::high_resolution_clock::now();
+        if (!query) {
+            std::cerr << "could not load query, stopping test" << std::endl;
+            return;
+        }
+        std::cout << "atomspace and query are loadded in: "
+                << duration_in_millis(start, end) << " ms" << std::endl;
     }
-    std::cout << "atomspace and query are loadded in: "
-        << duration_in_secs(start, clock()) << " secs" << std::endl;
 
-    Handle result;
-    start = clock();
-    for (int iteration = 0; iteration < iterations_count; iteration++) {
-        result = satisfying_set(&atomspace, query);
-    }
-    std::cout << "query executed " << iterations_count << " time(s) in: "
-        << duration_in_secs(start, clock()) << " secs" << std::endl;
+    {
+        Handle result;
+        TimePoint start = std::chrono::high_resolution_clock::now();
+        for (int iteration = 0; iteration < iterations_count; iteration++) {
+            result = satisfying_set(&atomspace, query);
+        }
+        TimePoint end = std::chrono::high_resolution_clock::now();
+        double duration_ms = duration_in_millis(start, end);
+        std::cout << "query executed " << iterations_count << " time(s) in: "
+                <<  duration_ms << " ms" << std::endl;
+        std::cout << "1 iteration duration is: "
+                << duration_ms / iterations_count << " ms" << std::endl;
 
-    if (configuration.get_bool("print_results", true)) {
-        std::cout << "results are: " << result->to_string() << std::endl;
+        if (configuration.get_bool("print_results", true)) {
+            std::cout << "results are: " << result->to_string() << std::endl;
+        }
     }
 }
 
@@ -108,7 +123,7 @@ int parse_command_line(int argc, char** argv)
 {
     const std::string description =
         "Query benchmark tool\n"
-        "Usage: query_benchmark [-d <working_dir>] [-c <config>] [-t <benchmark_id>]\n"
+        "Usage: query_benchmark [-d <working_dir>] [-c <config>] [-t <benchmark_id>] [p <number>]\n"
         "Options:\n"
         "  -d <working_dir> - working dir, default: current dir\n"
         "\n"
@@ -117,19 +132,21 @@ int parse_command_line(int argc, char** argv)
         "    Configuration file properties:\n"
         "      - guile_auto_compile=(true|false) # whether guile autocompilation should be enabled\n"
         "      - print_results=(true|false) # print query results after last execution\n"
+        "      - log_level=(ERROR|WARN|INFO|DEBUG|FINE) # set log level\n"
         "      - benchmarks_to_run=benchmark1,benchmark2 # comma separated list of benchmarks to run\n"
         "      - <benchmark>_atomspace_file=<filename.scm> # scheme file describing atomspace to load\n"
         "      - <benchmark>_query_file=<filename.scm> # scheme file describing query to execute\n"
         "      - <benchmark>_iterations_count=<number> # number of times to execute query\n"
         "\n"
         "  -t <benchmark_id>,... - comma separated list of benchmarks to run,\n"
-        "                          default: run all benchmarks from config\n";
+        "                          default: run all benchmarks from config\n"
+        "  -p <number> - set number of OpenMP threads when running test, default: 1\n";
     int c;
 
     opterr = 0;
-    while ((c = getopt(argc, argv, "d:t:c:")) != -1)
-    {
-        switch (c) {
+    while ((c = getopt(argc, argv, "d:t:c:p:")) != -1) {
+        switch (c)
+        {
         case 'd':
             working_dir = optarg;
             break;
@@ -138,6 +155,9 @@ int parse_command_line(int argc, char** argv)
             break;
         case 'c':
             config_file_name = optarg;
+            break;
+        case 'p':
+            omp_number_of_threads = atoi(optarg);
             break;
         case '?':
             std::cerr << description;
@@ -151,10 +171,12 @@ int parse_command_line(int argc, char** argv)
     return 0;
 }
 
-void load_benchmarks_from_configuration(std::vector<std::string>& benchmarks_to_run)
+void load_benchmarks_from_configuration(
+        std::vector<std::string>& benchmarks_to_run)
 {
     if (configuration.has(BENCHMARKS_TO_RUN_PROPERTY)) {
-        std::istringstream istream(configuration.get(BENCHMARKS_TO_RUN_PROPERTY));
+        std::istringstream istream(
+                configuration.get(BENCHMARKS_TO_RUN_PROPERTY));
 
         while (istream.good()) {
             std::string benchmark_id;
@@ -178,6 +200,12 @@ int main(int argc, char** argv)
     if (!benchmarks_to_run.empty()) {
         configuration.set(BENCHMARKS_TO_RUN_PROPERTY, benchmarks_to_run);
     }
+    const std::string log_level = configuration.get("log_level", "INFO");
+    std::cout << "set log level to: " << log_level << std::endl;
+    logger().set_level(log_level);
+
+    std::cout << "set OpenMP threads number to: " << omp_number_of_threads << std::endl;
+    setting_omp(omp_number_of_threads);
 
     // Switch Guile autocompilation off to prevent compilation on big data sets
     if (!configuration.get_bool("guile_auto_compile", true)) {
