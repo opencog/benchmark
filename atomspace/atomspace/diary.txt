@@ -1471,3 +1471,34 @@ Remarks:
   So WTF.
 
 * No clue why addLink is so much faster.
+
+======================================================================
+
+3 May 2018
+----------
+New core baseline. Fanny.  This baseline measures perf after misc
+changes, including:
+* bugfix classserver factory performance #1503
+* Remove boost for signals, #1504
+* Use of const auto& in various loops #1646
+
+compiler: gcc version 6.3.0
+
+                     -A          -A           -A
+   test            Dec 2016    Dec 2017       Today
+   name            K-ops/sec   K-ops/sec      2018         Comments
+   ----            ---------   ---------      ----      -----------------
+  noop              2.20e6       1.89e6       2.17e6
+  getType          82.3K        79.9K     101K          26% improvement
+  getTV             4109         4117       4632        12% faster
+  setTV             1243          796        901        13% faster
+  pointerCast       8236        10.6K      11.5K         8%
+  getIncomingSet    2270         2086       2530        21%
+  getOutgoingSet   47.2K        45.6K      52.7K        16%
+  addNode            305          315        383        22% faster
+  addLink            103          142        135        slower by 5%
+  removeAtom         559          573        705        23% faster
+
+Remarks:
+* Attempting to git-bisect to figure out which changes did what proved
+  to be ambiguous, when not outright tedious.
