@@ -64,11 +64,11 @@ records (you can always output to file with -f and do stats calculations later)
 
 ## Graphs ##
 
-There is a script scripts/make_benchmark_graphs.py which will create graphs
-from the csv files. You must have matplotlib (Python graphing library)
-installed for this to work. If you run the script from a directory with
-files ending in "_benchmark.csv" in it, it will create a .png file for
-each.
+There is a script atomspace/atomspace/make_benchmark_graphs.py which will
+create graphs from the csv files. You must have matplotlib (Python graphing
+library) version 2.0 or greater installed for this to work. If you run the
+script from a directory with files ending in "_benchmark.csv" in it, it will
+create a .png file for each.
 
 ## TODO ##
 
