@@ -55,8 +55,8 @@ def graph_file(fn,delta_rss=True):
     fig = plt.figure(facecolor='white')
     axescolor  = '#f6f6f6'  # the axies background color
 
-    ax1 = fig.add_axes(rect1, axisbg=axescolor)
-    ax2 = fig.add_axes(rect2, axisbg=axescolor, sharex=ax1)
+    ax1 = fig.add_axes(rect1, facecolor=axescolor)
+    ax2 = fig.add_axes(rect2, facecolor=axescolor, sharex=ax1)
 
     ax1.plot(sizes,times_seconds,color='black')
     if len(times_seconds) > 1000:
