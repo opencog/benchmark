@@ -476,7 +476,7 @@ void AtomSpaceBenchmark::startBenchmark(int numThreads)
             // run on a different atomspace, than the one containing
             // all the atoms.  And that would give bad results.
             std::ostringstream dss;
-            dss << "from opencog.atomspace import AtomSpace, types, TruthValue" << std::endl;
+            dss << "from opencog.atomspace import AtomSpace, types, TruthValue, Atom" << std::endl;
             dss << "aspace = AtomSpace(" << asp << ")" << std::endl;
             pyev->eval(dss.str());
 #endif
@@ -916,7 +916,7 @@ timepair_t AtomSpaceBenchmark::bm_rmAtom()
             Handle h = hs[i];
             std::ostringstream dss;
             for (unsigned int i=0; i<Nloops; i++) {
-                dss << "aspace.remove(Handle(" << h.value() << "))\n";
+                dss << "aspace.remove(Atom(" << &h << ", aspace))\n";
                 h = getRandomHandle();
                 // XXX FIXME --- this may have trouble finding anything if
                 // Nloops is bigger than the number of links in the atomspace !
@@ -1009,7 +1009,7 @@ timepair_t AtomSpaceBenchmark::bm_getType()
             Handle h = hs[i];
             std::ostringstream dss;
             for (unsigned int i=0; i<Nloops; i++) {
-                dss << "aspace.get_type(Handle(" << h.value() << "))\n";
+                dss << "type = Atom(" << &h << ", aspace)" << ".type\n";
                 h = getRandomHandle();
             }
             std::string ps = dss.str();
@@ -1077,7 +1077,7 @@ timepair_t AtomSpaceBenchmark::bm_getTruthValue()
         {
             Handle h = hs[i];
             std::ostringstream dss;
-            dss << "aspace.get_tv(Handle(" << h.value() << "))\n";
+            dss << "tv = Atom(" << &h << ", aspace).tv\n";
             std::string ps = dss.str();
             psa[i] = ps;
         }
@@ -1156,8 +1156,8 @@ timepair_t AtomSpaceBenchmark::bm_setTruthValue()
             float strength = strg[i];
             float cnf = conf[i];
             std::ostringstream dss;
-            dss << "aspace.set_tv(Handle(" << h.value()
-                << "), TruthValue(" << strength << ", " << cnf << "))\n";
+            dss << "Atom(" << &h <<", aspace)"
+                << ".truth_value(" << strength << ", " << cnf << ")\n";
             std::string ps = dss.str();
             psa[i] = ps;
         }
@@ -1228,7 +1228,7 @@ timepair_t AtomSpaceBenchmark::bm_getIncomingSet()
         {
             Handle h = hs[i];
             std::ostringstream dss;
-            dss << "incoming = Atom(" << h.value() << ").incoming\n";
+            dss << "incoming = Atom(" << &h << ", aspace).incoming\n";
             std::string ps = dss.str();
             psa[i] = ps;
         }
@@ -1367,7 +1367,7 @@ timepair_t AtomSpaceBenchmark::bm_getOutgoingSet()
         {
             Handle h = hs[i];
             std::ostringstream dss;
-            dss << "out = Atom(" << h.value() << ", aspace).out\n";
+            dss << "out = Atom(" << &h << ", aspace).out\n";
             std::string ps = dss.str();
             psa[i] = ps;
         }
@@ -1427,7 +1427,8 @@ timepair_t AtomSpaceBenchmark::bm_getHandlesByType()
         std::string ps = dss.str();
         clock_t t_begin = clock();
         pyev->eval(ps);
-        return timepair_t(Nclock*clock(), Nclock*t_begin);
+        clock_t time_taken = clock() - t_begin;
+        return timepair_t(Nclock*time_taken,0);
     }
 #endif /* HAVE_CYTHON */
 #if HAVE_GUILE
