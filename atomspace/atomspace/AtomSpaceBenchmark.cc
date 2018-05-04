@@ -702,14 +702,14 @@ clock_t AtomSpaceBenchmark::makeRandomLinks()
         for (unsigned int i = 0; i<Nclock; i++)
         {
             Type t = ta[i];
-            HandleSeq outgoing = og[i];
+            const auto& outgoing = og[i];
             size_t arity = outgoing.size();
 
             OC_ASSERT(1 == Nloops, "Looping not supported for python");
             std::ostringstream dss;
             dss << "aspace.add_link (" << t << ", [";
             for (size_t j=0; j < arity; j++) {
-                dss << "Handle( " << outgoing[j].value() << ")";
+                dss << "Atom( " << &(outgoing[j]) << ", aspace)";
                 if (j < arity-1) dss  << ", ";
             }
             dss << " ] )\n";
