@@ -631,22 +631,6 @@ clock_t AtomSpaceBenchmark::makeRandomNodes(const std::string& csi)
                 ss << "(cog-new-node '"
                    << nameserver().getTypeName(t)
                    << " \"" << scp << "\")\n";
-
-                p = randomGenerator->randdouble();
-                t = defaultNodeType;
-                if (p < chanceOfNonDefaultNode)
-                    t = randomType(NODE);
-
-                scp = csi;
-                if (csi.size() ==  0) {
-                    std::ostringstream oss;
-                    counter++;
-                    if (NUMBER_NODE == t)
-                        oss << counter;  // number nodes must actually be numbers.
-                    else
-                        oss << "node " << counter;
-                    scp = oss.str();
-                }
             }
             std::string gs = memoize_or_compile(ss.str());
             gsa[i] = gs;
@@ -673,22 +657,6 @@ clock_t AtomSpaceBenchmark::makeRandomNodes(const std::string& csi)
             for (unsigned int i=0; i<Nloops; i++) {
                 if (memoize) dss << "    ";   // indentation
                 dss << "aspace.add_node (" << t << ", \"" << scp << "\")\n";
-
-                p = randomGenerator->randdouble();
-                t = defaultNodeType;
-                if (p < chanceOfNonDefaultNode)
-                    t = randomType(NODE);
-
-                scp = csi;
-                if (csi.size() ==  0) {
-                    std::ostringstream oss;
-                    counter++;
-                    if (NUMBER_NODE == t)
-                        oss << counter;  // number nodes must actually be numbers.
-                    else
-                        oss << "node " << counter;
-                    scp = oss.str();
-                }
             }
 
             std::string ps = memoize_or_compile(dss.str());
@@ -790,21 +758,6 @@ clock_t AtomSpaceBenchmark::makeRandomLinks()
                     ss << " h" << c;
                 }
                 ss << ")\n";
-
-                t = defaultLinkType;
-                p = randomGenerator->randdouble();
-                if (p < chanceOfNonDefaultLink) t = randomType(LINK);
-
-                arity = (*poissonDistribution)(*randomGenerator);
-                if (arity == 0) { ++arity; };
-
-                // AtomSpace will throw if the context link has bad arity
-                if (CONTEXT_LINK == t) arity = 2;
-
-                outgoing.clear();
-                for (size_t j=0; j < arity; j++) {
-                    outgoing.push_back(getRandomHandle());
-                }
             }
             std::string gs = memoize_or_compile(ss.str());
             gsa[i] = gs;
