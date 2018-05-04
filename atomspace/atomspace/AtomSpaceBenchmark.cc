@@ -43,8 +43,6 @@ using std::time;
 
 TLB tlbuf;
 
-#define HAVE_CYTHONX 1
-
 AtomSpaceBenchmark::AtomSpaceBenchmark()
 {
     percentLinks = 0.2;
@@ -467,7 +465,7 @@ void AtomSpaceBenchmark::startBenchmark(int numThreads)
         }
         else {
             asp = new AtomSpace();
-#if HAVE_CYTHONX
+#if HAVE_CYTHON
             pyev = new PythonEval(asp);
             // And now ... create a Python instance of the atomspace.
             // Pass in the raw C++ atomspace address into cython.
@@ -497,7 +495,7 @@ void AtomSpaceBenchmark::startBenchmark(int numThreads)
 #if HAVE_GUILE
             delete scm;
 #endif
-#if HAVE_CYTHONX
+#if HAVE_CYTHON
             delete pyev;
 #endif
             delete asp;
@@ -645,7 +643,6 @@ clock_t AtomSpaceBenchmark::makeRandomNodes(const std::string& csi)
 
 #if HAVE_CYTHON
     case BENCH_PYTHON: {
-#if HAVE_CYTHONX
         std::string psa[Nclock];
 
         for (unsigned int i=0; i<Nclock; i++)
@@ -666,7 +663,6 @@ clock_t AtomSpaceBenchmark::makeRandomNodes(const std::string& csi)
         for (unsigned int i = 0; i < Nclock; ++i)
             pyev->eval(psa[i]);
         return clock() - t_begin;
-#endif /* HAVE_CYTHON */
     }
 #endif /* HAVE_CYTHON */
     }
@@ -702,7 +698,6 @@ clock_t AtomSpaceBenchmark::makeRandomLinks()
     switch (testKind) {
 #if HAVE_CYTHON
     case BENCH_PYTHON: {
-#if HAVE_CYTHONX
         std::string psa[Nclock];
         for (unsigned int i = 0; i<Nclock; i++)
         {
@@ -725,7 +720,6 @@ clock_t AtomSpaceBenchmark::makeRandomLinks()
         for (unsigned int i=0; i<Nclock; i++)
             pyev->eval(psa[i]);
         return clock() - t_begin;
-#endif /* HAVE_CYTHON */
     }
 #endif /* HAVE_CYTHON */
 
@@ -909,7 +903,6 @@ timepair_t AtomSpaceBenchmark::bm_rmAtom()
 #if HAVE_CYTHON
     case BENCH_PYTHON: {
         OC_ASSERT(1 == Nloops, "Looping not supported for python");
-#if HAVE_CYTHONX
         std::string psa[Nclock];
         for (unsigned int i=0; i<Nclock; i++)
         {
@@ -932,7 +925,6 @@ timepair_t AtomSpaceBenchmark::bm_rmAtom()
             pyev->eval(psa[i]);
         clock_t time_taken = clock() - t_begin;
         return timepair_t(time_taken,0);
-#endif /* HAVE_CYTHON */
     }
 #endif /* HAVE_CYTHON */
 #if HAVE_GUILE
@@ -1002,7 +994,6 @@ timepair_t AtomSpaceBenchmark::bm_getType()
 #if HAVE_CYTHON
     case BENCH_PYTHON: {
         OC_ASSERT(1 == Nloops, "Looping not supported for python");
-#if HAVE_CYTHONX
         std::string psa[Nclock];
         for (unsigned int i=0; i<Nclock; i++)
         {
@@ -1020,7 +1011,6 @@ timepair_t AtomSpaceBenchmark::bm_getType()
             pyev->eval(psa[i]);
         clock_t time_taken = clock() - t_begin;
         return timepair_t(time_taken,0);
-#endif /* HAVE_CYTHON */
     }
 #endif /* HAVE_CYTHON */
 
@@ -1070,7 +1060,6 @@ timepair_t AtomSpaceBenchmark::bm_getTruthValue()
     switch (testKind) {
 #if HAVE_CYTHON
     case BENCH_PYTHON: {
-#if HAVE_CYTHONX
         OC_ASSERT(1 == Nloops, "Looping not supported for python");
         std::string psa[Nclock];
         for (unsigned int i=0; i<Nclock; i++)
@@ -1086,7 +1075,6 @@ timepair_t AtomSpaceBenchmark::bm_getTruthValue()
             pyev->eval(psa[i]);
         clock_t time_taken = clock() - t_begin;
         return timepair_t(time_taken,0);
-#endif /* HAVE_CYTHON */
     }
 #endif /* HAVE_CYTHON */
 #if HAVE_GUILE
@@ -1147,7 +1135,6 @@ timepair_t AtomSpaceBenchmark::bm_setTruthValue()
     switch (testKind) {
 #if HAVE_CYTHON
     case BENCH_PYTHON: {
-#if HAVE_CYTHONX
         OC_ASSERT(1 == Nloops, "Looping not supported for python");
         std::string psa[Nclock];
         for (unsigned int i=0; i<Nclock; i++)
@@ -1166,7 +1153,6 @@ timepair_t AtomSpaceBenchmark::bm_setTruthValue()
             pyev->eval(psa[i]);
         clock_t time_taken = clock() - t_begin;
         return timepair_t(time_taken,0);
-#endif /* HAVE_CYTHON */
     }
 #endif /* HAVE_CYTHON */
 #if HAVE_GUILE
@@ -1221,7 +1207,6 @@ timepair_t AtomSpaceBenchmark::bm_getIncomingSet()
     switch (testKind) {
 #if HAVE_CYTHON
     case BENCH_PYTHON: {
-#if HAVE_CYTHONX
         OC_ASSERT(1 == Nloops, "Looping not supported for python");
         std::string psa[Nclock];
         for (unsigned int i=0; i<Nclock; i++)
@@ -1237,7 +1222,6 @@ timepair_t AtomSpaceBenchmark::bm_getIncomingSet()
             pyev->eval(psa[i]);
         clock_t time_taken = clock() - t_begin;
         return timepair_t(time_taken,0);
-#endif /* HAVE_CYTHON */
     }
 #endif /* HAVE_CYTHON */
 #if HAVE_GUILE
@@ -1361,7 +1345,6 @@ timepair_t AtomSpaceBenchmark::bm_getOutgoingSet()
 #if HAVE_CYTHON
     case BENCH_PYTHON: {
         OC_ASSERT(1 == Nloops, "Looping not supported for python");
-#if HAVE_CYTHONX
         std::string psa[Nclock];
         for (unsigned int i=0; i<Nclock; i++)
         {
@@ -1376,7 +1359,6 @@ timepair_t AtomSpaceBenchmark::bm_getOutgoingSet()
             pyev->eval(psa[i]);
         clock_t time_taken = clock() - t_begin;
         return timepair_t(time_taken,0);
-#endif /* HAVE_CYTHON */
     }
 #endif /* HAVE_CYTHON */
 #if HAVE_GUILE
