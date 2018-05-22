@@ -12,7 +12,7 @@
 #include <opencog/util/oc_assert.h>
 #include <opencog/util/random.h>
 
-#include <opencog/atoms/base/types.h>
+#include <opencog/atoms/proto/types.h>
 #include <opencog/atoms/base/Node.h>
 #include <opencog/atoms/base/Link.h>
 #include <opencog/truthvalue/AttentionValue.h>
@@ -488,7 +488,7 @@ void AtomSpaceBenchmark::startBenchmark(int numThreads)
             scm = new SchemeEval(asp);
 #endif
         }
-        numberOfTypes = classserver().getNumberOfClasses();
+        numberOfTypes = nameserver().getNumberOfClasses();
 
         if (buildTestData) buildAtomSpace(atomCount, percentLinks, false);
         UUID_end = tlbuf.getMaxUUID();
@@ -554,17 +554,17 @@ Type AtomSpaceBenchmark::randomType(Type t)
     // BIND_LINK and other validated types since the validation will fail.
     do {
         candidateType = ATOM + randomGenerator->randint(numberOfTypes - ATOM - 1);
-    } while (!classserver().isA(candidateType, t) or
-        classserver().isA(candidateType, BOOLEAN_LINK) or
-        classserver().isA(candidateType, FREE_LINK) or
-        classserver().isA(candidateType, NUMERIC_LINK) or
-        classserver().isA(candidateType, SCOPE_LINK) or
-        classserver().isA(candidateType, TYPE_LINK) or
-        classserver().isA(candidateType, UNIQUE_LINK) or
+    } while (!nameserver().isA(candidateType, t) or
+        nameserver().isA(candidateType, BOOLEAN_LINK) or
+        nameserver().isA(candidateType, FREE_LINK) or
+        nameserver().isA(candidateType, NUMERIC_LINK) or
+        nameserver().isA(candidateType, SCOPE_LINK) or
+        nameserver().isA(candidateType, TYPE_LINK) or
+        nameserver().isA(candidateType, UNIQUE_LINK) or
         candidateType == VARIABLE_LIST or
         candidateType == DEFINE_LINK or
         candidateType == NUMBER_NODE or
-        classserver().isA(candidateType, TYPE_NODE));
+        nameserver().isA(candidateType, TYPE_NODE));
 
     return candidateType;
 }
@@ -632,7 +632,7 @@ clock_t AtomSpaceBenchmark::makeRandomNodes(const std::string& csi)
             std::ostringstream ss;
             for (unsigned int i=0; i<Nloops; i++) {
                 ss << "(cog-new-node '"
-                   << classserver().getTypeName(t)
+                   << nameserver().getTypeName(t)
                    << " \"" << scp << "\")\n";
 
                 p = randomGenerator->randdouble();
@@ -766,7 +766,7 @@ clock_t AtomSpaceBenchmark::makeRandomLinks()
                        << " (cog-atom " << outgoing[j].value() << "))\n";
                 }
                 ss << "(cog-new-link '"
-                   << classserver().getTypeName(t);
+                   << nameserver().getTypeName(t);
                 for (size_t j = 0; j < arity; j++) {
                     char c = 'a' + j;
                     ss << " h" << c;
