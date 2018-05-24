@@ -980,7 +980,7 @@ Its all broken. Remeasure, below.
 
 ProtoAtom testing.
 Implementing the ProtoAtom requires that some of the Handle operators,
-for casting to AtomPtr and for operator->() are no longer in he header
+for casting to AtomPtr and for operator->() are no longer in the header
 file. Does this impact performance? Lets see...
 
                    de-uuid      -flto -O3     -02
