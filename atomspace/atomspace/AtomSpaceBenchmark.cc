@@ -464,13 +464,9 @@ void AtomSpaceBenchmark::startBenchmark(int numThreads)
             atab = new AtomTable();
         }
         else {
-#if HAVE_CYTHONX
-            cogs = new CogServer();
-            if (pymo == NULL) pymo = new PythonModule(*cogs);
-            pymo->init();
-            asp = &cogs->getAtomSpace();
-            pyev = &PythonEval::instance();
-
+            asp = new AtomSpace();
+#if HAVE_CYTHON
+            pyev = new PythonEval(asp);
             // And now ... create a Python instance of the atomspace.
             // Pass in the raw C++ atomspace address into cython.
             // Kind-of tacky, but I don't see any better way.
@@ -478,11 +474,9 @@ void AtomSpaceBenchmark::startBenchmark(int numThreads)
             // run on a different atomspace, than the one containing
             // all the atoms.  And that would give bad results.
             std::ostringstream dss;
-            dss << "from opencog.atomspace import AtomSpace, types, Handle, TruthValue\n"
-                << "aspace = AtomSpace(" << asp << ")\n";
+            dss << "from opencog.atomspace import AtomSpace, types, TruthValue, Atom" << std::endl;
+            dss << "aspace = AtomSpace(" << asp << ")" << std::endl;
             pyev->eval(dss.str());
-#else
-            asp = new AtomSpace();
 #endif
 #if HAVE_GUILE
             scm = new SchemeEval(asp);
@@ -501,9 +495,10 @@ void AtomSpaceBenchmark::startBenchmark(int numThreads)
 #if HAVE_GUILE
             delete scm;
 #endif
-#if not HAVE_CYTHON
-            delete asp;
+#if HAVE_CYTHON
+            delete pyev;
 #endif
+            delete asp;
         }
     }
 
@@ -634,22 +629,6 @@ clock_t AtomSpaceBenchmark::makeRandomNodes(const std::string& csi)
                 ss << "(cog-new-node '"
                    << nameserver().getTypeName(t)
                    << " \"" << scp << "\")\n";
-
-                p = randomGenerator->randdouble();
-                t = defaultNodeType;
-                if (p < chanceOfNonDefaultNode)
-                    t = randomType(NODE);
-
-                scp = csi;
-                if (csi.size() ==  0) {
-                    std::ostringstream oss;
-                    counter++;
-                    if (NUMBER_NODE == t)
-                        oss << counter;  // number nodes must actually be numbers.
-                    else
-                        oss << "node " << counter;
-                    scp = oss.str();
-                }
             }
             std::string gs = memoize_or_compile(ss.str());
             gsa[i] = gs;
@@ -664,33 +643,26 @@ clock_t AtomSpaceBenchmark::makeRandomNodes(const std::string& csi)
 
 #if HAVE_CYTHON
     case BENCH_PYTHON: {
-#if HAVE_CYTHONX
-        std::ostringstream dss;
-        for (unsigned int i=0; i<Nloops; i++) {
-            if (memoize) dss << "    ";   // indentation
-            dss << "aspace.add_node (" << t << ", \"" << scp << "\")\n";
+        std::string psa[Nclock];
 
-            p = randomGenerator->randdouble();
-            t = defaultNodeType;
-            if (p < chanceOfNonDefaultNode)
-                t = randomType(NODE);
+        for (unsigned int i=0; i<Nclock; i++)
+        {
+            Type t = ta[i];
+            std::string scp = nn[i];
 
-            scp = csi;
-            if (csi.size() ==  0) {
-                std::ostringstream oss;
-                counter++;
-                if (NUMBER_NODE == t)
-                    oss << counter;  // number nodes must actually be numbers.
-                else
-                    oss << "node " << counter;
-                scp = oss.str();
+            std::ostringstream dss;
+            for (unsigned int i=0; i<Nloops; i++) {
+                if (memoize) dss << "    ";   // indentation
+                dss << "aspace.add_node (" << t << ", \"" << scp << "\")\n";
             }
+
+            std::string ps = memoize_or_compile(dss.str());
+            psa[i] = ps;
         }
-        std::string ps = memoize_or_compile(dss.str());
         clock_t t_begin = clock();
-        pyev->eval(ps);
+        for (unsigned int i = 0; i < Nclock; ++i)
+            pyev->eval(psa[i]);
         return clock() - t_begin;
-#endif /* HAVE_CYTHON */
     }
 #endif /* HAVE_CYTHON */
     }
@@ -726,20 +698,28 @@ clock_t AtomSpaceBenchmark::makeRandomLinks()
     switch (testKind) {
 #if HAVE_CYTHON
     case BENCH_PYTHON: {
-#if HAVE_CYTHONX
-        OC_ASSERT(1 == Nloops, "Looping not supported for python");
-        std::ostringstream dss;
-        dss << "aspace.add_link (" << t << ", [";
-        for (size_t j=0; j < arity; j++) {
-            dss << "Handle( " << outgoing[j].value() << ")";
-            if (j < arity-1) dss  << ", ";
+        std::string psa[Nclock];
+        for (unsigned int i = 0; i<Nclock; i++)
+        {
+            Type t = ta[i];
+            const auto& outgoing = og[i];
+            size_t arity = outgoing.size();
+
+            OC_ASSERT(1 == Nloops, "Looping not supported for python");
+            std::ostringstream dss;
+            dss << "aspace.add_link (" << t << ", [";
+            for (size_t j=0; j < arity; j++) {
+                dss << "Atom( " << &(outgoing[j]) << ", aspace)";
+                if (j < arity-1) dss  << ", ";
+            }
+            dss << " ] )\n";
+            std::string ps = dss.str();
+            psa[i] = ps;
         }
-        dss << " ] )\n";
-        std::string ps = dss.str();
         clock_t t_begin = clock();
-        pyev->eval(ps);
+        for (unsigned int i=0; i<Nclock; i++)
+            pyev->eval(psa[i]);
         return clock() - t_begin;
-#endif /* HAVE_CYTHON */
     }
 #endif /* HAVE_CYTHON */
 
@@ -772,21 +752,6 @@ clock_t AtomSpaceBenchmark::makeRandomLinks()
                     ss << " h" << c;
                 }
                 ss << ")\n";
-
-                t = defaultLinkType;
-                p = randomGenerator->randdouble();
-                if (p < chanceOfNonDefaultLink) t = randomType(LINK);
-
-                arity = (*poissonDistribution)(*randomGenerator);
-                if (arity == 0) { ++arity; };
-
-                // AtomSpace will throw if the context link has bad arity
-                if (CONTEXT_LINK == t) arity = 2;
-
-                outgoing.clear();
-                for (size_t j=0; j < arity; j++) {
-                    outgoing.push_back(getRandomHandle());
-                }
             }
             std::string gs = memoize_or_compile(ss.str());
             gsa[i] = gs;
@@ -937,23 +902,28 @@ timepair_t AtomSpaceBenchmark::bm_rmAtom()
     switch (testKind) {
 #if HAVE_CYTHON
     case BENCH_PYTHON: {
-        OC_ASSERT(1 == Nloops, "Looping not supported for python");
-#if HAVE_CYTHONX
-        std::ostringstream dss;
-        for (unsigned int i=0; i<Nloops; i++) {
-            dss << "aspace.remove(Handle(" << h.value() << "))\n";
-            h = getRandomHandle();
-            // XXX FIXME --- this may have trouble finding anything if
-            // Nloops is bigger than the number of links in the atomspace !
-            while (0 < h->getIncomingSetSize()) {
+        std::string psa[Nclock];
+        for (unsigned int i=0; i<Nclock; i++)
+        {
+            Handle h = hs[i];
+            std::ostringstream dss;
+            for (unsigned int i=0; i<Nloops; i++) {
+                dss << "aspace.remove(Atom(" << &h << ", aspace))\n";
                 h = getRandomHandle();
+                // XXX FIXME --- this may have trouble finding anything if
+                // Nloops is bigger than the number of links in the atomspace !
+                while (0 < h->getIncomingSetSize()) {
+                    h = getRandomHandle();
+                }
             }
+            std::string ps = dss.str();
+            psa[i] = ps;
         }
-        std::string ps = dss.str();
         clock_t t_begin = clock();
-        pyev->eval(ps);
-        return clock() - t_begin;
-#endif /* HAVE_CYTHON */
+        for (unsigned int i=0; i<Nclock; i++)
+            pyev->eval(psa[i]);
+        clock_t time_taken = clock() - t_begin;
+        return timepair_t(time_taken,0);
     }
 #endif /* HAVE_CYTHON */
 #if HAVE_GUILE
@@ -974,7 +944,7 @@ timepair_t AtomSpaceBenchmark::bm_rmAtom()
             }
             std::string gs = memoize_or_compile(ss.str());
             gsa[i] = gs;
-			}
+            }
 
         clock_t t_begin = clock();
         for (unsigned int i=0; i<Nclock; i++)
@@ -1022,18 +992,23 @@ timepair_t AtomSpaceBenchmark::bm_getType()
     switch (testKind) {
 #if HAVE_CYTHON
     case BENCH_PYTHON: {
-        OC_ASSERT(1 == Nloops, "Looping not supported for python");
-#if HAVE_CYTHONX
-        std::ostringstream dss;
-        for (unsigned int i=0; i<Nloops; i++) {
-            dss << "aspace.get_type(Handle(" << h.value() << "))\n";
-            h = getRandomHandle();
+        std::string psa[Nclock];
+        for (unsigned int i=0; i<Nclock; i++)
+        {
+            Handle h = hs[i];
+            std::ostringstream dss;
+            for (unsigned int i=0; i<Nloops; i++) {
+                dss << "type = Atom(" << &h << ", aspace)" << ".type\n";
+                h = getRandomHandle();
+            }
+            std::string ps = dss.str();
+            psa[i] = ps;
         }
-        std::string ps = dss.str();
         clock_t t_begin = clock();
-        pyev->eval(ps);
-        return clock() - t_begin;
-#endif /* HAVE_CYTHON */
+        for (unsigned int i=0; i<Nclock; i++)
+            pyev->eval(psa[i]);
+        clock_t time_taken = clock() - t_begin;
+        return timepair_t(time_taken,0);
     }
 #endif /* HAVE_CYTHON */
 
@@ -1083,15 +1058,21 @@ timepair_t AtomSpaceBenchmark::bm_getTruthValue()
     switch (testKind) {
 #if HAVE_CYTHON
     case BENCH_PYTHON: {
-#if HAVE_CYTHONX
         OC_ASSERT(1 == Nloops, "Looping not supported for python");
-        std::ostringstream dss;
-        dss << "aspace.get_tv(Handle(" << h.value() << "))\n";
-        std::string ps = dss.str();
+        std::string psa[Nclock];
+        for (unsigned int i=0; i<Nclock; i++)
+        {
+            Handle h = hs[i];
+            std::ostringstream dss;
+            dss << "tv = Atom(" << &h << ", aspace).tv\n";
+            std::string ps = dss.str();
+            psa[i] = ps;
+        }
         clock_t t_begin = clock();
-        pyev->eval(ps);
-        return clock() - t_begin;
-#endif /* HAVE_CYTHON */
+        for (unsigned int i=0; i<Nclock; i++)
+            pyev->eval(psa[i]);
+        clock_t time_taken = clock() - t_begin;
+        return timepair_t(time_taken,0);
     }
 #endif /* HAVE_CYTHON */
 #if HAVE_GUILE
@@ -1152,16 +1133,24 @@ timepair_t AtomSpaceBenchmark::bm_setTruthValue()
     switch (testKind) {
 #if HAVE_CYTHON
     case BENCH_PYTHON: {
-#if HAVE_CYTHONX
         OC_ASSERT(1 == Nloops, "Looping not supported for python");
-        std::ostringstream dss;
-        dss << "aspace.set_tv(Handle(" << h.value()
-            << "), TruthValue(" << strength << ", " << conf << "))\n";
-        std::string ps = dss.str();
+        std::string psa[Nclock];
+        for (unsigned int i=0; i<Nclock; i++)
+        {
+            Handle h = hs[i];
+            float strength = strg[i];
+            float cnf = conf[i];
+            std::ostringstream dss;
+            dss << "Atom(" << &h <<", aspace)"
+                << ".truth_value(" << strength << ", " << cnf << ")\n";
+            std::string ps = dss.str();
+            psa[i] = ps;
+        }
         clock_t t_begin = clock();
-        pyev->eval(ps);
-        return clock() - t_begin;
-#endif /* HAVE_CYTHON */
+        for (unsigned int i=0; i<Nclock; i++)
+            pyev->eval(psa[i]);
+        clock_t time_taken = clock() - t_begin;
+        return timepair_t(time_taken,0);
     }
 #endif /* HAVE_CYTHON */
 #if HAVE_GUILE
@@ -1216,15 +1205,21 @@ timepair_t AtomSpaceBenchmark::bm_getIncomingSet()
     switch (testKind) {
 #if HAVE_CYTHON
     case BENCH_PYTHON: {
-#if HAVE_CYTHONX
         OC_ASSERT(1 == Nloops, "Looping not supported for python");
-        std::ostringstream dss;
-        dss << "incoming = Atom(" << h.value() << ").incoming\n";
-        std::string ps = dss.str();
+        std::string psa[Nclock];
+        for (unsigned int i=0; i<Nclock; i++)
+        {
+            Handle h = hs[i];
+            std::ostringstream dss;
+            dss << "incoming = Atom(" << &h << ", aspace).incoming\n";
+            std::string ps = dss.str();
+            psa[i] = ps;
+        }
         clock_t t_begin = clock();
-        pyev->eval(ps);
-        return clock() - t_begin;
-#endif /* HAVE_CYTHON */
+        for (unsigned int i=0; i<Nclock; i++)
+            pyev->eval(psa[i]);
+        clock_t time_taken = clock() - t_begin;
+        return timepair_t(time_taken,0);
     }
 #endif /* HAVE_CYTHON */
 #if HAVE_GUILE
@@ -1348,14 +1343,20 @@ timepair_t AtomSpaceBenchmark::bm_getOutgoingSet()
 #if HAVE_CYTHON
     case BENCH_PYTHON: {
         OC_ASSERT(1 == Nloops, "Looping not supported for python");
-#if HAVE_CYTHONX
-        std::ostringstream dss;
-        dss << "out = Atom(" << h.value() << ", aspace).out\n";
-        std::string ps = dss.str();
+        std::string psa[Nclock];
+        for (unsigned int i=0; i<Nclock; i++)
+        {
+            Handle h = hs[i];
+            std::ostringstream dss;
+            dss << "out = Atom(" << &h << ", aspace).out\n";
+            std::string ps = dss.str();
+            psa[i] = ps;
+        }
         clock_t t_begin = clock();
-        pyev->eval(ps);
-        return clock() - t_begin;
-#endif /* HAVE_CYTHON */
+        for (unsigned int i=0; i<Nclock; i++)
+            pyev->eval(psa[i]);
+        clock_t time_taken = clock() - t_begin;
+        return timepair_t(time_taken,0);
     }
 #endif /* HAVE_CYTHON */
 #if HAVE_GUILE
@@ -1406,7 +1407,8 @@ timepair_t AtomSpaceBenchmark::bm_getHandlesByType()
         std::string ps = dss.str();
         clock_t t_begin = clock();
         pyev->eval(ps);
-        return timepair_t(Nclock*clock(), Nclock*t_begin);
+        clock_t time_taken = clock() - t_begin;
+        return timepair_t(Nclock*time_taken,0);
     }
 #endif /* HAVE_CYTHON */
 #if HAVE_GUILE
