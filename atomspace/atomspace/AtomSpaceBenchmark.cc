@@ -902,7 +902,6 @@ timepair_t AtomSpaceBenchmark::bm_rmAtom()
     switch (testKind) {
 #if HAVE_CYTHON
     case BENCH_PYTHON: {
-        OC_ASSERT(1 == Nloops, "Looping not supported for python");
         std::string psa[Nclock];
         for (unsigned int i=0; i<Nclock; i++)
         {
@@ -993,7 +992,6 @@ timepair_t AtomSpaceBenchmark::bm_getType()
     switch (testKind) {
 #if HAVE_CYTHON
     case BENCH_PYTHON: {
-        OC_ASSERT(1 == Nloops, "Looping not supported for python");
         std::string psa[Nclock];
         for (unsigned int i=0; i<Nclock; i++)
         {
