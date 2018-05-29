@@ -258,6 +258,11 @@ IF(HAVE_PY_INTERP)
 	ENDIF (NOSETESTS_EXECUTABLE AND CYTHON_FOUND AND HAVE_PY_LIBS)
 ENDIF(HAVE_PY_INTERP)
 
+FIND_PACKAGE(benchmark CONFIG REQUIRED)
+IF (benchmark_FOUND)
+	MESSAGE(STATUS "Google Benchmark ${benchmark_VERSION} found.")
+ENDIF(benchmark_FOUND)
+
 # ===================================================================
 # Add subdirectories
 
