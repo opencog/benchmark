@@ -69,7 +69,7 @@ static void BM_CreateScopeLinkWithVariableList(benchmark::State& state)
 	}
 
 	logger().fine(
-	        "variables: " + ((ScopeLink&) (*h)).get_variables().to_string());
+	        "variables: " + ScopeLinkCast(h)->get_variables().to_string());
 }
 BENCHMARK(BM_CreateScopeLinkWithVariableList);
 
@@ -89,7 +89,7 @@ static void BM_CreateScopeLinkWithoutVariableList(benchmark::State& state)
 	}
 
 	logger().fine(
-	        "variables: " + ((ScopeLink&) (*h)).get_variables().to_string());
+	        "variables: " + ScopeLinkCast(h)->get_variables().to_string());
 }
 BENCHMARK(BM_CreateScopeLinkWithoutVariableList);
 
@@ -110,7 +110,7 @@ static void BM_CreateScopeLinkWithLambdaLink(benchmark::State& state)
 	}
 
 	logger().fine(
-	        "variables: " + ((ScopeLink&) (*h)).get_variables().to_string());
+	        "variables: " + ScopeLinkCast(h)->get_variables().to_string());
 }
 BENCHMARK(BM_CreateScopeLinkWithLambdaLink);
 
