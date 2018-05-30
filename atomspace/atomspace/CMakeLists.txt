@@ -11,13 +11,13 @@ TARGET_LINK_LIBRARIES (atomspace_bm
 )
 
 IF (benchmark_FOUND)
-        ADD_EXECUTABLE (scopelink_bm
+        ADD_EXECUTABLE (benchmark
                 benchmark.cc
                 scopelink_bm.cc
                 evaluationlink_bm.cc
         )
         
-        TARGET_LINK_LIBRARIES (scopelink_bm
+        TARGET_LINK_LIBRARIES (benchmark
                 ${ATOMSPACE_LIBRARIES}
                 ${COGUTIL_LIBRARY}
                 benchmark::benchmark
