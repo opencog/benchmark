@@ -38,14 +38,11 @@ using namespace opencog;
 static Handle create_scope_link(AtomSpace& atomspace, size_t& seed)
 {
 	Handle X = atomspace.add_node(VARIABLE_NODE, get_unique_name("$X", seed));
-	Handle Y = atomspace.add_node(VARIABLE_NODE, get_unique_name("$Y", seed));
 	Handle P = atomspace.add_node(PREDICATE_NODE, get_unique_name("P", seed));
-	Handle Q = atomspace.add_node(PREDICATE_NODE, get_unique_name("Q", seed));
 
-	Handle variable_list = atomspace.add_link(VARIABLE_LIST, X, Y);
-	Handle expression = atomspace.add_link(AND_LINK,
-	        atomspace.add_link(EVALUATION_LINK, P, X),
-	        atomspace.add_link(EVALUATION_LINK, Q, Y));
+	Handle variable_list = atomspace.add_link(VARIABLE_LIST, X);
+	Handle expression = atomspace.add_link(EVALUATION_LINK, P, X);
+
 	return createLink(SCOPE_LINK, variable_list, expression);
 }
 
@@ -60,14 +57,10 @@ static void BM_CreateScopeLinkWithVariableList(benchmark::State& state)
 	AtomSpace atomspace;
 
 	Handle X = atomspace.add_node(VARIABLE_NODE, "$X");
-	Handle Y = atomspace.add_node(VARIABLE_NODE, "$Y");
 	Handle P = atomspace.add_node(PREDICATE_NODE, "P");
-	Handle Q = atomspace.add_node(PREDICATE_NODE, "Q");
 
-	Handle variable_list = atomspace.add_link(VARIABLE_LIST, X, Y);
-	Handle expression = atomspace.add_link(AND_LINK,
-	        atomspace.add_link(EVALUATION_LINK, P, X),
-	        atomspace.add_link(EVALUATION_LINK, Q, Y));
+	Handle variable_list = atomspace.add_link(VARIABLE_LIST, X);
+	Handle expression = atomspace.add_link(EVALUATION_LINK, P, X);
 
 	Handle h;
 	for (auto _ : state)
@@ -85,13 +78,9 @@ static void BM_CreateScopeLinkWithoutVariableList(benchmark::State& state)
 	AtomSpace atomspace;
 
 	Handle X = atomspace.add_node(VARIABLE_NODE, "$X");
-	Handle Y = atomspace.add_node(VARIABLE_NODE, "$Y");
 	Handle P = atomspace.add_node(PREDICATE_NODE, "P");
-	Handle Q = atomspace.add_node(PREDICATE_NODE, "Q");
 
-	Handle expression = atomspace.add_link(AND_LINK,
-	        atomspace.add_link(EVALUATION_LINK, P, X),
-	        atomspace.add_link(EVALUATION_LINK, Q, Y));
+	Handle expression = atomspace.add_link(EVALUATION_LINK, P, X);
 
 	Handle h;
 	for (auto _ : state)
@@ -109,14 +98,10 @@ static void BM_CreateScopeLinkWithLambdaLink(benchmark::State& state)
 	AtomSpace atomspace;
 
 	Handle X = atomspace.add_node(VARIABLE_NODE, "$X");
-	Handle Y = atomspace.add_node(VARIABLE_NODE, "$Y");
 	Handle P = atomspace.add_node(PREDICATE_NODE, "P");
-	Handle Q = atomspace.add_node(PREDICATE_NODE, "Q");
 
 	Handle expression = atomspace.add_link(LAMBDA_LINK,
-	        atomspace.add_link(AND_LINK,
-	                atomspace.add_link(EVALUATION_LINK, P, X),
-	                atomspace.add_link(EVALUATION_LINK, Q, Y)));
+	        atomspace.add_link(EVALUATION_LINK, P, X));
 
 	Handle h;
 	for (auto _ : state)
