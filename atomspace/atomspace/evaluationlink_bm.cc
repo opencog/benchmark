@@ -99,7 +99,7 @@ static void BM_AddEvaluationLink(benchmark::State& state)
 
 	logger().fine("atomspace size after adding: %d", atomspace.get_size());
 }
-BENCHMARK(BM_AddEvaluationLink)->Arg(2<<15);
+BENCHMARK(BM_AddEvaluationLink)->Arg(2<<13)->Arg(2<<14)->Arg(2<<15);
 
 
 

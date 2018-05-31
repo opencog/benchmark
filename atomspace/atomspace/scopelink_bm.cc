@@ -152,5 +152,5 @@ static void BM_AddScopeLink(benchmark::State& state)
 
 	logger().fine("atomspace size after adding: %d", atomspace.get_size());
 }
-BENCHMARK(BM_AddScopeLink)->Arg(2<<15);
+BENCHMARK(BM_AddScopeLink)->Arg(2<<11)->Arg(2<<12)->Arg(2<<13);
 
