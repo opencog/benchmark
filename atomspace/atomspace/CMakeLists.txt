@@ -10,6 +10,21 @@ TARGET_LINK_LIBRARIES (atomspace_bm
         ${COGUTIL_LIBRARY}
 )
 
+IF (benchmark_FOUND)
+        ADD_EXECUTABLE (benchmark
+                benchmark.cc
+                scopelink_bm.cc
+                evaluationlink_bm.cc
+        )
+        
+        TARGET_LINK_LIBRARIES (benchmark
+                ${ATOMSPACE_LIBRARIES}
+                ${COGUTIL_LIBRARY}
+                benchmark::benchmark
+                benchmark::benchmark_main
+        )
+ENDIF(benchmark_FOUND)
+
 IF (HAVE_CYTHON)
         INCLUDE_DIRECTORIES (
                 ${PYTHON_INCLUDE_DIRS}
