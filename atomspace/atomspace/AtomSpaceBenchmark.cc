@@ -436,6 +436,9 @@ void AtomSpaceBenchmark::doBenchmark(const std::string& methodName,
     if (saveToFile) { myfile.close(); }
 }
 
+// A totally bogus value for no particular reason
+#define UUID_PAD 1000
+
 void AtomSpaceBenchmark::startBenchmark(int numThreads)
 {
     cout << "OpenCog Atomspace Benchmark - " << VERSION_STRING << "\n";
@@ -458,8 +461,8 @@ void AtomSpaceBenchmark::startBenchmark(int numThreads)
     if (showTypeSizes) printTypeSizes();
 
     for (unsigned int i = 0; i < methodNames.size(); i++) {
-        UUID_begin = tlbuf.getMaxUUID();
-        UUID_end = tlbuf.getMaxUUID();
+        UUID_begin = 1;
+        UUID_end = tlbuf.size() + UUID_PAD;
         if (testKind == BENCH_TABLE) {
             atab = new AtomTable();
         }
@@ -485,7 +488,7 @@ void AtomSpaceBenchmark::startBenchmark(int numThreads)
         numberOfTypes = nameserver().getNumberOfClasses();
 
         if (buildTestData) buildAtomSpace(atomCount, percentLinks, false);
-        UUID_end = tlbuf.getMaxUUID();
+        UUID_end = tlbuf.size() + UUID_PAD;
 
         doBenchmark(methodNames[i], methodsToTest[i]);
 
@@ -840,7 +843,7 @@ void AtomSpaceBenchmark::buildAtomSpace(long atomspaceSize,
     for (const Handle& h : alli)
         tlbuf.addAtom(h, TLB::INVALID_UUID);
 
-    UUID_end = tlbuf.getMaxUUID();
+    UUID_end = tlbuf.size() + UUID_PAD;
     testKind = saveKind;
 }
 
