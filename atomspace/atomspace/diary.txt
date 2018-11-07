@@ -1502,3 +1502,40 @@ compiler: gcc version 6.3.0
 Remarks:
 * Attempting to git-bisect to figure out which changes did what proved
   to be ambiguous, when not outright tedious.
+
+======================================================================
+
+6 November 2018
+---------------
+New core baseline. Fanny.  This baseline measures perf after misc
+changes, including:
+* Creation of value factory #1883
+* Cleanup for Link search and insertion in the AtomTable #1895
+
+compiler: gcc version 6.3.0
+
+                     -A          -A           -A
+   test            Dec 2017    May 2018       Today
+   name            K-ops/sec   K-ops/sec      2018         Comments
+   ----            ---------   ---------      ----      -----------------
+  noop              1.89e6       2.17e6       1.82e6
+  getType          79.9K     101K         105K
+  getTV             4117       4632         4567
+  setTV              796        901         1271
+  pointerCast      10.6K      11.5K        11.2K
+  getIncomingSet    2086       2530         2530
+  getOutgoingSet   45.6K      52.7K        46.7K
+  addNode            315        383          361
+  addLink            142        135           76       wtf!????
+  removeAtom         573        705          924
+
+Hey, they only thing that changes, should have gotten faster, and,
+instead its about 2x worse! WTF!!
+
+The large change in setTV and removeAtom is unexpected. Why?
+
+Fun-n-games: compared to January 2015, all numbers are 3x to 8x better,
+except for addLink, which is worse!  Clearly, link disambig remains a
+challenge, bottlenecked in the AtomTable code.
+
+TODO: measure getHandle() time ...
