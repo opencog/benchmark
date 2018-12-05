@@ -552,7 +552,7 @@ void AtomSpaceBenchmark::guile_define(std::string id, Handle h)
     if (nameserver().isA(t, NODE)) {
         ss << "(define " << id << " (cog-new-node '"
            << nameserver().getTypeName(t)
-           << " \"" << h->get_name() << "\")\n";
+           << " \"" << h->get_name() << "\"))\n";
     } else {
         HandleSeq oset = h->getOutgoingSet();
         Arity ary = oset.size();
@@ -564,7 +564,7 @@ void AtomSpaceBenchmark::guile_define(std::string id, Handle h)
             guile_define(osym, oset[i]);
             ss << osym << " ";
         }
-        ss << ")\n";
+        ss << "))\n";
     }
     std::string result = scm->eval(ss.str());
     if (scm->eval_error()) {
