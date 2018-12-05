@@ -1125,18 +1125,28 @@ timepair_t AtomSpaceBenchmark::bm_getTruthValue()
         std::string gsa[Nclock];
         for (unsigned int i=0; i<Nclock; i++)
         {
-            Handle h = hs[i];
             std::ostringstream ss;
-            for (unsigned int i=0; i<Nloops; i++) {
-                ss << "(cog-tv (cog-atom " << h.value() << "))\n";
+
+            Handle h = hs[i];
+            std::string symb = GUILE_SYMB;
+
+            for (unsigned int j=0; j<Nloops; j++) {
+                std::string bar = symb + std::to_string(i*Nloops + j);
+                guile_define(bar, h);
+                ss << "(cog-tv " << bar << ")\n";
                 h = getRandomHandle();
             }
             std::string gs = memoize_or_compile(ss.str());
             gsa[i] = gs;
         }
         clock_t t_begin = clock();
-        for (unsigned int i=0; i<Nclock; i++)
-           scm->eval(gsa[i]);
+        for (unsigned int i=0; i<Nclock; i++) {
+            scm->eval(gsa[i]);
+            if (scm->eval_error()) {
+                printf("Caught error while evaluating %s\n", gsa[i].c_str());
+                exit(1);
+            }
+        }
         clock_t time_taken = clock() - t_begin;
         return timepair_t(time_taken,0);
     }
