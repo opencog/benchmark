@@ -550,14 +550,13 @@ void AtomSpaceBenchmark::guile_define(std::string id, Handle h)
     std::ostringstream ss;
     Type t = h->get_type();
     if (nameserver().isA(t, NODE)) {
-        ss << "(define " << id << "(cog-new-node '"
+        ss << "(define " << id << " (cog-new-node '"
            << nameserver().getTypeName(t)
            << " \"" << h->get_name() << "\")\n";
-        scm->eval(ss.str());
     } else {
         HandleSeq oset = h->getOutgoingSet();
         Arity ary = oset.size();
-        ss << "(define " << id << "(cog-new-link '"
+        ss << "(define " << id << " (cog-new-link '"
            << nameserver().getTypeName(t) << " ";
         std::string symb = "bar";
         for (Arity i=0; i<ary; i++) {
@@ -566,7 +565,12 @@ void AtomSpaceBenchmark::guile_define(std::string id, Handle h)
             ss << osym << " ";
         }
         ss << ")\n";
-        scm->eval(ss.str());
+    }
+    std::string result = scm->eval(ss.str());
+    if (scm->eval_error()) {
+        printf("Caught error %s\nWhile evaluating %s\n",
+            result.c_str(), ss.str().c_str());
+        exit(1);
     }
 }
 
