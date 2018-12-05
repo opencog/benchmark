@@ -278,4 +278,3 @@ SUMMARY_ADD("AtomSpace benchmarks" "Microbenchmarks for atomspace classes and me
 SUMMARY_ADD("Python bindings benchmarks" "Microbenchmarks using Python (cython) bindings" HAVE_CYTHON)
 SUMMARY_ADD("Scheme benchmarks" "Benchmarks on data described in Scheme language" HAVE_GUILE)
 SUMMARY_SHOW()
-
