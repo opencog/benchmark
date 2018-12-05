@@ -547,13 +547,26 @@ AtomSpaceBenchmark::memoize_or_compile(std::string exp)
 // Set the guile symbol id to the atom h.
 void AtomSpaceBenchmark::guile_define(std::string id, Handle h)
 {
+    std::ostringstream ss;
     Type t = h->get_type();
     if (nameserver().isA(t, NODE)) {
-        std::ostringstream ss;
         ss << "(define " << id << "(cog-new-node '"
            << nameserver().getTypeName(t)
            << " \"" << h->get_name() << "\")\n";
-       scm->eval(ss.str());
+        scm->eval(ss.str());
+    } else {
+        HandleSeq oset = h->getOutgoingSet();
+        Arity ary = oset.size();
+        ss << "(define " << id << "(cog-new-link '"
+           << nameserver().getTypeName(t) << " ";
+        std::string symb = "bar";
+        for (Arity i=0; i<ary; i++) {
+            std::string osym = symb + std::to_string(i);
+            guile_define(osym, oset[i]);
+            ss << osym << " ";
+        }
+        ss << ")\n";
+        scm->eval(ss.str());
     }
 }
 
