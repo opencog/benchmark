@@ -780,18 +780,15 @@ clock_t AtomSpaceBenchmark::makeRandomLinks()
             // I guess its quasi-realistic as a stand-in for other work
             // that might be done anyway...
             std::ostringstream ss;
+            ss << "(cog-new-link '"
+               << nameserver().getTypeName(t);
             for (unsigned int i=0; i<Nloops; i++) {
                 if (25 < arity) arity = 25;
                 for (size_t j = 0; j < arity; j++) {
-                    char c = 'a' + j;
-                    ss << "(define h" << c
-                       << " (cog-atom " << outgoing[j].value() << "))\n";
-                }
-                ss << "(cog-new-link '"
-                   << nameserver().getTypeName(t);
-                for (size_t j = 0; j < arity; j++) {
-                    char c = 'a' + j;
-                    ss << " h" << c;
+                    std::string symb = GUILE_SYMB;
+                    symb += j;
+                    guile_define(symb, outgoing[j]);
+                    ss << " " << symb;
                 }
                 ss << ")\n";
             }
