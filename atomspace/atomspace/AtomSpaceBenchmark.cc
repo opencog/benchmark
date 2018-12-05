@@ -12,7 +12,7 @@
 #include <opencog/util/oc_assert.h>
 #include <opencog/util/random.h>
 
-#include <opencog/atoms/proto/types.h>
+#include <opencog/atoms/value/types.h>
 #include <opencog/atoms/base/Node.h>
 #include <opencog/atoms/base/Link.h>
 #include <opencog/truthvalue/AttentionValue.h>

@@ -978,7 +978,7 @@ Its all broken. Remeasure, below.
 ======================================================================
 2 October 2015
 
-ProtoAtom testing.
+ProtoAtom[now renamed 'Value'] testing.
 Implementing the ProtoAtom requires that some of the Handle operators,
 for casting to AtomPtr and for operator->() are no longer in the header
 file. Does this impact performance? Lets see...
