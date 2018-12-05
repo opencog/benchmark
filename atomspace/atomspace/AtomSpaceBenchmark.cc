@@ -26,7 +26,7 @@
 
 #include "AtomSpaceBenchmark.h"
 
-const char* VERSION_STRING = "Version 1.0.1";
+const char* VERSION_STRING = "Version 1.1.1";
 
 namespace opencog {
 
@@ -40,6 +40,8 @@ using std::time;
 
 #define DIVIDER_LINE "------------------------------"
 #define PROGRESS_BAR_LENGTH 10
+
+#define GUILE_SYMB "foo"
 
 TLB tlbuf;
 
@@ -340,6 +342,13 @@ void AtomSpaceBenchmark::doBenchmark(const std::string& methodName,
         // Try to avoid excessive compilation times.
         Nclock /= 100;
         Nreps *= 100;
+
+        // Basic non-craziness.
+        if (scm->input_pending() or scm->eval_error())
+        {
+            printf("Fatal Error: guile evaluator in crazy state!\n");
+            exit(1);
+        }
     }
 #endif // HAVE_GUILE
 
@@ -542,6 +551,36 @@ AtomSpaceBenchmark::memoize_or_compile(std::string exp)
     return exp;
 }
 
+// Set the guile symbol id to the atom h.
+void AtomSpaceBenchmark::guile_define(std::string id, Handle h)
+{
+    std::ostringstream ss;
+    Type t = h->get_type();
+    if (nameserver().isA(t, NODE)) {
+        ss << "(define " << id << " (cog-new-node '"
+           << nameserver().getTypeName(t)
+           << " \"" << h->get_name() << "\"))\n";
+    } else {
+        HandleSeq oset = h->getOutgoingSet();
+        Arity ary = oset.size();
+        ss << "(define " << id << " (cog-new-link '"
+           << nameserver().getTypeName(t) << " ";
+        std::string symb = "bar";
+        for (Arity i=0; i<ary; i++) {
+            std::string osym = symb + std::to_string(i);
+            guile_define(osym, oset[i]);
+            ss << osym << " ";
+        }
+        ss << "))\n";
+    }
+    std::string result = scm->eval(ss.str());
+    if (scm->eval_error()) {
+        printf("Caught error %s\nWhile evaluating %s\n",
+            result.c_str(), ss.str().c_str());
+        exit(1);
+    }
+}
+
 Type AtomSpaceBenchmark::randomType(Type t)
 {
     OC_ASSERT(t < numberOfTypes);
@@ -729,30 +768,24 @@ clock_t AtomSpaceBenchmark::makeRandomLinks()
 #if HAVE_GUILE
     case BENCH_SCM: {
         std::string gsa[Nclock];
+        std::string symb = GUILE_SYMB;
         for (unsigned int i = 0; i<Nclock; i++)
         {
             Type t = ta[i];
             HandleSeq outgoing = og[i];
             size_t arity = outgoing.size();
 
-            // This is somewhat more cumbersome and slower than what
-            // anyone would actually do in scheme, because handles are
-            // never handled in this way, but wtf, not much choice here.
-            // I guess its quasi-realistic as a stand-in for other work
-            // that might be done anyway...
             std::ostringstream ss;
-            for (unsigned int i=0; i<Nloops; i++) {
-                if (25 < arity) arity = 25;
-                for (size_t j = 0; j < arity; j++) {
-                    char c = 'a' + j;
-                    ss << "(define h" << c
-                       << " (cog-atom " << outgoing[j].value() << "))\n";
-                }
+            for (unsigned int j=0; j<Nloops; j++) {
                 ss << "(cog-new-link '"
                    << nameserver().getTypeName(t);
-                for (size_t j = 0; j < arity; j++) {
-                    char c = 'a' + j;
-                    ss << " h" << c;
+                if (25 < arity) arity = 25;
+                for (size_t k = 0; k < arity; k++) {
+                    std::string bar = symb + std::to_string(i*Nloops + j);
+                    bar += "-";
+                    bar += std::to_string(k);
+                    guile_define(bar, outgoing[k]);
+                    ss << " " << bar;
                 }
                 ss << ")\n";
             }
@@ -932,26 +965,39 @@ timepair_t AtomSpaceBenchmark::bm_rmAtom()
 #if HAVE_GUILE
     case BENCH_SCM: {
         std::string gsa[Nclock];
+        std::string symb = GUILE_SYMB;
         for (unsigned int i=0; i<Nclock; i++)
         {
             Handle h = hs[i];
             std::ostringstream ss;
-            for (unsigned int i=0; i<Nloops; i++) {
-                ss << "(cog-delete-recursive (cog-atom " << h.value() << "))\n";
+            for (unsigned int j=0; j<Nloops; j++) {
+                std::string bar = symb + std::to_string(i*Nloops + j);
+                guile_define(bar, h);
+                ss << "(cog-delete-recursive " << bar << ")\n";
                 h = getRandomHandle();
-                // XXX FIXME --- this may have trouble finding anything if
-                // Nloops is bigger than the number of links in the atomspace !
+                // XXX FIXME --- this may have trouble finding
+                // anything if Nloops is bigger than the number
+                // of links in the atomspace !
                 while (0 < h->getIncomingSetSize()) {
                     h = getRandomHandle();
                 }
             }
             std::string gs = memoize_or_compile(ss.str());
             gsa[i] = gs;
-            }
+        }
 
         clock_t t_begin = clock();
-        for (unsigned int i=0; i<Nclock; i++)
+        for (unsigned int i=0; i<Nclock; i++) {
             scm->eval(gsa[i]);
+#ifdef DONT_IGNORE_ERRORS
+            // There's a good chance were trying to delete something
+            // that doesn't exist any more...
+            if (scm->eval_error()) {
+                printf("Caught error while evaluating %s\n", gsa[i].c_str());
+                exit(1);
+            }
+#endif
+        }
         clock_t time_taken = clock() - t_begin;
         return timepair_t(time_taken,0);
     }
@@ -1018,20 +1064,29 @@ timepair_t AtomSpaceBenchmark::bm_getType()
 #if HAVE_GUILE
     case BENCH_SCM: {
         std::string gsa[Nclock];
+        std::string symb = GUILE_SYMB;
         for (unsigned int i=0; i<Nclock; i++)
         {
-            Handle h = hs[i];
             std::ostringstream ss;
-            for (unsigned int i=0; i<Nloops; i++) {
-                ss << "(cog-type (cog-atom " << h.value() << "))\n";
+
+            Handle h = hs[i];
+            for (unsigned int j=0; j<Nloops; j++) {
+                std::string bar = symb + std::to_string(i*Nloops + j);
+                guile_define(bar, h);
+                ss << "(cog-type " << bar << ")\n";
                 h = getRandomHandle();
             }
             std::string gs = memoize_or_compile(ss.str());
             gsa[i] = gs;
         }
         clock_t t_begin = clock();
-        for (unsigned int i=0; i<Nclock; i++)
-           scm->eval(gsa[i]);
+        for (unsigned int i=0; i<Nclock; i++) {
+            scm->eval(gsa[i]);
+            if (scm->eval_error()) {
+                printf("Caught error while evaluating %s\n", gsa[i].c_str());
+                exit(1);
+            }
+        }
         clock_t time_taken = clock() - t_begin;
         return timepair_t(time_taken,0);
     }
@@ -1083,18 +1138,28 @@ timepair_t AtomSpaceBenchmark::bm_getTruthValue()
         std::string gsa[Nclock];
         for (unsigned int i=0; i<Nclock; i++)
         {
-            Handle h = hs[i];
             std::ostringstream ss;
-            for (unsigned int i=0; i<Nloops; i++) {
-                ss << "(cog-tv (cog-atom " << h.value() << "))\n";
+
+            Handle h = hs[i];
+            std::string symb = GUILE_SYMB;
+
+            for (unsigned int j=0; j<Nloops; j++) {
+                std::string bar = symb + std::to_string(i*Nloops + j);
+                guile_define(bar, h);
+                ss << "(cog-tv " << bar << ")\n";
                 h = getRandomHandle();
             }
             std::string gs = memoize_or_compile(ss.str());
             gsa[i] = gs;
         }
         clock_t t_begin = clock();
-        for (unsigned int i=0; i<Nclock; i++)
-           scm->eval(gsa[i]);
+        for (unsigned int i=0; i<Nclock; i++) {
+            scm->eval(gsa[i]);
+            if (scm->eval_error()) {
+                printf("Caught error while evaluating %s\n", gsa[i].c_str());
+                exit(1);
+            }
+        }
         clock_t time_taken = clock() - t_begin;
         return timepair_t(time_taken,0);
     }
@@ -1161,15 +1226,19 @@ timepair_t AtomSpaceBenchmark::bm_setTruthValue()
         std::string gsa[Nclock];
         for (unsigned int i=0; i<Nclock; i++)
         {
+            std::ostringstream ss;
+
             Handle h = hs[i];
             float strength = strg[i];
             float cnf = conf[i];
-            std::ostringstream ss;
-            for (unsigned int i=0; i<Nloops; i++) {
-                ss << "(cog-set-tv! (cog-atom " << h.value() << ")"
+            std::string symb = GUILE_SYMB;
+
+            for (unsigned int j=0; j<Nloops; j++) {
+                std::string bar = symb + std::to_string(i*Nloops + j);
+                guile_define(bar, h);
+                ss << "(cog-set-tv! " << bar
                    << "   (cog-new-stv " << strength << " " << cnf << ")"
                    << ")\n";
-
                 h = getRandomHandle();
                 strength = randomGenerator->randfloat();
                 cnf = randomGenerator->randfloat();
@@ -1178,8 +1247,13 @@ timepair_t AtomSpaceBenchmark::bm_setTruthValue()
             gsa[i] = gs;
         }
         clock_t t_begin = clock();
-        for (unsigned int i=0; i<Nclock; i++)
-           scm->eval(gsa[i]);
+        for (unsigned int i=0; i<Nclock; i++) {
+            scm->eval(gsa[i]);
+            if (scm->eval_error()) {
+                printf("Caught error while evaluating %s\n", gsa[i].c_str());
+                exit(1);
+            }
+        }
         clock_t time_taken = clock() - t_begin;
         return timepair_t(time_taken,0);
     }
@@ -1230,18 +1304,28 @@ timepair_t AtomSpaceBenchmark::bm_getIncomingSet()
         std::string gsa[Nclock];
         for (unsigned int i=0; i<Nclock; i++)
         {
-            Handle h = hs[i];
             std::ostringstream ss;
-            for (unsigned int i=0; i<Nloops; i++) {
-                ss << "(cog-incoming-set (cog-atom " << h.value() << "))\n";
+
+            Handle h = hs[i];
+            std::string symb = GUILE_SYMB;
+
+            for (unsigned int j=0; j<Nloops; j++) {
+                std::string bar = symb + std::to_string(i*Nloops + j);
+                guile_define(bar, h);
+                ss << "(cog-incoming-set " << bar << ")\n";
                 h = getRandomHandle();
             }
             std::string gs = memoize_or_compile(ss.str());
             gsa[i] = gs;
         }
         clock_t t_begin = clock();
-        for (unsigned int i=0; i<Nclock; i++)
-           scm->eval(gsa[i]);
+        for (unsigned int i=0; i<Nclock; i++) {
+            scm->eval(gsa[i]);
+            if (scm->eval_error()) {
+                printf("Caught error while evaluating %s\n", gsa[i].c_str());
+                exit(1);
+            }
+        }
         clock_t time_taken = clock() - t_begin;
         return timepair_t(time_taken,0);
     }
@@ -1367,18 +1451,28 @@ timepair_t AtomSpaceBenchmark::bm_getOutgoingSet()
         std::string gsa[Nclock];
         for (unsigned int i=0; i<Nclock; i++)
         {
-            Handle h = hs[i];
             std::ostringstream ss;
-            for (unsigned int i=0; i<Nloops; i++) {
-                ss << "(cog-outgoing-set (cog-atom " << h.value() << "))\n";
+
+            Handle h = hs[i];
+            std::string symb = GUILE_SYMB;
+
+            for (unsigned int j=0; j<Nloops; j++) {
+                std::string bar = symb + std::to_string(i*Nloops + j);
+                guile_define(bar, h);
+                ss << "(cog-outgoing-set " << bar << ")\n";
                 h = getRandomHandle();
             }
             std::string gs = memoize_or_compile(ss.str());
             gsa[i] = gs;
         }
         clock_t t_begin = clock();
-        for (unsigned int i=0; i<Nclock; i++)
-           scm->eval(gsa[i]);
+        for (unsigned int i=0; i<Nclock; i++) {
+            scm->eval(gsa[i]);
+            if (scm->eval_error()) {
+                printf("Caught error while evaluating %s\n", gsa[i].c_str());
+                exit(1);
+            }
+        }
         clock_t time_taken = clock() - t_begin;
         return timepair_t(time_taken,0);
     }

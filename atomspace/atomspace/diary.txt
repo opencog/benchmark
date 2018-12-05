@@ -1539,3 +1539,49 @@ except for addLink, which is worse!  Clearly, link disambig remains a
 challenge, bottlenecked in the AtomTable code.
 
 TODO: measure getHandle() time ...
+
+=====================================================================
+
+4 Dec 2018
+----------
+New guile baseline. Fanny.
+First, a compare of the interpreter, vs. previous Feb 2016 benchmark.
+
+atomspace_bm -A -g -n2000 -r100
+
+                  Feb 2016     Today      above raw
+                  -g -r100    -g -r100      -A
+   test            interp      interp     AtomSpace
+   name           K-ops/sec   K-ops/sec   K-ops/sec
+   ----           ---------   ---------   ---------
+  noop             2e6         3e6         1.82e6
+  getType          18.3        26.4      105K
+  getTV            19.7        28.1        4567
+  setTV            11.2        13.4        1271
+  getIncomingSet   20.5        28.5        2530
+  getOutgoingSet   20.4        29.1        46.7K
+  addNode          17.6        20.0         361
+  addLink           5.02       14.4          76
+  removeAtom        6.69       20.0         924
+
+
+Next, a comparison of the compiled performance
+
+                    Feb 2016      Today        above raw
+                  -g -C -r100   -g -C -r100      -A
+   test             compile      compile      AtomSpace
+   name            K-ops/sec    K-ops/sec     K-ops/sec
+   ----            ---------   ----------     ---------
+  noop               2e6                       1.82e6
+  getType            177                       105K
+  getTV              218                         4567
+  setTV              122                         1271
+  getIncomingSet     119                         2530
+  getOutgoingSet     118                        46.7K
+  addNode             87.8                        361
+  addLink            224                           76
+  removeAtom          34.6                        924
+
+Remarks:
+* This is for guile-2.2 commit 4f64bcd4d146618154d50202fc73d7083bf9b26a
+  from Tue Jun 19 14:52:46 2018 +0200 Ludovic Courtès <ludo@gnu.org>
