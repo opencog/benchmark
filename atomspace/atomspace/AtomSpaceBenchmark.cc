@@ -784,7 +784,7 @@ clock_t AtomSpaceBenchmark::makeRandomLinks()
                     std::string bar = symb + std::to_string(i*Nloops + j);
                     bar += "-";
                     bar += std::to_string(k);
-                    guile_define(bar, outgoing[j]);
+                    guile_define(bar, outgoing[k]);
                     ss << " " << bar;
                 }
                 ss << ")\n";
