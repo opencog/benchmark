@@ -26,7 +26,7 @@
 
 #include "AtomSpaceBenchmark.h"
 
-const char* VERSION_STRING = "Version 1.0.1";
+const char* VERSION_STRING = "Version 1.1.1";
 
 namespace opencog {
 
@@ -40,6 +40,8 @@ using std::time;
 
 #define DIVIDER_LINE "------------------------------"
 #define PROGRESS_BAR_LENGTH 10
+
+#define GUILE_SYMB "foo"
 
 TLB tlbuf;
 
@@ -542,6 +544,19 @@ AtomSpaceBenchmark::memoize_or_compile(std::string exp)
     return exp;
 }
 
+// Set the guile symbol id to the atom h.
+void AtomSpaceBenchmark::guile_define(std::string id, Handle h)
+{
+    Type t = h->get_type();
+    if (nameserver().isA(t, NODE)) {
+        std::ostringstream ss;
+        ss << "(define " << id << "(cog-new-node '"
+           << nameserver().getTypeName(t)
+           << " \"" << h->get_name() << "\")\n";
+       scm->eval(ss.str());
+    }
+}
+
 Type AtomSpaceBenchmark::randomType(Type t)
 {
     OC_ASSERT(t < numberOfTypes);
@@ -1020,10 +1035,14 @@ timepair_t AtomSpaceBenchmark::bm_getType()
         std::string gsa[Nclock];
         for (unsigned int i=0; i<Nclock; i++)
         {
-            Handle h = hs[i];
             std::ostringstream ss;
-            for (unsigned int i=0; i<Nloops; i++) {
-                ss << "(cog-type (cog-atom " << h.value() << "))\n";
+
+            Handle h = hs[i];
+            std::string symb = GUILE_SYMB;
+
+            for (unsigned int j=0; j<Nloops; j++) {
+                guile_define(symb + std::to_string(i*Nloops + j), h);
+                ss << "(cog-type " << symb << ")\n";
                 h = getRandomHandle();
             }
             std::string gs = memoize_or_compile(ss.str());

@@ -76,7 +76,9 @@ class AtomSpaceBenchmark
     long getMemUsage();
     int counter;
 
+    // Obtain memoized or compiled variant of a guile expr
     std::string memoize_or_compile(std::string);
+    void guile_define(std::string, Handle);
 
     std::vector<std::string>  methodNames;
 
