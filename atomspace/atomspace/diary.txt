@@ -1564,6 +1564,12 @@ atomspace_bm -A -g -n2000 -r100
   addLink           5.02       14.4          76
   removeAtom        6.69       20.0         924
 
+Remarks:
+* Above is for debian stable.
+* gcc version 6.3.0 20170516 (Debian 6.3.0-18+deb9u1)
+* guile 2.2.2.1-886ac
+* So things are a little bit faster. However, the guile benchmark had to
+  be redesigned/recoded, so this may be de to benchmark changes.
 
 Next, a comparison of the compiled performance
 
@@ -1583,8 +1589,40 @@ Next, a comparison of the compiled performance
   removeAtom          34.6                        924
 
 Remarks:
+* Above is for debian stable.
 * gcc version 6.3.0 20170516 (Debian 6.3.0-18+deb9u1)
-* This is for guile-2.2 commit 4f64bcd4d146618154d50202fc73d7083bf9b26a
-  from Tue Jun 19 14:52:46 2018 +0200 Ludovic Courtès <ludo@gnu.org>
+* guile 2.2.2.1-886ac
 * Compiled getIncomingSet errors out with "Too many root sets"
   (This is from bdwgc, actually).
+
+--------------------------------------
+Again, but with guile 2.9.1
+commit 0e2f46264796a1da17044293842f89d734071ba1
+Author: Andy Wingo <wingo@pobox.com>
+Date:   Wed Oct 10 10:49:07 2018 +0200
+gcc (Ubuntu 5.4.0-6ubuntu1~16.04.10) 5.4.0 20160609
+
+
+atomspace_bm -A -g -n2000 -r100
+
+                    guile       guile
+                    2.9.1      2.2.2.1    above raw
+                  -g -r100    -g -r100      -A
+   test            interp      interp     AtomSpace
+   name           K-ops/sec   K-ops/sec   K-ops/sec
+   ----           ---------   ---------   ---------
+  noop             3e6         3e6         1.82e6
+  getType          31.1        26.4      105K
+  getTV            25.4        28.1        4567
+  setTV            16.8        13.4        1271
+  getIncomingSet   45.5        28.5        2530
+  getOutgoingSet   35.5        29.1        46.7K
+  addNode          19.4        20.0         361
+  addLink          16.2        14.4          76
+  removeAtom       22.7        20.0         924
+
+Remarks:
+* Above is for Ubuntu Xenial 16.04 LTS
+* gcc (Ubuntu 5.4.0-6ubuntu1~16.04.10) 5.4.0 20160609
+* guile 2.9.1 as tagged by Wingo, October 2018
+* So, OK, its a little bit faster, but not show-stopping.
