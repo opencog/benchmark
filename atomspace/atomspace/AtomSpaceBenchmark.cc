@@ -768,27 +768,24 @@ clock_t AtomSpaceBenchmark::makeRandomLinks()
 #if HAVE_GUILE
     case BENCH_SCM: {
         std::string gsa[Nclock];
+        std::string symb = GUILE_SYMB;
         for (unsigned int i = 0; i<Nclock; i++)
         {
             Type t = ta[i];
             HandleSeq outgoing = og[i];
             size_t arity = outgoing.size();
 
-            // This is somewhat more cumbersome and slower than what
-            // anyone would actually do in scheme, because handles are
-            // never handled in this way, but wtf, not much choice here.
-            // I guess its quasi-realistic as a stand-in for other work
-            // that might be done anyway...
             std::ostringstream ss;
             ss << "(cog-new-link '"
                << nameserver().getTypeName(t);
-            for (unsigned int i=0; i<Nloops; i++) {
+            for (unsigned int j=0; j<Nloops; j++) {
                 if (25 < arity) arity = 25;
-                for (size_t j = 0; j < arity; j++) {
-                    std::string symb = GUILE_SYMB;
-                    symb += j;
-                    guile_define(symb, outgoing[j]);
-                    ss << " " << symb;
+                for (size_t k = 0; k < arity; k++) {
+                    std::string bar = symb + std::to_string(i*Nloops + j);
+                    bar += "-";
+                    bar += std::to_string(k);
+                    guile_define(bar, outgoing[j]);
+                    ss << " " << bar;
                 }
                 ss << ")\n";
             }
@@ -973,6 +970,8 @@ timepair_t AtomSpaceBenchmark::bm_rmAtom()
             Handle h = hs[i];
             std::ostringstream ss;
             for (unsigned int i=0; i<Nloops; i++) {
+                    // guile_define(symb, outgoing[j]);
+//xxxxxxxxx
                 ss << "(cog-delete-recursive (cog-atom " << h.value() << "))\n";
                 h = getRandomHandle();
                 // XXX FIXME --- this may have trouble finding anything if
