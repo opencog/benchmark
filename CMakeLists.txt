@@ -261,6 +261,8 @@ ENDIF(HAVE_PY_INTERP)
 FIND_PACKAGE(benchmark CONFIG REQUIRED)
 IF (benchmark_FOUND)
 	MESSAGE(STATUS "Google Benchmark ${benchmark_VERSION} found.")
+ELSE (benchmark_FOUND)
+	MESSAGE(STATUS "Google Benchmark not found. Hint: see the README!")
 ENDIF(benchmark_FOUND)
 
 # ===================================================================

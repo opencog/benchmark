@@ -14,7 +14,8 @@ common tools placed under some common folder.
 
 ### Google Benchmarks
 
-Google Benchmark is a library supporting C++ benchmarks writing. Use following commands to build and install it:
+Google Benchmark is a library supporting C++ benchmarks writing.
+Use following commands to build and install it:
 
 ```
     git clone https://github.com/google/benchmark.git google-benchmark
@@ -35,4 +36,3 @@ Perform the following steps at the shell prompt:
     cmake ..
     make
 ```
-
