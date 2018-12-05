@@ -989,10 +989,14 @@ timepair_t AtomSpaceBenchmark::bm_rmAtom()
         clock_t t_begin = clock();
         for (unsigned int i=0; i<Nclock; i++) {
             scm->eval(gsa[i]);
+#ifdef DONT_IGNORE_ERRORS
+            // There's a good chance were trying to delete something
+            // that doesn't exist any more...
             if (scm->eval_error()) {
                 printf("Caught error while evaluating %s\n", gsa[i].c_str());
                 exit(1);
             }
+#endif
         }
         clock_t time_taken = clock() - t_begin;
         return timepair_t(time_taken,0);
