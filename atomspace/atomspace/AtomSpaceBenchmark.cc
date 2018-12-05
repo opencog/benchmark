@@ -342,6 +342,13 @@ void AtomSpaceBenchmark::doBenchmark(const std::string& methodName,
         // Try to avoid excessive compilation times.
         Nclock /= 100;
         Nreps *= 100;
+
+        // Basic non-craziness.
+        if (scm->input_pending() or scm->eval_error())
+        {
+            printf("Fatal Error: guile evaluator in crazy state!\n");
+            exit(1);
+        }
     }
 #endif // HAVE_GUILE
 
