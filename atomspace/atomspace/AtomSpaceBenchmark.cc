@@ -776,9 +776,9 @@ clock_t AtomSpaceBenchmark::makeRandomLinks()
             size_t arity = outgoing.size();
 
             std::ostringstream ss;
-            ss << "(cog-new-link '"
-               << nameserver().getTypeName(t);
             for (unsigned int j=0; j<Nloops; j++) {
+                ss << "(cog-new-link '"
+                   << nameserver().getTypeName(t);
                 if (25 < arity) arity = 25;
                 for (size_t k = 0; k < arity; k++) {
                     std::string bar = symb + std::to_string(i*Nloops + j);
