@@ -42,6 +42,7 @@ using std::time;
 #define PROGRESS_BAR_LENGTH 10
 
 #define GUILE_SYMB "foo"
+#define GUILE_FUNB "fnu"
 
 TLB tlbuf;
 
@@ -519,32 +520,35 @@ void AtomSpaceBenchmark::startBenchmark(int numThreads)
 }
 
 std::string
-AtomSpaceBenchmark::memoize_or_compile(std::string exp)
+AtomSpaceBenchmark::memoize_or_compile(std::string label, std::string exp)
 {
 #ifdef HAVE_GUILE
+    std::string funlab = "(";
+    funlab += label;
+    funlab += ")";
     if (memoize)
     {
         std::ostringstream dss;
-        dss << "(define (mk) " << exp << ")\n";
+        dss << "(define " << funlab << " " << exp << ")\n";
         scm->eval(dss.str());
-        return "(mk)\n";
+        return funlab + "\n";
     }
     if (compile)
     {
         std::ostringstream dss;
-        dss << "(compile '(define (mk) " << exp
+        dss << "(compile '(define " << funlab << " " << exp
             << ") #:env (current-module))\n";
         scm->eval(dss.str());
-        return "(mk)\n";
+        return funlab + "\n";
     }
 #endif /* HAVE_GUILE */
 #if HAVE_CYTHON
     if (memoize)
     {
         std::ostringstream dss;
-        dss << "def mk():\n" << exp << "\n\n";
+        dss << "def " << label << "():\n" << exp << "\n\n";
         pyev->eval(dss.str());
-        return "mk()\n\n";
+        return label + "()\n\n";
     }
 #endif /* HAVE_CYTHON */
 
@@ -667,12 +671,14 @@ clock_t AtomSpaceBenchmark::makeRandomNodes(const std::string& csi)
             std::string scp = nn[i];
 
             std::ostringstream ss;
-            for (unsigned int i=0; i<Nloops; i++) {
+            for (unsigned int j=0; j<Nloops; j++) {
                 ss << "(cog-new-node '"
                    << nameserver().getTypeName(t)
                    << " \"" << scp << "\")\n";
             }
-            std::string gs = memoize_or_compile(ss.str());
+            std::string lbl = GUILE_FUNB;
+            lbl += std::to_string(i);
+            std::string gs = memoize_or_compile(lbl, ss.str());
             gsa[i] = gs;
         }
 
@@ -693,12 +699,14 @@ clock_t AtomSpaceBenchmark::makeRandomNodes(const std::string& csi)
             std::string scp = nn[i];
 
             std::ostringstream dss;
-            for (unsigned int i=0; i<Nloops; i++) {
+            for (unsigned int j=0; j<Nloops; j++) {
                 if (memoize) dss << "    ";   // indentation
                 dss << "aspace.add_node (" << t << ", \"" << scp << "\")\n";
             }
 
-            std::string ps = memoize_or_compile(dss.str());
+            std::string lbl = GUILE_FUNB;
+            lbl += std::to_string(i);
+            std::string ps = memoize_or_compile(lbl, dss.str());
             psa[i] = ps;
         }
         clock_t t_begin = clock();
@@ -789,7 +797,9 @@ clock_t AtomSpaceBenchmark::makeRandomLinks()
                 }
                 ss << ")\n";
             }
-            std::string gs = memoize_or_compile(ss.str());
+            std::string lbl = GUILE_FUNB;
+            lbl += std::to_string(i);
+            std::string gs = memoize_or_compile(lbl, ss.str());
             gsa[i] = gs;
         }
 
@@ -982,7 +992,9 @@ timepair_t AtomSpaceBenchmark::bm_rmAtom()
                     h = getRandomHandle();
                 }
             }
-            std::string gs = memoize_or_compile(ss.str());
+            std::string lbl = GUILE_FUNB;
+            lbl += std::to_string(i);
+            std::string gs = memoize_or_compile(lbl, ss.str());
             gsa[i] = gs;
         }
 
@@ -1076,7 +1088,9 @@ timepair_t AtomSpaceBenchmark::bm_getType()
                 ss << "(cog-type " << bar << ")\n";
                 h = getRandomHandle();
             }
-            std::string gs = memoize_or_compile(ss.str());
+            std::string lbl = GUILE_FUNB;
+            lbl += std::to_string(i);
+            std::string gs = memoize_or_compile(lbl, ss.str());
             gsa[i] = gs;
         }
         clock_t t_begin = clock();
@@ -1149,7 +1163,9 @@ timepair_t AtomSpaceBenchmark::bm_getTruthValue()
                 ss << "(cog-tv " << bar << ")\n";
                 h = getRandomHandle();
             }
-            std::string gs = memoize_or_compile(ss.str());
+            std::string lbl = GUILE_FUNB;
+            lbl += std::to_string(i);
+            std::string gs = memoize_or_compile(lbl, ss.str());
             gsa[i] = gs;
         }
         clock_t t_begin = clock();
@@ -1243,7 +1259,9 @@ timepair_t AtomSpaceBenchmark::bm_setTruthValue()
                 strength = randomGenerator->randfloat();
                 cnf = randomGenerator->randfloat();
             }
-            std::string gs = memoize_or_compile(ss.str());
+            std::string lbl = GUILE_FUNB;
+            lbl += std::to_string(i);
+            std::string gs = memoize_or_compile(lbl, ss.str());
             gsa[i] = gs;
         }
         clock_t t_begin = clock();
@@ -1315,7 +1333,9 @@ timepair_t AtomSpaceBenchmark::bm_getIncomingSet()
                 ss << "(cog-incoming-set " << bar << ")\n";
                 h = getRandomHandle();
             }
-            std::string gs = memoize_or_compile(ss.str());
+            std::string lbl = GUILE_FUNB;
+            lbl += std::to_string(i);
+            std::string gs = memoize_or_compile(lbl, ss.str());
             gsa[i] = gs;
         }
         clock_t t_begin = clock();
@@ -1462,7 +1482,9 @@ timepair_t AtomSpaceBenchmark::bm_getOutgoingSet()
                 ss << "(cog-outgoing-set " << bar << ")\n";
                 h = getRandomHandle();
             }
-            std::string gs = memoize_or_compile(ss.str());
+            std::string lbl = GUILE_FUNB;
+            lbl += std::to_string(i);
+            std::string gs = memoize_or_compile(lbl, ss.str());
             gsa[i] = gs;
         }
         clock_t t_begin = clock();
