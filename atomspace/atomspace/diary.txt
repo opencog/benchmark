@@ -9,7 +9,7 @@ performance changes over time.
 
 26 March 2013
 -------------
-Benchamrks performed on 2008 vintage CPU and system:
+Benchmarks performed on 2008 vintage CPU and system:
    AMD Athlon(tm) 64 X2 Dual Core Processor 6000+
    3GHz  1024 KB cache
    8GB ECC DDR2 RAM
@@ -172,7 +172,7 @@ to get microseconds:
 (***) See comment below
 
 So...
-The AtomSpaceImpl adds an aprox 30 usec overhead to addNode/addLink and
+The AtomSpaceImpl adds an approx 30 usec overhead to addNode/addLink and
 the client/server interface adds another 2 usecs
 
 Its not clear why AtomSpaceImpl does NOT add an overhead to getType and
@@ -243,15 +243,15 @@ New results:
 -------------
 Replaced all uses of HandleEntry with C++11 unordered_set and etc.
 HandleEntry is now extinct.  The nature of the benchmark changed
-as well: instead of creating 65536 atoms initially, the new bnechmark
+as well: instead of creating 65536 atoms initially, the new benchmark
 creates 256K atoms: four times more than before. This has an overall
 negative impact on addLink, getHandleSet and getNodeHandles.  However,
 the new size is more realistic, so the actual perf is more realistic
 too.
 
 Added a no-op test. The no-op makes no calls to the atom-anything at
-all.  Thus it provides a measuremnt baseline. Based on the no-op test,
-we see that getType, getTV, setTV and getOutgoingSewt are running at
+all.  Thus it provides a measurement baseline. Based on the no-op test,
+we see that getType, getTV, setTV and getOutgoingSet are running at
 near-noop speeds.
 
 Added scheme tests. The scheme tests create strings, and pass them to
@@ -286,7 +286,7 @@ the C code for the atomspace is being called.  Thus, these two steps
 alone rate-limit the measurement to 7K-ops/sec max.
 
 In 'real life', both of these steps would be infrequent, as normally,
-one would enter the interpeter, do a wholw lot of stuff, and then exit.
+one would enter the interpreter, do a whole lot of stuff, and then exit.
 In other words, the correct way to measure performance for the scheme
 bindings would be to create maybe 10 or 100 atoms, once one is 'inside'.
 
@@ -400,14 +400,14 @@ Repeat measurements for current code (IV) for all interfaces:
 
 
 Hmm. A net overall slowdown in AtomSpaceImpl. This is presumably due to
-excessive pointer mainuplation (resulting in excess shared_ptr count
+excessive pointer manipulation (resulting in excess shared_ptr count
 increments & ctor/dtor ops).
 
 AtomSpace perf is neutral: some things got faster, some got slower.
 Some didn't change. Unclear what that's about -- a mixed effect, I guess.
 
 Curiously, Scheme perf improved across the board ... even when atomspace
-perf went down. Perhaps this has to do with truth-value pointer managment?
+perf went down. Perhaps this has to do with truth-value pointer management?
 
 --------------
 Remeasure, after bugfix: WOW! WHAT A HUGE DIFFERENCE!
@@ -453,20 +453,20 @@ AtomSpace perf: Wow! Huge improvement!
 
 XXX FIXME: There seems to be a benchmark bug somewhere ... the AtomSpace
 figures are high ONLY if I'm doing something else CPU intensive at the
-same tie (e.g. compiling).  Even watching youtube helps a little, but not
-as much. This alone reslts in a 2x or 3x performance improvement.
+same tie (e.g. compiling).  Even watching YouTube helps a little, but not
+as much. This alone results in a 2x or 3x performance improvement.
 Theorize:
    -- Some cache or TLB effect, with other CPU causing different cache line
       alignments, thus avoiding contention.
-   -- Some kerne context-swtiching effect: perhaps the clock() timer calls
+   -- Some kernel context-switching effect: perhaps the clock() timer calls
       stall in the kernel, until some other context switch event forces
       a return?  Noop. Stub out the calls to clock(), but perf does not
       improve. (based on total elapsed time, which uses gettimeofday())
    -- Some kind of thread-dispatching effect: the AtomSpaceAsync threads
       stall. Perhaps a sched_yield() is needed in ASRequest?  No... tried
       that and it didn't work.
-   -- It may still be a kernel-context wtiching thing; its just not
-      cureable with sched_yield() or disabling clock()...
+   -- It may still be a kernel-context switching thing; its just not
+      curable with sched_yield() or disabling clock()...
 
 This is bad. It makes the measurements untrustworthy...
 
@@ -530,7 +530,7 @@ Summary: pretty much everything got faster for every layer.
 ---------------
 Remeasure after ripping out the AtomSpaceAsync wrapper.  Basically, expect
 the atomspace and atomtable performance to be nearly identical (there are
-still some differences and minor additinal layers, but they're mosty the
+still some differences and minor additional layers, but they're mostly the
 same).  There is no AtomSpaceImpl any more, so not measured.
 
 Summary:
@@ -574,7 +574,7 @@ The setTV path got faster, probably due to cleaner impl.
 
 Significant improvements in getIncoming/OutgoingSet ... not sure why.
 
-Big drop in getNodesHandles, don't know why.
+Big drop in getNodeHandles, don't know why.
 
 
                    -A -X         -A          -A -g
@@ -599,7 +599,7 @@ Big drop in getNodesHandles, don't know why.
 Due to bug #524, scheme was always being interpreted, never compiled.
 The previous commit fixes this, the setting #:compile? #t on
 eval-string.  This should improve scheme performance.  Does it?
-No, it des NOT. Gack. But of course. Compiling every time is just
+No, it does NOT. Gack. But of course. Compiling every time is just
 going to slow everything down. Really, we should compile just once.
 and measure the compiled code. Gack.  This needs a new benchmark...
 
@@ -689,7 +689,7 @@ The plain -g column enters guile, does one op, and exists.  The -r100
 column enters guile, does 100 ops, and then exits.
 
 The memoized and compiled columns should be compared to the interpreted
-column: this shows exacly how painfully slow the interpreter is.  The
+column: this shows exactly how painfully slow the interpreter is.  The
 fact that the compiled and memoized columns are quite close to one
 another illustrates that there's really not much going on in the
 bindings.  For contrast, the last column shows the atomspace
@@ -711,7 +711,7 @@ So: there are two distinct costs:
 
  B) Cost of calling scheme from C++. This seems to take about 175uS and
     sometimes much worse: 300uS to 400uS.  Perhaps this could be worked
-    around by having another thread on standby:  linux thread-context
+    around by having another thread on standby:  Linux thread-context
     switching should run about about 5uS per switch ...
 
 Caution: some of the above conclusions are either misleading, or the
@@ -728,7 +728,7 @@ really does look like the only viable solution....
 
 =================================================================
 
-22 Jan 2015: measurements on fanny.  fanny is a differnt machine than
+22 Jan 2015: measurements on fanny.  fanny is a different machine than
 the above.  Also: measurements are done with guile-2.2 from a December
 2014 git pull.  So these numbers are not directly comparable to the
 above.
@@ -783,7 +783,7 @@ breakdown:
 	1% in get tv, av
 	9.5% in handle_to_scm()
 
-Breakdon of verify:
+Breakdown of verify:
 	1%  verify_atom_type()
 	43% in verify_string()   ouuuuuch
 
@@ -929,7 +929,7 @@ On "fanny", after removing UUID's from handles.
 
 The "old" column is a cut-n-paste from the March 2015 results above.
 The "new (master)" column is the git-pull from 1 October 2015.
-The "new (de-uuid)" column is the de-uuid branch thate removes the
+The "new (de-uuid)" column is the de-uuid branch that removes the
     UUID's from the handle.
 
 The measurement for the gets has to be done with -n1M to get valid
@@ -941,14 +941,14 @@ Observations:
   half since March.  Why?  Well, comparing the March No-op results to
   to these suggests that these were near the limit of measurability (as
   currently done, which is poorly). These functions could-be/were rate
-  limited by the speed of derefrencing AtomPtr.  Why this changed is ...
-  unknown to me.  A git bisect would be useful. XXXX WTF. If measured
+  limited by the speed of dereferencing AtomPtr.  Why this changed is ...
+  unknown to me.  A git bisect would be useful. XXX WTF. If measured
   one at a time, i.e. -m getIncomingSet, instead of in bulk, -A then
   the results are on parity. So .. is something wrong with the -A flag?
   What could possibly be different? The remeasured results below.
 
 * The addNode and removeAtom operations are unchanged by the de-uuid
-  process.  That addLink got slower is dissappointing, but may be due
+  process.  That addLink got slower is disappointing, but may be due
   to the fact that, in the past, Handle comparison was done by directly
   comparing UUID's in the Handles, whereas now, it must be done by
   fetching them from atoms.
@@ -999,13 +999,13 @@ file. Does this impact performance? Lets see...
   removeAtom         166          129          128
 
 de-uuid column:  copied from above; its the current mainline.
--flto -O3:  CMakefile enables gcc -O3 -flto flags as well as the
+-flto -O3:  CMakeFile enables gcc -O3 -flto flags as well as the
             the ProtoAtom changes to Handle.h
--O2 column: CMakefile enables gcc -O2 only ... but with ProtoAtom.
+-O2 column: CMakeFile enables gcc -O2 only ... but with ProtoAtom.
 
 Conclusions:
-* ProtoAtom has a strong impact on the AddLink performance, and maybe
-  a 13% hit to AddNode and 23% hit to removeAtom.  Meanwhile -flto is
+* ProtoAtom has a strong impact on the addLink performance, and maybe
+  a 13% hit to addNode and 23% hit to removeAtom.  Meanwhile -flto is
   essentially invisible. This is surprising.  One may have thought that
   the get* functions would take a hit from the lack of operator->()
   inlining, which the -flto would fix. Well, no hit and no fix.
@@ -1017,7 +1017,7 @@ Conclusions:
 3 October 2015
 
 Clearly the benchmark has been badly designed for too long.  So fix
-this.  All inner loop mesurements are now repeated 2K times, by default.
+this.  All inner loop measurements are now repeated 2K times, by default.
 The current results are:
 
                    broken         fixed
@@ -1103,7 +1103,7 @@ Atom* column:   using bool atoms_less(const Atom*, const Atom*); in
                 Handle.h (used to be AtomPtr)
 ProtoAtom*:     using bool atoms_less(const ProtoAtom*, etc...)
 
-Conclude: switching to * from Ptr for handle compares helps. But AddLink
+Conclude: switching to * from Ptr for handle compares helps. But addLink
    still hurts; it hurts just a bit less.
 
 ======================================================================
@@ -1153,7 +1153,7 @@ New baseline is then
   addLink             70.1          67.9
   removeAtom         188           187
 
-previous: the situation before protoatoms; copied from above.
+previous: the situation before ProtoAtoms; copied from above.
 
 ProtoAtom: this branch, including recent work on avoiding smart-pointer
     casts.
@@ -1188,15 +1188,15 @@ Remarks:
    C++ addNode? Isn't this logically impossible? Also, addLink...
  * The compiled numbers are half of what they used to be! Or even 1/3
    of what they used to be... And they are also worse than the
-   memoized numbers, which should be impossbile.  WTF???
+   memoized numbers, which should be impossible.  WTF???
  * Now that we have correctly-measured AtomSpace numbers, the guile
    numbers are easily seen to be much worse than the C++ numbers.
- * The uniformity of numbers in the memoize column sugggests a
+ * The uniformity of numbers in the memoize column suggests a
    bottleneck; I'm guessing its the ProtoAtomPtr->Handle cast.
  * This is not a very good benchmark, because it does not represent
    the way that people would "typically" program in scheme.
 
-To summarize: this test is wonky, crazy; the numbers are bizzarely
+To summarize: this test is wonky, crazy; the numbers are bizarrely
 inconsistent with expectations.
 
 ======================================================================
@@ -1315,7 +1315,7 @@ HandleMap access time.
 ----------------------
 Wow.  I was using try...catch semantics under the assumption that
 this is fast, but it turns out that stack unwinding is very expensive.
-Thus, catch should only be used for those cases tha trigger
+Thus, catch should only be used for those cases that trigger
 infrequently.
 
 PatternMatchEngine.cc line 777: var_grounding.at(hp)
@@ -1395,7 +1395,7 @@ compiler: gcc version 6.2.0
 Remarks:
 * Removal of the UUID make the atoms slightly smaller - about 5% or 10%
   depending on the atom.  So cache line alignments will be different.
-* Variation of getType performance indicatie of the caching effect.
+* Variation of getType performance indicative of the caching effect.
 * Variation of getOutgoingSet unexpected: caching effect?
   Maybe something to do with cache alignment of Handles and atoms?
 * Improvement of addNode, addLink and removeAtom probably explainable
@@ -1531,7 +1531,7 @@ compiler: gcc version 6.3.0
 
 Hey, they only thing that changes, should have gotten faster, and,
 instead its about 2x worse! WTF!! The guile measurements (below)
-strongly suggest that this is actualy a cache or TLB contention
+strongly suggest that this is actually a cache or TLB contention
 accident; the guile addLink performance is almost 2x the above
 C++ result -- which would be impossible, if it was a "real" C++
 code issue, and not a cache contention issue.
@@ -1540,7 +1540,7 @@ The large change in setTV and removeAtom is unexpected. Why?
 
 Fun-n-games: compared to January 2015, all numbers are 3x to 8x better,
 except for addLink, which is worse!  Clearly, link disambig remains a
-challenge, bottlenecked in the AtomTable code.
+challenge, bottle-necked in the AtomTable code.
 
 TODO: measure getHandle() time ...
 
@@ -1611,5 +1611,5 @@ Remarks:
 * both 2.2.2.1 and also 2.9.1 are failing in bdwgc with
     "Too many root sets"
 * The removeAtom benchmark is broken, because the lump of cog-delete
-    calls are deleting non-existant atoms, causing exceptions to be
+    calls are deleting non-existent atoms, causing exceptions to be
     thrown. So this is exception-overhead dominated.
