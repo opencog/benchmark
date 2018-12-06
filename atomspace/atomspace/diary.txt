@@ -1549,27 +1549,36 @@ First, a compare of the interpreter, vs. previous Feb 2016 benchmark.
 
 atomspace_bm -A -g -n2000 -r100
 
-                  Feb 2016     Today      above raw
-                  -g -r100    -g -r100      -A
-   test            interp      interp     AtomSpace
-   name           K-ops/sec   K-ops/sec   K-ops/sec
-   ----           ---------   ---------   ---------
-  noop             2e6         3e6         1.82e6
-  getType          18.3        26.4      105K
-  getTV            19.7        28.1        4567
-  setTV            11.2        13.4        1271
-  getIncomingSet   20.5        28.5        2530
-  getOutgoingSet   20.4        29.1        46.7K
-  addNode          17.6        20.0         361
-  addLink           5.02       14.4          76
-  removeAtom        6.69       20.0         924
+                                guile       guile
+                  Feb 2016     2.2.2.1      2.9.1     above raw
+                  -g -r100    -g -r100    -g -r100       -A
+   test            interp      interp      interp     AtomSpace
+   name           K-ops/sec   K-ops/sec   K-ops/sec   K-ops/sec
+   ----           ---------   ---------   ---------   ---------
+  noop             2e6         3e6         3e6        1.82e6
+  getType          18.3        26.4        31.1      105K
+  getTV            19.7        28.1        25.4        4567
+  setTV            11.2        13.4        16.8        1271
+  getIncomingSet   20.5        28.5        45.5        2530
+  getOutgoingSet   20.4        29.1        35.5       46.7K
+  addNode          17.6        20.0        19.4         361
+  addLink           5.02       14.4        16.2          76
+  removeAtom        6.69       20.0        22.7         924
 
 Remarks:
-* Above is for debian stable.
-* gcc version 6.3.0 20170516 (Debian 6.3.0-18+deb9u1)
-* guile 2.2.2.1-886ac
-* So things are a little bit faster. However, the guile benchmark had to
-  be redesigned/recoded, so this may be de to benchmark changes.
+* Column labelled 2.2.2.1 is for Debian stable; (see above)
+    gcc version 6.3.0 20170516 (Debian 6.3.0-18+deb9u1)
+    guile 2.2.2.1-886ac
+* Column labelled 2.9.1 is for Ubuntu Xenial 16.04 LTS
+    gcc (Ubuntu 5.4.0-6ubuntu1~16.04.10) 5.4.0 20160609
+    guile 2.9.1 as tagged by Wingo, October 2018
+* Comparing 2016 to today's 2.2.2.1 results: things are a little
+    bit faster. However, the guile benchmark had to be redesigned,
+    recoded, so this may be de to benchmark changes.
+* Comparing 2.2.2.1 to 2.9.1: OK, so its a little bit faster,
+    but not show-stopping.
+
+--------------------------------
 
 Next, a comparison of the compiled performance
 
@@ -1580,7 +1589,7 @@ Next, a comparison of the compiled performance
    ----           ---------    ---------   ---------     ---------
   noop              2e6          3e6         3e6          1.82e6
   getType           177          460         715          105K
-  getTV             218          447                        4567
+  getTV             218          447         819            4567
   setTV             122                                     1271
   getIncomingSet    119                                     2530
   getOutgoingSet    118                                    46.7K
@@ -1595,35 +1604,3 @@ Remarks:
 * Column labelled 2.9.1 is for Ubuntu Xenial 16.04 LTS
     gcc (Ubuntu 5.4.0-6ubuntu1~16.04.10) 5.4.0 20160609
     guile 2.9.1 as tagged by Wingo, October 2018
-
---------------------------------------
-Again, but with guile 2.9.1
-commit 0e2f46264796a1da17044293842f89d734071ba1
-Author: Andy Wingo <wingo@pobox.com>
-Date:   Wed Oct 10 10:49:07 2018 +0200
-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.10) 5.4.0 20160609
-
-atomspace_bm -A -g -n2000 -r100
-
-                    guile       guile
-                    2.9.1      2.2.2.1    above raw
-                  -g -r100    -g -r100      -A
-   test            interp      interp     AtomSpace
-   name           K-ops/sec   K-ops/sec   K-ops/sec
-   ----           ---------   ---------   ---------
-  noop             3e6         3e6         1.82e6
-  getType          31.1        26.4      105K
-  getTV            25.4        28.1        4567
-  setTV            16.8        13.4        1271
-  getIncomingSet   45.5        28.5        2530
-  getOutgoingSet   35.5        29.1        46.7K
-  addNode          19.4        20.0         361
-  addLink          16.2        14.4          76
-  removeAtom       22.7        20.0         924
-
-Remarks:
-* Column labelled 2.2.2.1 is for Debian stable; (see above)
-* Column labelled 2.9.1 is for Ubuntu Xenial 16.04 LTS
-    gcc (Ubuntu 5.4.0-6ubuntu1~16.04.10) 5.4.0 20160609
-    guile 2.9.1 as tagged by Wingo, October 2018
-* So, OK, its a little bit faster, but not show-stopping.
