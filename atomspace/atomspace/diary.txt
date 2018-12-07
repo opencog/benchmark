@@ -1595,7 +1595,7 @@ Next, a comparison of the compiled performance
   getType           177          460         715          105K
   getTV             218          447         819            4567
   setTV             122          262         344            1271
-  getIncomingSet    119                                     2530
+  getIncomingSet    119          424         822            2530
   getOutgoingSet    118          501        1043           46.7K
   addNode            87.8        269         250             361
   addLink           224          127         145              76
@@ -1608,8 +1608,8 @@ Remarks:
 * Column labelled 2.9.1 is for Ubuntu Xenial 16.04 LTS
     gcc (Ubuntu 5.4.0-6ubuntu1~16.04.10) 5.4.0 20160609
     guile 2.9.1 as tagged by Wingo, October 2018
-* both 2.2.2.1 and also 2.9.1 are failing in bdwgc with
-    "Too many root sets"
+* getIncomingSet: both 2.2.2.1 and also 2.9.1 are failing in bdwgc with
+    "Too many root sets". Recompile, increase MAX_ROOT_SETS to 16384.
 * The removeAtom benchmark is broken, because the lump of cog-delete
     calls are deleting non-existent atoms, causing exceptions to be
     thrown. So this is exception-overhead dominated.
