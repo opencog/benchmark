@@ -12,14 +12,14 @@
 #include <opencog/util/oc_assert.h>
 #include <opencog/util/random.h>
 
-#include <opencog/atoms/value/types.h>
+#include <opencog/atoms/atom_types/types.h>
 #include <opencog/atoms/base/Node.h>
 #include <opencog/atoms/base/Link.h>
-#include <opencog/truthvalue/AttentionValue.h>
-#include <opencog/truthvalue/CountTruthValue.h>
-#include <opencog/truthvalue/IndefiniteTruthValue.h>
-#include <opencog/truthvalue/SimpleTruthValue.h>
-#include <opencog/truthvalue/TruthValue.h>
+#include <opencog/atoms/truthvalue/AttentionValue.h>
+#include <opencog/atoms/truthvalue/CountTruthValue.h>
+#include <opencog/atoms/truthvalue/IndefiniteTruthValue.h>
+#include <opencog/atoms/truthvalue/SimpleTruthValue.h>
+#include <opencog/atoms/truthvalue/TruthValue.h>
 #include <opencog/atomspaceutils/TLB.h>
 #include <opencog/cython/PythonEval.h>
 #include <opencog/guile/SchemeEval.h>
