@@ -280,7 +280,6 @@ ADD_SUBDIRECTORY(atomspace)
 # ===================================================================
 # Show a summary of what we got
 
-include(lib/Summary.cmake)
 SUMMARY_ADD("AtomSpace bench" "Microbenchmarks for atomspace classes and methods" HAVE_ATOMSPACE)
 SUMMARY_ADD("Python bench" "Microbenchmarks for Python (cython) bindings" HAVE_CYTHON)
 SUMMARY_ADD("Scheme bench" "Benchmarks for Scheme (guile) bindings" HAVE_GUILE)
