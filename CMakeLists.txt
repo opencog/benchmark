@@ -113,6 +113,52 @@ ENDIF (CMAKE_COMPILER_IS_GNUCXX)
 
 # ===================================================================
 # Check for existance of various required, optional packages.
+# Listed in alphabetical order, more or less.
+# CogUtil must come first, because it supplies various FindXXX macros.
+
+# Add the 'lib' dir to cmake's module search path
+# list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/lib/")
+
+# Cogutil
+FIND_PACKAGE(CogUtil)
+IF (COGUTIL_FOUND)
+        MESSAGE(STATUS "CogUtil found.")
+        ADD_DEFINITIONS(-DHAVE_COGUTIL)
+        SET(HAVE_COGUTIL 1)
+        INCLUDE_DIRECTORIES(${COGUTIL_INCLUDE_DIR})
+ELSE (COGUTIL_FOUND)
+        MESSAGE(FATAL_ERROR "CogUtil missing: it is needed for everything!")
+ENDIF (COGUTIL_FOUND)
+
+# add the 'cmake' directory from cogutil to search path
+list(APPEND CMAKE_MODULE_PATH  ${COGUTIL_DATA_DIR}/cmake)
+
+include(${COGUTIL_DATA_DIR}/cmake/Summary.cmake)
+
+# ===================================================================
+# Check for existance of various required, optional packages.
+
+# AtomSpace
+FIND_PACKAGE(AtomSpace 5.0.3 REQUIRED)
+IF (ATOMSPACE_FOUND)
+        MESSAGE(STATUS "AtomSpace found.")
+        ADD_DEFINITIONS(-DHAVE_ATOMSPACE)
+        SET(HAVE_ATOMSPACE 1)
+        INCLUDE_DIRECTORIES(${ATOMSPACE_INCLUDE_DIR})
+ELSE (ATOMSPACE_FOUND)
+        MESSAGE(FATAL_ERROR "AtomSpace missing: it is needed for everything!")
+ENDIF (ATOMSPACE_FOUND)
+
+# ----------------------------------------------------------
+# Google benchmark package (optional, not really required, after all).
+FIND_PACKAGE(benchmark CONFIG REQUIRED)
+IF (benchmark_FOUND)
+	MESSAGE(STATUS "Google Benchmark ${benchmark_VERSION} found.")
+ELSE (benchmark_FOUND)
+	MESSAGE(STATUS "Google Benchmark not found. Hint: see the README!")
+ENDIF(benchmark_FOUND)
+
+# ----------------------------------------------------------
 # Check for boost. We need dynamic-linked, threaded libs by default.
 
 SET(Boost_USE_STATIC_LIBS OFF)
@@ -127,20 +173,9 @@ FIND_PACKAGE(Boost 1.46 COMPONENTS date_time filesystem program_options regex se
 
 IF(Boost_FOUND)
 	SET(Boost_FOUND_SAVE 1)
-
-	# Boost.Signals2 requires this in signal_type.hpp
-	SET(BOOST_PARAMETER_MAX_ARITY 7)
-	ADD_DEFINITIONS(-DBOOST_PARAMETER_MAX_ARITY=${BOOST_PARAMETER_MAX_ARITY})
 ELSE(Boost_FOUND)
 	MESSAGE(FATAL_ERROR "Boost 1.46 or newer is needed to build OpenCog!")
 ENDIF(Boost_FOUND)
-
-# Opencog won't compile with Boost 1.51, some kind of conflict with
-# hash functions, see github bugs 1 and 36
-IF(105100 EQUAL ${Boost_VERSION})
-	MESSAGE(FATAL_ERROR "Boost version 1.51 will not work with OpenCog.  Please use a different version.")
-ENDIF(105100 EQUAL ${Boost_VERSION})
-MESSAGE(STATUS "Boost version ${Boost_VERSION} found.")
 
 # Optional boost packages; can build without these.
 # FIND_PACKAGE(Boost 1.46 COMPONENTS python program_options QUIET)
@@ -151,45 +186,24 @@ IF(Boost_FOUND_SAVE)
 	SET(Boost_FOUND 1)
 ENDIF(Boost_FOUND_SAVE)
 
-# Cogutil
-FIND_PACKAGE(CogUtil)
-IF (COGUTIL_FOUND)
-        MESSAGE(STATUS "CogUtil found.")
-        ADD_DEFINITIONS(-DHAVE_COGUTIL)
-        SET(HAVE_COGUTIL 1)
-        INCLUDE_DIRECTORIES(${COGUTIL_INCLUDE_DIR})
-ELSE (COGUTIL_FOUND)
-        MESSAGE(FATAL_ERROR "CogUtil missing: it is needed for everything!")
-ENDIF (COGUTIL_FOUND)
-
-# AtomSpace
-FIND_PACKAGE(AtomSpace 5.0.3 REQUIRED)
-IF (ATOMSPACE_FOUND)
-        MESSAGE(STATUS "AtomSpace found.")
-        ADD_DEFINITIONS(-DHAVE_ATOMSPACE)
-        SET(HAVE_ATOMSPACE 1)
-        INCLUDE_DIRECTORIES(${ATOMSPACE_INCLUDE_DIR})
-ELSE (ATOMSPACE_FOUND)
-        MESSAGE(FATAL_ERROR "AtomSpace missing: it is needed for everything!")
-ENDIF (ATOMSPACE_FOUND)
-
+# ----------------------------------------------------------
 # This is required for Guile
 FIND_LIBRARY(GMP_LIBRARY gmp)
 FIND_PATH(GMP_INCLUDE_DIR gmp.h)
 
 # Gnu Guile scheme interpreter
-# Version 2.0.9 is needed for mrs io ports, compilation, etc.
-FIND_PACKAGE(Guile 2.0.9)
+# Version 2.2.2 is already specified by the atomspace.
+FIND_PACKAGE(Guile 2.2.2.)
 IF (GUILE_FOUND AND GMP_LIBRARY AND GMP_INCLUDE_DIR)
 	ADD_DEFINITIONS(-DHAVE_GUILE)
 	SET(HAVE_GUILE 1)
 	INCLUDE_DIRECTORIES(${GUILE_INCLUDE_DIR})
 ELSE (GUILE_FOUND AND GMP_LIBRARY AND GMP_INCLUDE_DIR)
-	SET(GUILE_DIR_MESSAGE "Guile was not found; the scheme shell will not be built.\nTo over-ride, make sure GUILE_LIBRARIES and GUILE_INCLUDE_DIRS are set.")
+	SET(GUILE_DIR_MESSAGE "Guile was not found; needed for guile benchmarks.")
 	MESSAGE(STATUS "${GUILE_DIR_MESSAGE}")
 ENDIF (GUILE_FOUND AND GMP_LIBRARY AND GMP_INCLUDE_DIR)
 
-# -----------------------------------------------------------------------------
+# ----------------------------------------------------------
 # Python and Cython
 #
 # NOTE: Python interpreter is needed for runing python unit tests, and for
@@ -258,13 +272,6 @@ IF(HAVE_PY_INTERP)
 	ENDIF (NOSETESTS_EXECUTABLE AND CYTHON_FOUND AND HAVE_PY_LIBS)
 ENDIF(HAVE_PY_INTERP)
 
-FIND_PACKAGE(benchmark CONFIG REQUIRED)
-IF (benchmark_FOUND)
-	MESSAGE(STATUS "Google Benchmark ${benchmark_VERSION} found.")
-ELSE (benchmark_FOUND)
-	MESSAGE(STATUS "Google Benchmark not found. Hint: see the README!")
-ENDIF(benchmark_FOUND)
-
 # ===================================================================
 # Add subdirectories
 
@@ -274,7 +281,7 @@ ADD_SUBDIRECTORY(atomspace)
 # Show a summary of what we got
 
 include(lib/Summary.cmake)
-SUMMARY_ADD("AtomSpace benchmarks" "Microbenchmarks for atomspace classes and methods" HAVE_ATOMSPACE)
-SUMMARY_ADD("Python bindings benchmarks" "Microbenchmarks using Python (cython) bindings" HAVE_CYTHON)
-SUMMARY_ADD("Scheme benchmarks" "Benchmarks on data described in Scheme language" HAVE_GUILE)
+SUMMARY_ADD("AtomSpace bench" "Microbenchmarks for atomspace classes and methods" HAVE_ATOMSPACE)
+SUMMARY_ADD("Python bench" "Microbenchmarks for Python (cython) bindings" HAVE_CYTHON)
+SUMMARY_ADD("Scheme bench" "Benchmarks for Scheme (guile) bindings" HAVE_GUILE)
 SUMMARY_SHOW()
