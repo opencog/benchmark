@@ -151,7 +151,7 @@ ENDIF (ATOMSPACE_FOUND)
 
 # ----------------------------------------------------------
 # Google benchmark package (optional, not really required, after all).
-FIND_PACKAGE(benchmark CONFIG REQUIRED)
+FIND_PACKAGE(benchmark)
 IF (benchmark_FOUND)
 	MESSAGE(STATUS "Google Benchmark ${benchmark_VERSION} found.")
 ELSE (benchmark_FOUND)
@@ -164,27 +164,12 @@ ENDIF(benchmark_FOUND)
 SET(Boost_USE_STATIC_LIBS OFF)
 SET(Boost_USE_MULTITHREADED ON)
 
-# Required boost packages
-# hypertable requires boost iostreams
-# boost-1.49 no longer has a libboost_iostreams
-# 1.46 is minimum for required filesystem support
-# program_options needed by some combo utilities
-FIND_PACKAGE(Boost 1.46 COMPONENTS date_time filesystem program_options regex serialization system thread REQUIRED)
+# Only basic boost (for tuple) is required
+FIND_PACKAGE(Boost 1.46 REQUIRED)
 
-IF(Boost_FOUND)
-	SET(Boost_FOUND_SAVE 1)
-ELSE(Boost_FOUND)
-	MESSAGE(FATAL_ERROR "Boost 1.46 or newer is needed to build OpenCog!")
-ENDIF(Boost_FOUND)
-
-# Optional boost packages; can build without these.
-# FIND_PACKAGE(Boost 1.46 COMPONENTS python program_options QUIET)
-# FIND_PACKAGE(Boost 1.46 COMPONENTS math_c99 QUIET)
-
-# Arghhh. Except cmake is treating above as required, not optional. #$%**&
-IF(Boost_FOUND_SAVE)
-	SET(Boost_FOUND 1)
-ENDIF(Boost_FOUND_SAVE)
+IF(NOT Boost_FOUND)
+	MESSAGE(FATAL_ERROR "Boost 1.46 or newer is needed to build benchmarks!")
+ENDIF(NOT Boost_FOUND)
 
 # ----------------------------------------------------------
 # This is required for Guile
