@@ -150,7 +150,7 @@ ELSE (ATOMSPACE_FOUND)
 ENDIF (ATOMSPACE_FOUND)
 
 # ----------------------------------------------------------
-# Google benchmark package (optional, not really required, after all).
+# Google benchmark package (optional)
 FIND_PACKAGE(benchmark)
 IF (benchmark_FOUND)
 	MESSAGE(STATUS "Google Benchmark ${benchmark_VERSION} found.")
@@ -159,7 +159,7 @@ ELSE (benchmark_FOUND)
 ENDIF(benchmark_FOUND)
 
 # ----------------------------------------------------------
-# Check for boost. We need dynamic-linked, threaded libs by default.
+# Check for boost.
 
 SET(Boost_USE_STATIC_LIBS OFF)
 SET(Boost_USE_MULTITHREADED ON)
