@@ -1527,20 +1527,20 @@ compiler: gcc version 6.3.0
   getOutgoingSet   45.6K      52.7K        46.7K
   addNode            315        383          361
   addLink            142        135           76       wtf!????
+  addLink            142        135          184       A hah!
   removeAtom         573        705          924
 
-Hey, they only thing that changes, should have gotten faster, and,
-instead its about 2x worse! WTF!! The guile measurements (below)
-strongly suggest that this is actually a cache or TLB contention
-accident; the guile addLink performance is almost 2x the above
-C++ result -- which would be impossible, if it was a "real" C++
-code issue, and not a cache contention issue.
+addLink: two different results, based on whether the test is run with
+`./atomspace_bm -A` or with `./atomspace_bm -m addLink`.  Apparently,
+the former means that `addNode` adds lots of atoms to the atomspace,
+throwing off the `addLink` measurements. Measured distinctly, the
+expected performance increase in addLink does indeed show up.
 
 The large change in setTV and removeAtom is unexpected. Why?
 
 Fun-n-games: compared to January 2015, all numbers are 3x to 8x better,
-except for addLink, which is worse!  Clearly, link disambig remains a
-challenge, bottle-necked in the AtomTable code.
+except for addLink, which is only 2x better.  Clearly, link disambig
+remains a challenge, bottle-necked in the AtomTable code.
 
 TODO: measure getHandle() time ...
 
@@ -1566,7 +1566,7 @@ atomspace_bm -A -g -n2000 -r100
   getIncomingSet   20.5        28.5        45.5        2530
   getOutgoingSet   20.4        29.1        35.5       46.7K
   addNode          17.6        20.0        19.4         361
-  addLink           5.02       14.4        16.2          76
+  addLink           5.02       14.4        16.2         184
   removeAtom        6.69       20.0        22.7         924
 
 Remarks:
@@ -1576,6 +1576,8 @@ Remarks:
 * Column labelled 2.9.1 is for Ubuntu Xenial 16.04 LTS
     gcc (Ubuntu 5.4.0-6ubuntu1~16.04.10) 5.4.0 20160609
     guile 2.9.1 as tagged by Wingo, October 2018
+    (Note that, at this time, AtomSpace unit tests do not pass
+    with this version of guile. There is some thread-race bug.)
 * Comparing 2016 to today's 2.2.2.1 results: things are a little
     bit faster. However, the guile benchmark had to be redesigned,
     recoded, so this may be de to benchmark changes.
@@ -1598,7 +1600,7 @@ Next, a comparison of the compiled performance
   getIncomingSet    119          424         822            2530
   getOutgoingSet    118          501        1043           46.7K
   addNode            87.8        269         250             361
-  addLink           224          127         145              76
+  addLink           224          127         145             184
   removeAtom         34.6          9.23        3.51          924
 
 Remarks:
@@ -1608,6 +1610,8 @@ Remarks:
 * Column labelled 2.9.1 is for Ubuntu Xenial 16.04 LTS
     gcc (Ubuntu 5.4.0-6ubuntu1~16.04.10) 5.4.0 20160609
     guile 2.9.1 as tagged by Wingo, October 2018
+    (Note that, at this time, AtomSpace unit tests do not pass
+    with this version of guile. There is some thread-race bug.)
 * getIncomingSet: both 2.2.2.1 and also 2.9.1 are failing in bdwgc with
     "Too many root sets". Recompile, increase MAX_ROOT_SETS to 16384.
 * The removeAtom benchmark is broken, because the lump of cog-delete
