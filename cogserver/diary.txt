@@ -1,0 +1,26 @@
+
+Cogserver shell performance notes
+=================================
+
+11 March 2019
+-------------
+spured by bug
+   https://github.com/singnet/language-learning/issues/179
+
+create very super-simplistic `shell-bench.pl`
+
+Results:
+   $ ./shell-bench.pl
+   Cogserver shell performance test, NREP=100
+   Elapsed=0.592721 secs; shell cmds/sec=0.005927
+   Elapsed=3.146250 secs; trivial guile cmds/sec=0.031463
+   Elapsed=3.340324 secs; non-trivial guile cmds/sec=0.033403
+   Elapsed=3.112285 secs; trivial Atoms/sec=0.031123
+   Elapsed=3.278475 secs; non-trivial Atoms/sec=0.032785
+
+So entering guile takes about 6x longer than entering the cogserver shell!
+
+cogserver runs at about 10% of total cpu (per `top`) while
+the perl command doing the timing runs at about 2% of CPU time.
+
+See above github issue for wild guesses as to why.

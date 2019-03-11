@@ -7,7 +7,7 @@
 # hi-res time returns floating-point (wall-clock) seconds
 use Time::HiRes qw( time );
 
-my $nrep=100;
+my $nrep=1000;
 
 print "Cogserver shell performance test, NREP=$nrep\n";
 
