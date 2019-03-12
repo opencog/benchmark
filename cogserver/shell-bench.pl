@@ -56,6 +56,7 @@ $rate = $elapsed / $nrep;
 printf "Elapsed=%f secs; non-trivial guile cmds/sec=%f\n", $elapsed, $rate;
 
 # ---------------------------------------------------
+
 $loop = 0;
 $starttime = time;
 while ($loop < $nrep) {
@@ -70,6 +71,7 @@ $rate = $elapsed / $nrep;
 printf "Elapsed=%f secs; trivial Atoms/sec=%f\n", $elapsed, $rate;
 
 # ---------------------------------------------------
+
 $loop = 0;
 $starttime = time;
 while ($loop < $nrep) {
@@ -90,17 +92,37 @@ use Socket;
 my $port = 17001;
 my $server = "127.0.0.1";
 
-socket(SOCKET, PF_INET, SOCK_STREAM, (getprotobyname('tcp'))[2])
-	or die "Can't create a socket $!\n";
-connect(SOCKET, pack_sockaddr_in($port, inet_aton($server)))
-	or die "Can't connect to port $port! \n";
+sub send_stuff {
+	socket(SOCKET, PF_INET, SOCK_STREAM, (getprotobyname('tcp'))[2])
+		or die "Can't create a socket $!\n";
 
-SOCKET->autoflush(1);
-print SOCKET "(+ 2 2)\n.\n.\n";
+	connect(SOCKET, pack_sockaddr_in($port, inet_aton($server)))
+		or die "Can't connect to port $port! \n";
 
-print "waiting... so=$SOCKET\n";
-my $line;
-while ($line = <SOCKET>) {
-	print " its $line\n";
+#	SOCKET->autoflush(1);
+	print SOCKET "$_[0]\n.\n.\n";
+#	my $line;
+#	while ($line = <SOCKET>) {
+#		# print "Drained: $line";
+#	}
+	close SOCKET;
 }
-close SOCKET;
+
+# send_stuff("(+ 2 2)");
+# send_stuff("(+ 3 3)");
+
+# ---------------------------------------------------
+
+$nrep=10000;
+# Direct socket writes
+$loop = 0;
+$starttime = time;
+while ($loop < $nrep) {
+	send_stuff('(Concept "foo")');
+	$loop += 1;
+}
+$endtime = time;
+$elapsed = $endtime - $starttime;
+$rate = $elapsed / $nrep;
+
+printf "Elapsed=%f secs; trivial direct Atoms/sec=%f\n", $elapsed, $rate;
