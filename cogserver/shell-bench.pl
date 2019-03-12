@@ -7,7 +7,7 @@
 # hi-res time returns floating-point (wall-clock) seconds
 use Time::HiRes qw( time );
 
-my $nrep=1000;
+my $nrep=1;
 
 print "Cogserver shell performance test, NREP=$nrep\n";
 
@@ -82,3 +82,25 @@ $elapsed = $endtime - $starttime;
 $rate = $elapsed / $nrep;
 
 printf "Elapsed=%f secs; non-trivial Atoms/sec=%f\n", $elapsed, $rate;
+
+# ---------------------------------------------------
+# Avoid using netcat.
+
+use Socket;
+my $port = 17001;
+my $server = "127.0.0.1";
+
+socket(SOCKET, PF_INET, SOCK_STREAM, (getprotobyname('tcp'))[2])
+	or die "Can't create a socket $!\n";
+connect(SOCKET, pack_sockaddr_in($port, inet_aton($server)))
+	or die "Can't connect to port $port! \n";
+
+SOCKET->autoflush(1);
+print SOCKET "(+ 2 2)\n.\n.\n";
+
+print "waiting... so=$SOCKET\n";
+my $line;
+while ($line = <SOCKET>) {
+	print " its $line\n";
+}
+close SOCKET;
