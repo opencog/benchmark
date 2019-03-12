@@ -9,16 +9,19 @@ spured by bug
 
 create very super-simplistic `shell-bench.pl`
 
-Results:
+Results (on `fanny`):
    $ ./shell-bench.pl
-   Cogserver shell performance test, NREP=100
-   Elapsed=0.592721 secs; shell cmds/sec=0.005927
-   Elapsed=3.146250 secs; trivial guile cmds/sec=0.031463
-   Elapsed=3.340324 secs; non-trivial guile cmds/sec=0.033403
-   Elapsed=3.112285 secs; trivial Atoms/sec=0.031123
-   Elapsed=3.278475 secs; non-trivial Atoms/sec=0.032785
+
+   Cogserver shell performance test, NREP=1000
+   Elapsed=6.544488 secs; shell cmds; msecs-each=6.544488
+   Elapsed=31.836581 secs; trivial guile cmds; msecs-each=31.836581
+   Elapsed=31.883032 secs; non-trivial guile cmds; msecs-each=31.883032
+   Elapsed=31.876574 secs; trivial Atoms; msecs-each=31.876574
+   Elapsed=31.830150 secs; non-trivial Atoms; msecs-each=31.830150
 
 So entering guile takes about 6x longer than entering the cogserver shell!
+(Well, not really, this is a false/misleading result, it's actually netcat
+weirdness; see further below.)
 
 according to top:
 When doing the shell commands, cogserver runs at about 2% of CPU.
@@ -33,3 +36,29 @@ does not alter the perf profile.
 
 Changing `nc -q 0 localhost 17001` to `nc -q 0 -n 127.0.0.1 17001`
 has no effect at all on performance.
+
+Native sockets
+--------------
+Instead of using netcat, just open a socket (in perl) write to it,
+and close. What's the performance then? It depends. If its "open a
+socket, write message, wait for full reply, close" then its:
+
+   Elapsed=30.523183 secs; direct logger+response; msecs-each=101.743943
+
+If its "open a socket, write message, don't wait, close", then its
+
+   Elapsed=18.459016 secs; direct logger; msecs-each=6.153005
+
+In the former, cogserver CPU-usage runs at 2% to 4%. In the latter,
+cpu usage runs 200% to 300%.
+
+So, the CPU usage is about 80x greater for don't-wait-for-reply case.
+The throughput is about 16x faster (elapsed time) so I guess there's
+a lot of CPU waste with multi-threading. Each command is super-short,
+so, of course the cogserver will waste a lot of time creating and
+dstroying threads, entering and exiting guile in each thread.
+
+According to `htop`, the cogserver is running 30-80 threads when its
+running in the close-don't-wait mode.
+
+   htop -- S for setup, columns, NLWP column for threads.
