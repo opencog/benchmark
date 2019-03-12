@@ -62,3 +62,19 @@ According to `htop`, the cogserver is running 30-80 threads when its
 running in the close-don't-wait mode.
 
    htop -- S for setup, columns, NLWP column for threads.
+
+Latest run 11 March 2019
+------------------------
+After cleanup of benchmark script. Pretty-print, etc.
+
+   $ ./shell-bench.pl
+   Cogserver shell performance measurements - Tue Mar 12 00:25:54 2019
+   nreps=   500 time= 3.141 secs; netcat trivial shell;    call= 6.281 msecs
+   nreps=   100 time=10.027 secs; netcat shell help cmd;   call=100.266 msecs
+   nreps=   100 time= 3.111 secs; netcat trivial scheme;   call=31.113 msecs
+   nreps=   100 time= 3.148 secs; netcat non-trivial scm;  call=31.480 msecs
+   nreps=   100 time= 3.238 secs; netcat create same atom; call=32.383 msecs
+   nreps=   100 time= 3.200 secs; netcat various atoms;    call=31.995 msecs
+   nreps=   500 time= 3.069 secs; no-wait socket atoms ;   call= 6.139 msecs
+   nreps=   500 time= 3.086 secs; no-wait socket logger;   call= 6.173 msecs
+   nreps=    50 time= 5.005 secs; socket-wait response ;   call=100.102 msecs
