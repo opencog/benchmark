@@ -9,12 +9,12 @@ use Time::HiRes qw( time );
 
 my $nrep=10;
 
-print "Cogserver shell performance test, NREP=$nrep\n";
+print "Cogserver shell performance measurements\n";
 
 my $loop = 0;
 my $starttime = time;
 while ($loop < $nrep) {
-	my $reply = `echo '  ' | nc -q 0 localhost 17001`;
+	my $reply = `echo 'h' | nc -q 0 localhost 17001`;
 	# print "its $loop $reply\n";
 	$loop += 1;
 }
@@ -23,7 +23,8 @@ my $elapsed = $endtime - $starttime;
 my $per_call = 1000.0 * $elapsed / $nrep;
 
 # print "Elapsed=$elapsed secs; shell cmds; msecs-each=$per_call\n";
-printf "Elapsed=%f secs; shell cmds; msecs-each=%f\n", $elapsed, $per_call;
+# printf "Elapsed=%f secs; shell cmds; msecs-each=%f\n", $elapsed, $per_call;
+printf "nreps=%6d time=%6.3f secs; netcat shell command;\tcall=%6.3f msecs\n", $nrep, $elapsed, $per_call;
 
 # ---------------------------------------------------
 
@@ -38,7 +39,7 @@ $endtime = time;
 $elapsed = $endtime - $starttime;
 $per_call = 1000.0 * $elapsed / $nrep;
 
-printf "Elapsed=%f secs; trivial guile cmds; msecs-each=%f\n", $elapsed, $per_call;
+printf "nreps=%6d time=%6.3f secs; netcat trivial scheme;\tcall=%6.3f msecs\n", $nrep, $elapsed, $per_call;
 
 # ---------------------------------------------------
 
@@ -53,7 +54,7 @@ $endtime = time;
 $elapsed = $endtime - $starttime;
 $per_call = 1000.0 * $elapsed / $nrep;
 
-printf "Elapsed=%f secs; non-trivial guile cmds; msecs-each=%f\n", $elapsed, $per_call;
+printf "nreps=%6d time=%6.3f secs; netcat non-trivial;\tcall=%6.3f msecs\n", $nrep, $elapsed, $per_call;
 
 # ---------------------------------------------------
 
@@ -68,7 +69,7 @@ $endtime = time;
 $elapsed = $endtime - $starttime;
 $per_call = 1000.0 * $elapsed / $nrep;
 
-printf "Elapsed=%f secs; trivial Atoms; msecs-each=%f\n", $elapsed, $per_call;
+printf "nreps=%6d time=%6.3f secs; netcat create same atom;\tcall=%6.3f msecs\n", $nrep, $elapsed, $per_call;
 
 # ---------------------------------------------------
 
@@ -83,7 +84,7 @@ $endtime = time;
 $elapsed = $endtime - $starttime;
 $per_call = 1000.0 * $elapsed / $nrep;
 
-printf "Elapsed=%f secs; non-trivial Atoms; msecs-each=%f\n", $elapsed, $per_call;
+printf "nreps=%6d time=%6.3f secs; netcat various atoms;\tcall=%6.3f msecs\n", $nrep, $elapsed, $per_call;
 
 # ---------------------------------------------------
 # Avoid using netcat.
@@ -142,15 +143,13 @@ $loop = 0;
 $starttime = time;
 while ($loop < $nrep) {
 	send_stuff('(Concept "foo ' . $loop . '")');
-	# send_stuff('(cog-logger-info "cbgb omfug")', 0);
-	# send_stuff('(cog-logger-info "cbgb omfug ' . $loop . '")', 0);
 	$loop += 1;
 }
 $endtime = time;
 $elapsed = $endtime - $starttime;
 $per_call = 1000.0 * $elapsed / $nrep;
 
-printf "Elapsed=%f secs; direct Atoms; msecs-each=%f\n", $elapsed, $per_call;
+printf "nreps=%6d time=%6.3f secs; no-wait socket Atoms;\tcall=%6.3f msecs\n", $nrep, $elapsed, $per_call;
 
 # ---------------------------------------------------
 
@@ -159,7 +158,6 @@ $nrep=3000;
 $loop = 0;
 $starttime = time;
 while ($loop < $nrep) {
-	# send_stuff('(Concept "foo")');
 	# send_stuff('(cog-logger-info "cbgb omfug")', 0);
 	send_stuff('(cog-logger-info "cbgb omfug ' . $loop . '")', 0);
 	$loop += 1;
@@ -168,7 +166,7 @@ $endtime = time;
 $elapsed = $endtime - $starttime;
 $per_call = 1000.0 * $elapsed / $nrep;
 
-printf "Elapsed=%f secs; direct logger; msecs-each=%f\n", $elapsed, $per_call;
+printf "nreps=%6d time=%6.3f secs; no-wait socket logger;\tcall=%6.3f msecs\n", $nrep, $elapsed, $per_call;
 
 # ---------------------------------------------------
 
@@ -177,8 +175,6 @@ $nrep=300;
 $loop = 0;
 $starttime = time;
 while ($loop < $nrep) {
-	# send_stuff('(Concept "foo")');
-	# send_stuff('(cog-logger-info "cbgb omfug")', 1);
 	send_stuff('(cog-logger-info "cbgb omfug ' . $loop . '")', 1);
 	$loop += 1;
 }
@@ -186,4 +182,4 @@ $endtime = time;
 $elapsed = $endtime - $starttime;
 $per_call = 1000.0 * $elapsed / $nrep;
 
-printf "Elapsed=%f secs; direct logger+response; msecs-each=%f\n", $elapsed, $per_call;
+printf "nreps=%6d time=%6.3f secs; socket-wait response;\tcall=%6.3f msecs\n", $nrep, $elapsed, $per_call;
