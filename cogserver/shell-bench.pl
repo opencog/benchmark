@@ -9,102 +9,40 @@ use Time::HiRes qw( time );
 
 my $nrep=10;
 
-my $now = time;
+my $now = localtime();
 print "Cogserver shell performance measurements - $now\n";
 
 # ---------------------------------------------------
 
-my $loop = 0;
-my $starttime = time;
-while ($loop < $nrep) {
-	my $reply = `echo ' ' | nc -q 0 localhost 17001`;
-	# print "its $loop $reply\n";
-	$loop += 1;
-}
-my $endtime = time;
-my $elapsed = $endtime - $starttime;
-my $per_call = 1000.0 * $elapsed / $nrep;
+sub netcat_timer {
+	my $nrep = $_[0];
+	my $label = $_[1];
+	my $msg = $_[2];
 
-# print "Elapsed=$elapsed secs; shell cmds; msecs-each=$per_call\n";
-# printf "Elapsed=%f secs; shell cmds; msecs-each=%f\n", $elapsed, $per_call;
-printf "nreps=%6d time=%6.3f secs; netcat trivial shell;\tcall=%6.3f msecs\n", $nrep, $elapsed, $per_call;
+	my $loop = 0;
+	my $starttime = time;
+	while ($loop < $nrep) {
+		my $full_msg = sprintf($msg, $loop);
+		my $reply = `echo '$full_msg' | nc -q 0 localhost 17001`;
+		# print "loopcnt=$loop full-msg=$full_msg reply=$reply\n";
+		$loop += 1;
+	}
+	my $endtime = time;
+	my $elapsed = $endtime - $starttime;
+	my $per_call = 1000.0 * $elapsed / $nrep;
+
+	printf "nreps=%6d time=%6.3f secs; " . $label . ";\tcall=%6.3f msecs\n",
+		$nrep, $elapsed, $per_call;
+}
 
 # ---------------------------------------------------
 
-my $loop = 0;
-my $starttime = time;
-while ($loop < $nrep) {
-	my $reply = `echo 'h' | nc -q 0 localhost 17001`;
-	# print "its $loop $reply\n";
-	$loop += 1;
-}
-my $endtime = time;
-my $elapsed = $endtime - $starttime;
-my $per_call = 1000.0 * $elapsed / $nrep;
-
-# print "Elapsed=$elapsed secs; shell cmds; msecs-each=$per_call\n";
-# printf "Elapsed=%f secs; shell cmds; msecs-each=%f\n", $elapsed, $per_call;
-printf "nreps=%6d time=%6.3f secs; netcat shell command;\tcall=%6.3f msecs\n", $nrep, $elapsed, $per_call;
-
-# ---------------------------------------------------
-
-$loop = 0;
-$starttime = time;
-while ($loop < $nrep) {
-	my $reply = `echo '(+ 2 2)' | nc -q 0 localhost 17001`;
-	# print "its $loop $reply\n";
-	$loop += 1;
-}
-$endtime = time;
-$elapsed = $endtime - $starttime;
-$per_call = 1000.0 * $elapsed / $nrep;
-
-printf "nreps=%6d time=%6.3f secs; netcat trivial scheme;\tcall=%6.3f msecs\n", $nrep, $elapsed, $per_call;
-
-# ---------------------------------------------------
-
-$loop = 0;
-$starttime = time;
-while ($loop < $nrep) {
-	my $reply = `echo '(+ 2 $loop)' | nc -q 0 localhost 17001`;
-	# print "its $loop $reply\n";
-	$loop += 1;
-}
-$endtime = time;
-$elapsed = $endtime - $starttime;
-$per_call = 1000.0 * $elapsed / $nrep;
-
-printf "nreps=%6d time=%6.3f secs; netcat non-trivial;\tcall=%6.3f msecs\n", $nrep, $elapsed, $per_call;
-
-# ---------------------------------------------------
-
-$loop = 0;
-$starttime = time;
-while ($loop < $nrep) {
-	my $reply = `echo '(Concept "foo")' | nc -q 0 localhost 17001`;
-	# print "its $loop $reply\n";
-	$loop += 1;
-}
-$endtime = time;
-$elapsed = $endtime - $starttime;
-$per_call = 1000.0 * $elapsed / $nrep;
-
-printf "nreps=%6d time=%6.3f secs; netcat create same atom;\tcall=%6.3f msecs\n", $nrep, $elapsed, $per_call;
-
-# ---------------------------------------------------
-
-$loop = 0;
-$starttime = time;
-while ($loop < $nrep) {
-	my $reply = `echo '(List (Number $loop) (Concept "foo"))' | nc -q 0 localhost 17001`;
-	# print "its $loop $reply\n";
-	$loop += 1;
-}
-$endtime = time;
-$elapsed = $endtime - $starttime;
-$per_call = 1000.0 * $elapsed / $nrep;
-
-printf "nreps=%6d time=%6.3f secs; netcat various atoms;\tcall=%6.3f msecs\n", $nrep, $elapsed, $per_call;
+netcat_timer(100, "netcat trivial shell", " ");
+netcat_timer(100, "netcat shell command", "h");
+netcat_timer(100, "netcat trivial scheme", "(+ 2 2)");
+netcat_timer(100, "netcat non-trivial", "(+ 2 %d)");
+netcat_timer(100, "netcat create same atom", "(Concept \"foo\")");
+netcat_timer(100, "netcat various atoms", "(List (Number %d) (Concept \"foo\"))");
 
 # ---------------------------------------------------
 # Avoid using netcat.
