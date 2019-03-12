@@ -9,7 +9,7 @@ spured by bug
 
 create very super-simplistic `shell-bench.pl`
 
-Results:
+Results (on `fanny`):
    $ ./shell-bench.pl
 
    Cogserver shell performance test, NREP=1000
