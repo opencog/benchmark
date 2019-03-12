@@ -7,7 +7,7 @@
 # hi-res time returns floating-point (wall-clock) seconds
 use Time::HiRes qw( time );
 
-my $nrep=1;
+my $nrep=10;
 
 print "Cogserver shell performance test, NREP=$nrep\n";
 
@@ -20,10 +20,10 @@ while ($loop < $nrep) {
 }
 my $endtime = time;
 my $elapsed = $endtime - $starttime;
-my $rate = $elapsed / $nrep;
+my $per_call = 1000.0 * $elapsed / $nrep;
 
-# print "Elapsed=$elapsed secs; shell cmds/sec=$rate\n";
-printf "Elapsed=%f secs; shell cmds/sec=%f\n", $elapsed, $rate;
+# print "Elapsed=$elapsed secs; shell cmds; msecs-each=$per_call\n";
+printf "Elapsed=%f secs; shell cmds; msecs-each=%f\n", $elapsed, $per_call;
 
 # ---------------------------------------------------
 
@@ -36,9 +36,9 @@ while ($loop < $nrep) {
 }
 $endtime = time;
 $elapsed = $endtime - $starttime;
-$rate = $elapsed / $nrep;
+$per_call = 1000.0 * $elapsed / $nrep;
 
-printf "Elapsed=%f secs; trivial guile cmds/sec=%f\n", $elapsed, $rate;
+printf "Elapsed=%f secs; trivial guile cmds; msecs-each=%f\n", $elapsed, $per_call;
 
 # ---------------------------------------------------
 
@@ -51,9 +51,9 @@ while ($loop < $nrep) {
 }
 $endtime = time;
 $elapsed = $endtime - $starttime;
-$rate = $elapsed / $nrep;
+$per_call = 1000.0 * $elapsed / $nrep;
 
-printf "Elapsed=%f secs; non-trivial guile cmds/sec=%f\n", $elapsed, $rate;
+printf "Elapsed=%f secs; non-trivial guile cmds; msecs-each=%f\n", $elapsed, $per_call;
 
 # ---------------------------------------------------
 
@@ -66,9 +66,9 @@ while ($loop < $nrep) {
 }
 $endtime = time;
 $elapsed = $endtime - $starttime;
-$rate = $elapsed / $nrep;
+$per_call = 1000.0 * $elapsed / $nrep;
 
-printf "Elapsed=%f secs; trivial Atoms/sec=%f\n", $elapsed, $rate;
+printf "Elapsed=%f secs; trivial Atoms; msecs-each=%f\n", $elapsed, $per_call;
 
 # ---------------------------------------------------
 
@@ -81,9 +81,9 @@ while ($loop < $nrep) {
 }
 $endtime = time;
 $elapsed = $endtime - $starttime;
-$rate = $elapsed / $nrep;
+$per_call = 1000.0 * $elapsed / $nrep;
 
-printf "Elapsed=%f secs; non-trivial Atoms/sec=%f\n", $elapsed, $rate;
+printf "Elapsed=%f secs; non-trivial Atoms; msecs-each=%f\n", $elapsed, $per_call;
 
 # ---------------------------------------------------
 # Avoid using netcat.
@@ -134,7 +134,27 @@ send_stuff('(use-modules (opencog logger))', 1);
 # send_stuff('(cog-logger-set-stdout! #t)');
 # send_stuff('(cog-logger-set-stdout! #f)');
 
-$nrep=1000;
+# ---------------------------------------------------
+
+$nrep=3000;
+# Direct socket writes
+$loop = 0;
+$starttime = time;
+while ($loop < $nrep) {
+	send_stuff('(Concept "foo ' . $loop . '")');
+	# send_stuff('(cog-logger-info "cbgb omfug")', 0);
+	# send_stuff('(cog-logger-info "cbgb omfug ' . $loop . '")', 0);
+	$loop += 1;
+}
+$endtime = time;
+$elapsed = $endtime - $starttime;
+$per_call = 1000.0 * $elapsed / $nrep;
+
+printf "Elapsed=%f secs; direct Atoms; msecs-each=%f\n", $elapsed, $per_call;
+
+# ---------------------------------------------------
+
+$nrep=3000;
 # Direct socket writes
 $loop = 0;
 $starttime = time;
@@ -146,14 +166,14 @@ while ($loop < $nrep) {
 }
 $endtime = time;
 $elapsed = $endtime - $starttime;
-$rate = $elapsed / $nrep;
+$per_call = 1000.0 * $elapsed / $nrep;
 
-printf "Elapsed=%f secs; direct logger/sec=%f\n", $elapsed, $rate;
+printf "Elapsed=%f secs; direct logger; msecs-each=%f\n", $elapsed, $per_call;
 
 # ---------------------------------------------------
 
 # Same as above, but wit for cogserver response.
-$nrep=100;
+$nrep=300;
 $loop = 0;
 $starttime = time;
 while ($loop < $nrep) {
@@ -164,6 +184,6 @@ while ($loop < $nrep) {
 }
 $endtime = time;
 $elapsed = $endtime - $starttime;
-$rate = $elapsed / $nrep;
+$per_call = 1000.0 * $elapsed / $nrep;
 
-printf "Elapsed=%f secs; direct logger+response/sec=%f\n", $elapsed, $rate;
+printf "Elapsed=%f secs; direct logger+response; msecs-each=%f\n", $elapsed, $per_call;
