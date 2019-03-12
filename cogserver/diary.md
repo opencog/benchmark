@@ -66,7 +66,8 @@ running in the close-don't-wait mode.
 ```
 Latest run 11 March 2019
 ------------------------
-After cleanup of benchmark script. Pretty-print, etc.
+After cleanup of benchmark script. Pretty-print, etc. These are same
+results as above, just printed nicely.
 ```
     $ ./shell-bench.pl
     Cogserver shell performance measurements - Tue Mar 12 00:25:54 2019
