@@ -10,14 +10,14 @@ spured by bug
 create very super-simplistic `shell-bench.pl`
 
 Results (on `fanny`):
-   $ ./shell-bench.pl
+    $ ./shell-bench.pl
 
-   Cogserver shell performance test, NREP=1000
-   Elapsed=6.544488 secs; shell cmds; msecs-each=6.544488
-   Elapsed=31.836581 secs; trivial guile cmds; msecs-each=31.836581
-   Elapsed=31.883032 secs; non-trivial guile cmds; msecs-each=31.883032
-   Elapsed=31.876574 secs; trivial Atoms; msecs-each=31.876574
-   Elapsed=31.830150 secs; non-trivial Atoms; msecs-each=31.830150
+    Cogserver shell performance test, NREP=1000
+    Elapsed=6.544488 secs; shell cmds; msecs-each=6.544488
+    Elapsed=31.836581 secs; trivial guile cmds; msecs-each=31.836581
+    Elapsed=31.883032 secs; non-trivial guile cmds; msecs-each=31.883032
+    Elapsed=31.876574 secs; trivial Atoms; msecs-each=31.876574
+    Elapsed=31.830150 secs; non-trivial Atoms; msecs-each=31.830150
 
 So entering guile takes about 6x longer than entering the cogserver shell!
 (Well, not really, this is a false/misleading result, it's actually netcat
