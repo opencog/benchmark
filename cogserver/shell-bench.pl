@@ -92,6 +92,9 @@ use Socket;
 my $port = 17001;
 my $server = "127.0.0.1";
 
+# Don't use netcat; just send directly
+# argument 1: what to send (ascii string)
+# argument 2: bool flag, wait for response, or not.
 sub send_stuff {
 	socket(SOCKET, PF_INET, SOCK_STREAM, (getprotobyname('tcp'))[2])
 		or die "Can't create a socket $!\n";
@@ -99,13 +102,27 @@ sub send_stuff {
 	connect(SOCKET, pack_sockaddr_in($port, inet_aton($server)))
 		or die "Can't connect to port $port! \n";
 
-#	SOCKET->autoflush(1);
-	print SOCKET "$_[0]\n.\n.\n";
-#	my $line;
-#	while ($line = <SOCKET>) {
-#		# print "Drained: $line";
-#	}
-	close SOCKET;
+	my $text = $_[0];
+
+	# if subroutine has second argument, use it.
+	my $wait_for_response = 0;
+	if (1 < scalar @_) {
+		$wait_for_response = $_[1];
+	}
+	# print "Will wait for response: $wait_for_response\n";
+
+	if ($wait_for_response) {
+		SOCKET->autoflush(1);
+		print SOCKET "$text\n.\n.\n";
+		my $line;
+		while ($line = <SOCKET>) {
+			# print "Drained: $line";
+		}
+		close SOCKET;
+	} else {
+		print SOCKET "$text\n.\n.\n";
+		close SOCKET;
+	}
 }
 
 # send_stuff("(+ 2 2)");
@@ -113,16 +130,40 @@ sub send_stuff {
 
 # ---------------------------------------------------
 
-$nrep=10000;
+send_stuff('(use-modules (opencog logger))', 1);
+# send_stuff('(cog-logger-set-stdout! #t)');
+# send_stuff('(cog-logger-set-stdout! #f)');
+
+$nrep=1000;
 # Direct socket writes
 $loop = 0;
 $starttime = time;
 while ($loop < $nrep) {
-	send_stuff('(Concept "foo")');
+	# send_stuff('(Concept "foo")');
+	# send_stuff('(cog-logger-info "cbgb omfug")', 0);
+	send_stuff('(cog-logger-info "cbgb omfug ' . $loop . '")', 0);
 	$loop += 1;
 }
 $endtime = time;
 $elapsed = $endtime - $starttime;
 $rate = $elapsed / $nrep;
 
-printf "Elapsed=%f secs; trivial direct Atoms/sec=%f\n", $elapsed, $rate;
+printf "Elapsed=%f secs; direct logger/sec=%f\n", $elapsed, $rate;
+
+# ---------------------------------------------------
+
+# Same as above, but wit for cogserver response.
+$nrep=100;
+$loop = 0;
+$starttime = time;
+while ($loop < $nrep) {
+	# send_stuff('(Concept "foo")');
+	# send_stuff('(cog-logger-info "cbgb omfug")', 1);
+	send_stuff('(cog-logger-info "cbgb omfug ' . $loop . '")', 1);
+	$loop += 1;
+}
+$endtime = time;
+$elapsed = $endtime - $starttime;
+$rate = $elapsed / $nrep;
+
+printf "Elapsed=%f secs; direct logger+response/sec=%f\n", $elapsed, $rate;
