@@ -33,14 +33,17 @@ sub netcat_timer {
 
 	printf "nreps=%6d time=%6.3f secs; " . $label . ";\tcall=%6.3f msecs\n",
 		$nrep, $elapsed, $per_call;
+
+	# Sleep; allow cogserver to recover!?
+	sleep 2;
 }
 
 # ---------------------------------------------------
 
-netcat_timer(100, "netcat trivial shell", " ");
-netcat_timer(100, "netcat shell command", "h");
+netcat_timer(500, "netcat trivial shell", " ");
+netcat_timer(100, "netcat shell help cmd", "help");
 netcat_timer(100, "netcat trivial scheme", "(+ 2 2)");
-netcat_timer(100, "netcat non-trivial", "(+ 2 %d)");
+netcat_timer(100, "netcat non-trivial scm", "(+ 2 %d)");
 netcat_timer(100, "netcat create same atom", "(Concept \"foo\")");
 netcat_timer(100, "netcat various atoms", "(List (Number %d) (Concept \"foo\"))");
 
@@ -51,9 +54,9 @@ use Socket;
 my $port = 17001;
 my $server = "127.0.0.1";
 
-# Don't use netcat; just send directly
-# argument 1: what to send (ascii string)
-# argument 2: bool flag, wait for response, or not.
+# Don't use netcat; just send directly.
+# Argument 1: what to send (ascii string)
+# Argument 2: bool flag, either wait for response, or not.
 sub send_stuff {
 	socket(SOCKET, PF_INET, SOCK_STREAM, (getprotobyname('tcp'))[2])
 		or die "Can't create a socket $!\n";
@@ -68,6 +71,7 @@ sub send_stuff {
 	if (1 < scalar @_) {
 		$wait_for_response = $_[1];
 	}
+	# print "Will send message: $text\n";
 	# print "Will wait for response: $wait_for_response\n";
 
 	if ($wait_for_response) {
@@ -95,49 +99,34 @@ send_stuff('(use-modules (opencog logger))', 1);
 
 # ---------------------------------------------------
 
-$nrep=3000;
-# Direct socket writes
-$loop = 0;
-$starttime = time;
-while ($loop < $nrep) {
-	send_stuff('(Concept "foo ' . $loop . '")');
-	$loop += 1;
-}
-$endtime = time;
-$elapsed = $endtime - $starttime;
-$per_call = 1000.0 * $elapsed / $nrep;
+sub direct_timer {
+	my $nrep = $_[0];
+	my $label = $_[1];
+	my $wait = $_[2];
+	my $msg = $_[3];
 
-printf "nreps=%6d time=%6.3f secs; no-wait socket Atoms;\tcall=%6.3f msecs\n", $nrep, $elapsed, $per_call;
+	my $loop = 0;
+	my $starttime = time;
+	while ($loop < $nrep) {
+		my $full_msg = sprintf($msg, $loop);
+		send_stuff($full_msg, $wait);
+		$loop += 1;
+	}
+	my $endtime = time;
+	my $elapsed = $endtime - $starttime;
+	my $per_call = 1000.0 * $elapsed / $nrep;
+
+	printf "nreps=%6d time=%6.3f secs; " . $label . ";\tcall=%6.3f msecs\n",
+		$nrep, $elapsed, $per_call;
+
+	# Sleep; allow cogserver to recover!?
+	sleep 2;
+}
 
 # ---------------------------------------------------
 
-$nrep=3000;
-# Direct socket writes
-$loop = 0;
-$starttime = time;
-while ($loop < $nrep) {
-	# send_stuff('(cog-logger-info "cbgb omfug")', 0);
-	send_stuff('(cog-logger-info "cbgb omfug ' . $loop . '")', 0);
-	$loop += 1;
-}
-$endtime = time;
-$elapsed = $endtime - $starttime;
-$per_call = 1000.0 * $elapsed / $nrep;
-
-printf "nreps=%6d time=%6.3f secs; no-wait socket logger;\tcall=%6.3f msecs\n", $nrep, $elapsed, $per_call;
+direct_timer(500, "no-wait socket atoms ", 0, "(Concept \"foo %d\")");
+direct_timer(500, "no-wait socket logger", 0, "(cog-logger-info \"cbgb omfug %d\")");
+direct_timer(50, "socket-wait response ", 1, "(cog-logger-info \"cbgb omfug %d\")");
 
 # ---------------------------------------------------
-
-# Same as above, but wit for cogserver response.
-$nrep=300;
-$loop = 0;
-$starttime = time;
-while ($loop < $nrep) {
-	send_stuff('(cog-logger-info "cbgb omfug ' . $loop . '")', 1);
-	$loop += 1;
-}
-$endtime = time;
-$elapsed = $endtime - $starttime;
-$per_call = 1000.0 * $elapsed / $nrep;
-
-printf "nreps=%6d time=%6.3f secs; socket-wait response;\tcall=%6.3f msecs\n", $nrep, $elapsed, $per_call;
