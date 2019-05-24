@@ -1617,3 +1617,51 @@ Remarks:
 * The removeAtom benchmark is broken, because the lump of cog-delete
     calls are deleting non-existent atoms, causing exceptions to be
     thrown. So this is exception-overhead dominated.
+
+======================================================================
+
+24 May 2019
+---------------
+New core baseline. Fanny.  This baseline measures perf after misc
+changes, including:
+* Removal of DeleteLink from AtomTable #2175
+* Removal of StateLink from AtomTable #2176
+
+compiler: gcc version 6.3.0 (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
+glibc: ldconfig -V (Debian GLIBC 2.24-11+deb9u4) 2.24
+
+                     -A          -A           -A
+   test            May 2018    Nov 2018       Today
+   name            K-ops/sec   K-ops/sec      2019         Comments
+   ----            ---------   ---------      ----      -----------------
+  noop          2.17e6       1.82e6       2.15e6
+  getType         101K         105K          93K
+  getTV             4632         4567         4578
+  setTV              901         1271         1075
+  pointerCast      11.5K        11.2K        11.5K
+  getIncomingSet    2530         2530         3006         unexpected!
+  getOutgoingSet   52.7K        46.7K        51.7K
+  addNode            383          361          364
+  addLink -A         135           76           72        wtf!????
+  addLink -m         135          184          154        A hah!
+  removeAtom         705          924         1012
+
+addLink: two different results, based on whether the test is run with
+`./atomspace_bm -A` or with `./atomspace_bm -m addLink`.  Apparently,
+the former means that `addNode` adds lots of atoms to the atomspace,
+throwing off the `addLink` measurements. Measured distinctly, the
+expected performance increase in addLink does indeed show up.
+
+The perf of addLink also depends strongly on the -n flag: bigger reps
+means lower numbers.
+
+Perf of setTruthValue also depends on the -n flag.  Why?
+
+The large change in getIncomingSet is unexpected. Why?
+Possibly due to a glibc change?
+
+Fun-n-games: compared to January 2015, all numbers are 3x to 8x better,
+except for addLink, which is only 2x better.  Clearly, link disambig
+remains a challenge, bottle-necked in the AtomTable code.
+
+TODO: measure getHandle() time ...
