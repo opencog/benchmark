@@ -63,7 +63,7 @@ AtomSpaceBenchmark::AtomSpaceBenchmark()
     counter = 0;
     showTypeSizes = false;
     baseNclock = 2000;
-    baseNreps = 200 * baseNclock;
+    baseNreps = 800 * baseNclock;
     baseNloops = 1;
     Nreserve = 0;
 

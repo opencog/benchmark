@@ -24,7 +24,7 @@ int main(int argc, char** argv)
      "-m <methodname>\tMethod to benchmark\n"
      "-l        \tList valid method names to benchmark\n"
      "-n <int>  \tHow many times to call the method in the measurement loop\n"
-     "          \t(default: 400000)\n"
+     "          \t(default: 1600000)\n"
      "-r <int>  \tLooping count; how many times a python/scheme operation is looped\n"
      "-u <int>  \tInner looping count\n"
      "          \t(default: 2000)\n"
