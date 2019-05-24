@@ -29,7 +29,6 @@
 #include <opencog/util/Config.h>
 #include <opencog/guile/SchemeEval.h>
 #include <opencog/atomspace/AtomSpace.h>
-#include <opencog/query/BindLinkAPI.h>
 
 #define DEFAULT_CONFIG_FILE_NAME "query_benchmark.conf"
 #define BENCHMARKS_TO_RUN_PROPERTY "benchmarks_to_run"
@@ -101,10 +100,10 @@ void run_benchmark(const std::string& id)
     }
 
     {
-        Handle result;
+        ValuePtr result;
         TimePoint start = std::chrono::high_resolution_clock::now();
         for (int iteration = 0; iteration < iterations_count; iteration++) {
-            result = satisfying_set(&atomspace, query);
+            result = query->execute(&atomspace);
         }
         TimePoint end = std::chrono::high_resolution_clock::now();
         double duration_ms = duration_in_millis(start, end);

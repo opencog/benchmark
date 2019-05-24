@@ -15,7 +15,6 @@
 #include <opencog/atoms/atom_types/types.h>
 #include <opencog/atoms/base/Node.h>
 #include <opencog/atoms/base/Link.h>
-#include <opencog/atoms/truthvalue/AttentionValue.h>
 #include <opencog/atoms/truthvalue/CountTruthValue.h>
 #include <opencog/atoms/truthvalue/IndefiniteTruthValue.h>
 #include <opencog/atoms/truthvalue/SimpleTruthValue.h>
@@ -92,8 +91,7 @@ AtomSpaceBenchmark::~AtomSpaceBenchmark()
 }
 
 // This is wrong, because it fails to count also the amount of RAM
-// used by the AtomTable to store indexes, as well as the AttentionBank
-// to store the AttentionValues.
+// used by the AtomTable to store indexes.
 size_t AtomSpaceBenchmark::estimateOfAtomSize(Handle h)
 {
     size_t total = 0;
@@ -160,7 +158,6 @@ void AtomSpaceBenchmark::printTypeSizes()
     cout << "SimpleTruthValue = " << sizeof(SimpleTruthValue) << endl;
     cout << "CountTruthValue = " << sizeof(CountTruthValue) << endl;
     cout << "IndefiniteTruthValue = " << sizeof(IndefiniteTruthValue) << endl;
-    cout << "AttentionValue = " << sizeof(AttentionValue) << endl;
     cout << "IncomingSet = " << sizeof(IncomingSet) << endl;
     cout << "AtomSignal = " << sizeof(AtomSignal) << endl;
     cout << "AtomPairSignal = " << sizeof(AtomPairSignal) << endl;
