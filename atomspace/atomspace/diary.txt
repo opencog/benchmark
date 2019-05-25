@@ -1626,25 +1626,28 @@ New core baseline. Fanny.  This baseline measures perf after misc
 changes, including:
 * Removal of DeleteLink from AtomTable #2175
 * Removal of StateLink from AtomTable #2176
+* AtomTable cleanup #2181
 
 compiler: gcc version 6.3.0 (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
 glibc: ldconfig -V (Debian GLIBC 2.24-11+deb9u4) 2.24
+
+./atomspace_bm -A -n 4000000
 
                      -A          -A           -A
    test            May 2018    Nov 2018       Today
    name            K-ops/sec   K-ops/sec      2019         Comments
    ----            ---------   ---------      ----      -----------------
   noop          2.17e6       1.82e6       2.15e6
-  getType         101K         105K          93K
+  getType         101K         105K          98K
   getTV             4632         4567         4578
   setTV              901         1271         1075
   pointerCast      11.5K        11.2K        11.5K
-  getIncomingSet    2530         2530         3006         unexpected!
-  getOutgoingSet   52.7K        46.7K        51.7K
+  getIncomingSet    2530         2530         3091        unexpected!
+  getOutgoingSet   52.7K        46.7K        52.3K
   addNode            383          361          364
-  addLink -A         135           76           72        wtf!????
-  addLink -m         135          184          154        A hah!
-  removeAtom         705          924         1012
+  addLink -A         135           76           85        wtf!????
+  addLink -m         135          184          165        A hah!
+  removeAtom         705          924         1141
 
 addLink: two different results, based on whether the test is run with
 `./atomspace_bm -A` or with `./atomspace_bm -m addLink`.  Apparently,
