@@ -3,10 +3,11 @@ Performance diary
 -----------------
 
 Below reports performance, measured on "fanny", a circa-2014 server.
+All results by Linas.
 
 3 July 2019
 -----------
-Repeated testing. Run as "guile -l nano-en.scm"
+Repeated testing. Run as "guile -l nano-en.scm".
 
 Got this:
 
@@ -14,8 +15,8 @@ Elapsed: 124 secs Tot-cnt=152904 Avg=0.2153 secs/word Rate=1233.1 cnts/sec
 Elapsed: 123 secs Tot-cnt=152904 Avg=0.2135 secs/word Rate=1243.1 cnts/sec
 Elapsed: 128 secs Tot-cnt=152904 Avg=0.2222 secs/word Rate=1194.6 cnts/sec
 Elapsed: 123 secs Tot-cnt=152904 Avg=0.2135 secs/word Rate=1243.1 cnts/sec
+Elapsed: 126 secs Tot-cnt=152904 Avg=0.2188 secs/word Rate=1213.5 cnts/sec
+
 
 As can be seen, there is relatively little variation, from run to run,
 in the measured performance.
-
-

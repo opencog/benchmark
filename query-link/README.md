@@ -21,6 +21,8 @@ only because its many thousands of tims smaller than the real datasets
 it was derived from.  As a "real-world" benchmark, it should represent
 "real-world" results that users can expect to get.
 
+A diary of results can be found in `diary.txt`.
+
 ==Running the benchmark
 
 Do this:
