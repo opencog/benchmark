@@ -4,7 +4,7 @@
 (use-modules (srfi srfi-1))
 (use-modules (opencog) (opencog matrix) (opencog exec))
 (use-modules (opencog persist) (opencog persist-sql))
-(use-modules (opencog nlp))
+(use-modules (opencog nlp) (opencog nlp learn))
 (use-modules (opencog cogserver))
 
 ; Start the cogserver on port 19405
@@ -87,40 +87,39 @@
 			(cog-arity (cog-execute! (make-blink LEFT-WRD))))
 		(wrap func))
 
-	; Why is this so slow?
+	; Performance stats
 	(define wrd-no 0)
 	(define (word-no) (set! wrd-no (+ wrd-no 1)) wrd-no)
 
 	(define start-time (current-time))
-	(define since-time (current-time))
 	(define (elapsed-secs)
 		(define now (current-time))
-		(define diff (- now since-time))
-		(set! since-time now)
+		(define diff (- now start-time))
+		(set! start-time now)
 		diff)
 
-	(define tot-cnt 0)
-	(define nwrds (length WORD-LST))
-
 	(define (link-count-x LEFT-WRD)
-		(define lc (link-count LEFT-WRD))
-		(define ti (- (current-time) start-time))
-		(if (= 0 ti) (set! ti 1))
-		(set! tot-cnt (+ tot-cnt lc))
-		(format #t "~A of ~A count=~A in ~A secs wrd ~A"
-			(word-no) nwrds lc (elapsed-secs) LEFT-WRD)
-		(format #t "--- Elapsed: ~D:~2,'0D:~2,'0D Tot-cnt=~A Avg=~6F secs/word Rate=~6F cnts/sec\n"
-			(inexact->exact (floor (/ ti 3600.0)))
-			(inexact->exact (floor (/ (remainder ti 3600) 60.)))
-			(remainder ti 60)
-			tot-cnt
-			(/ ti wrd-no)
-			(/ tot-cnt ti))
-		lc)
+		(display ".")
+		(link-count LEFT-WRD))
 
 	; Count over all words.
-	(fold
-		(lambda (WRD CNT) (+ CNT (link-count-x WRD)))
-		0 WORD-LST)
+	(define tot-cnt
+		(fold
+			(lambda (WRD CNT) (+ CNT (link-count-x WRD)))
+			0 WORD-LST))
+
+	(define (report)
+		(define ti (elapsed-secs))
+		(define nwrds (length WORD-LST))
+		(newline)
+		(format #t "--- ~D words in ~D secs Tot-cnt=~A Avg=~6F secs/word Rate=~6F cnts/sec\n"
+			nwrds ti tot-cnt (/ ti wrd-no) (/ tot-cnt ti))
+	)
+
+	(report)
 )
+
+; Run the benchmark
+(format #t "Will count ~D words\n" (psa 'left-basis-size))
+(count-full-links (psa 'left-basis))
 ; ------------------------------------------------------------------
