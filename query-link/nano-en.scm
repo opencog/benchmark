@@ -124,7 +124,7 @@
 )
 
 ; Run the benchmark
-(format #t "Will count ~D words\n" (psa 'left-basis-size))
+(format #t "Will count ~D words " (psa 'left-basis-size))
 (count-full-links (psa 'left-basis))
 (exit)
 ; ------------------------------------------------------------------

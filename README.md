@@ -4,18 +4,30 @@ Collection of tools and data to benchmark the AtomSpace, the pattern
 matcher and other OpenCog processes.
 
 ## Organization
+Each distinct benchmark has it's own instructions for building and
+running it.  See individual directories for details.
 
-For now all benchmarks across the various OpenCog repositories will be
-centralized here, with the folder names (under that root folder) equal
-to names of the repositories being benchmarked. As well as likely some
-common tools placed under some common folder.
+* atomspace -- A synthetic benchmark for measuring core AtomSpace
+  functions, such as rates for creating Nodes and Links, rates for
+  deleting them, and rates for setting and getting TruthValues and
+  IncomingSets.
+
+* query-trite -- A synthetic benchmark containing a trivial pattern
+  matcher query.
+
+* query-links -- A real-world benchmark for performing a complex
+  pattern match on a real-world natural-langauge dataset.
+
+
 
 ## Prerequisites
+Some, but not all of the benchmarks require the "Google Benchmarks"
+micro-benchmarking tool.
 
 ### Google Benchmarks
 
-Google Benchmark is a library supporting C++ benchmarks writing.
-Use following commands to build and install it:
+Google Benchmark is a library supporting C++ micro-benchmarking.
+Build and install it:
 
 ```
     git clone https://github.com/google/benchmark.git google-benchmark
@@ -24,15 +36,4 @@ Use following commands to build and install it:
     cmake -DCMAKE_BUILD_TYPE=Release -DBENCHMARK_ENABLE_GTEST_TESTS=OFF ..
     make
     sudo make install
-```
-
-## Building Benchmarks
-
-Perform the following steps at the shell prompt:
-```
-    cd to project root dir
-    mkdir build
-    cd build
-    cmake ..
-    make
 ```
