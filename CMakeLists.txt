@@ -113,6 +113,7 @@ ENDIF()
 # Add subdirectories
 
 ADD_SUBDIRECTORY(atomspace)
+ADD_SUBDIRECTORY(micro)
 ADD_SUBDIRECTORY(query-trite)
 
 # ===================================================================

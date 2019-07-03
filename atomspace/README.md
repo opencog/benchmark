@@ -85,31 +85,3 @@ memory measurement via max RSS isn't useful when running multiple methods).
 
 A better way might be to record the number of mallocs:
 http://www.gnu.org/s/libc/manual/html_node/Hooks-for-Malloc.html
-
-# Google Benchmark based benchmarks
-
-Run benchmarks:
-
-```
-cd <BUILD_DIR>/atomspace/atomspace
-./benchmark
-```
-
-Benchmark command line parameters:
-
-```
-benchmark [--benchmark_list_tests={true|false}]
-          [--benchmark_filter=<regex>]
-          [--benchmark_min_time=<min_time>]
-          [--benchmark_repetitions=<num_repetitions>]
-          [--benchmark_report_aggregates_only={true|false}
-          [--benchmark_format=<console|json|csv>]
-          [--benchmark_out=<filename>]
-          [--benchmark_out_format=<json|console|csv>]
-          [--benchmark_color={auto|true|false}]
-          [--benchmark_counters_tabular={true|false}]
-          [--v=<verbosity>]
-```
-
-See Google Benchmark documentation https://github.com/google/benchmark/blob/master/README.md and ```DEFINE_*``` definitions in https://github.com/google/benchmark/blob/master/src/benchmark.cc for command line parameters explanation.
-
