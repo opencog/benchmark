@@ -1,2 +1,2 @@
-Tools and data for benchmarking the code in the atomspace repository
+Tools and data for benchmarking the atomspace
 https://github.com/opencog/atomspace
