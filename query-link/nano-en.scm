@@ -20,6 +20,11 @@
 (psa 'fetch-pairs)
 (sql-close)
 
+(cog-report-counts)
+(format #t "Loaded ~D words, ~D disjuncts and ~D Sections\n"
+	(psa 'left-basis-size) (psa 'right-basis-size)
+	(length (psa 'get-all-elts)))
+
 ; ------------------------------------------------------------------
 ; Define the main benchmarking routine
 ; Count links between sections.
@@ -88,9 +93,6 @@
 		(wrap func))
 
 	; Performance stats
-	(define wrd-no 0)
-	(define (word-no) (set! wrd-no (+ wrd-no 1)) wrd-no)
-
 	(define start-time (current-time))
 	(define (elapsed-secs)
 		(define now (current-time))
@@ -112,8 +114,10 @@
 		(define ti (elapsed-secs))
 		(define nwrds (length WORD-LST))
 		(newline)
-		(format #t "--- ~D words in ~D secs Tot-cnt=~A Avg=~6F secs/word Rate=~6F cnts/sec\n"
-			nwrds ti tot-cnt (/ ti wrd-no) (/ tot-cnt ti))
+		(newline)
+		(format #t "Elapsed: ~D secs Tot-cnt=~A Avg=~6F secs/word Rate=~6F cnts/sec\n"
+			ti tot-cnt (/ ti nwrds) (/ tot-cnt ti))
+		(newline)
 	)
 
 	(report)
@@ -122,4 +126,5 @@
 ; Run the benchmark
 (format #t "Will count ~D words\n" (psa 'left-basis-size))
 (count-full-links (psa 'left-basis))
+(exit)
 ; ------------------------------------------------------------------
