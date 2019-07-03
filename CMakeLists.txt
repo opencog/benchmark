@@ -119,7 +119,8 @@ ADD_SUBDIRECTORY(query-trite)
 # ===================================================================
 # Show a summary of what we got
 
-SUMMARY_ADD("AtomSpace bench" "Microbenchmarks for atomspace classes and methods" HAVE_ATOMSPACE)
-SUMMARY_ADD("Python bench" "Microbenchmarks for Python (cython) bindings" HAVE_CYTHON)
-SUMMARY_ADD("Scheme bench" "Benchmarks for Scheme (guile) bindings" HAVE_GUILE)
+SUMMARY_ADD("AtomSpace bench" "Synthetic benchmarks for AtomSpace methods" HAVE_ATOMSPACE)
+SUMMARY_ADD("Python bench" "Synthetic benchmarks for Python (cython) bindings" HAVE_CYTHON)
+SUMMARY_ADD("Scheme bench" "Synthetic benchmarks for Scheme (guile) bindings" HAVE_GUILE)
+SUMMARY_ADD("Micro bench" "Assorted microbenchmarks" benchmark_FOUND)
 SUMMARY_SHOW()

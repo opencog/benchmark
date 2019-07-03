@@ -7,18 +7,22 @@ matcher and other OpenCog processes.
 Each distinct benchmark has it's own instructions for building and
 running it.  See individual directories for details.
 
-* atomspace -- A synthetic benchmark for measuring core AtomSpace
+The most interesting benchmarks are probably the **query-links**
+benchmark (because it is a real-world benchmark) and the **atomspace**
+benchmark (because it has a very long measurement history).
+
+* __atomspace__ -- A synthetic benchmark for measuring core AtomSpace
   functions, such as rates for creating Nodes and Links, rates for
   deleting them, and rates for setting and getting TruthValues and
   IncomingSets.
 
-* micro -- Micro-benchmarks for misc items.
+* __micro__ -- Micro-benchmarks for misc items.
 
-* python -- Benchmarks for the python bindinggs to various AtomSpace
+* __python__ -- Benchmarks for the python bindinggs to various AtomSpace
   subsystems.
 
-* query-trite -- A synthetic benchmark containing a trivial pattern
+* __query-trite__ -- A synthetic benchmark containing a trivial pattern
   matcher query.
 
-* query-links -- A real-world benchmark for performing a complex
+* __query-links__ -- A real-world benchmark for performing a complex
   pattern match on a real-world natural-langauge dataset.
