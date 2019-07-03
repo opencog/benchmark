@@ -21,8 +21,12 @@ benchmark (because it has a very long measurement history).
 * __python__ -- Benchmarks for the python bindinggs to various AtomSpace
   subsystems.
 
-* __query-trite__ -- A synthetic benchmark containing a trivial pattern
-  matcher query.
+* __query-trite__ -- A synthetic benchmark containing some trivial
+  pattern matcher queries.
 
 * __query-links__ -- A real-world benchmark for performing a complex
   pattern match on a real-world natural-langauge dataset.
+
+* __cogserver__ -- Benchmark of network I/O to the cogserver.
+  Highlights issues created by using `netcat` instead of using native
+  socket I/O.
