@@ -4,35 +4,29 @@ Collection of tools and data to benchmark the AtomSpace, the pattern
 matcher and other OpenCog processes.
 
 ## Organization
+Each distinct benchmark has it's own instructions for building and
+running it.  See individual directories for details.
 
-For now all benchmarks across the various OpenCog repositories will be
-centralized here, with the folder names (under that root folder) equal
-to names of the repositories being benchmarked. As well as likely some
-common tools placed under some common folder.
+The most interesting benchmarks are probably the **query-links**
+benchmark (because it is a real-world benchmark) and the **atomspace**
+benchmark (because it has a very long measurement history).
 
-## Prerequisites
+* __atomspace__ -- A synthetic benchmark for measuring core AtomSpace
+  functions, such as rates for creating Nodes and Links, rates for
+  deleting them, and rates for setting and getting TruthValues and
+  IncomingSets.
 
-### Google Benchmarks
+* __micro__ -- Micro-benchmarks for misc items.
 
-Google Benchmark is a library supporting C++ benchmarks writing.
-Use following commands to build and install it:
+* __python__ -- Benchmarks for the python bindinggs to various AtomSpace
+  subsystems.
 
-```
-    git clone https://github.com/google/benchmark.git google-benchmark
-    mkdir google-benchmark/build
-    cd google-benchmark/build
-    cmake -DCMAKE_BUILD_TYPE=Release -DBENCHMARK_ENABLE_GTEST_TESTS=OFF ..
-    make
-    sudo make install
-```
+* __query-trite__ -- A synthetic benchmark containing some trivial
+  pattern matcher queries.
 
-## Building Benchmarks
+* __query-links__ -- A real-world benchmark for performing a complex
+  pattern match on a real-world natural-langauge dataset.
 
-Perform the following steps at the shell prompt:
-```
-    cd to project root dir
-    mkdir build
-    cd build
-    cmake ..
-    make
-```
+* __cogserver__ -- Benchmark of network I/O to the cogserver.
+  Highlights issues created by using `netcat` instead of using native
+  socket I/O.
