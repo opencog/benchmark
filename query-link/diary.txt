@@ -7,8 +7,17 @@ All results by Linas.
 
 3 July 2019
 -----------
-Repeated testing. Run as "guile -l nano-en.scm".
+Modern version of guile, current atomspace.
 
+Guile: guile (GNU Guile) 2.9.2.14-1fb399
+Atomspace: git log
+commit a015b988246cd042cba836b30e050032fd5feca3
+    Merge: 978d997 e167406
+    Author: Nil Geisweiller <ngeiswei@gmail.com>
+    Date:   Tue Jul 2 13:01:36 2019 +0300
+
+
+Repeated testing. Run as "guile -l nano-en.scm".
 Got this:
 
 Elapsed: 124 secs Tot-cnt=152904 Avg=0.2153 secs/word Rate=1233.1 cnts/sec
@@ -20,3 +29,22 @@ Elapsed: 126 secs Tot-cnt=152904 Avg=0.2188 secs/word Rate=1213.5 cnts/sec
 
 As can be seen, there is relatively little variation, from run to run,
 in the measured performance.
+
+Older atomspace
+---------------
+For a baseline, lets run a version from a year ago...
+
+guile: guile (GNU Guile) 2.2.2.2-fc84f
+git log:
+    commit f9b9c8ce3f46f6349f4ad65fd85c974a031ad819
+    Merge: a0944c3 1dcf062
+    Author: Nil Geisweiller <ngeiswei@gmail.com>
+    Date:   Sat May 5 18:31:20 2018 +0300
+
+Got this:
+Elapsed: 18 secs Tot-cnt=1487 Avg=0.0313 secs/word Rate=82.611 cnts/sec
+Elapsed: 18 secs Tot-cnt=1481 Avg=0.0313 secs/word Rate=82.278 cnts/sec
+
+Well, the rate is much much higher, but the total cunt is also wrong.
+Conclude: pattern matcher at that version had a serious bug in it,
+probably with the GlobNodes. Yes, there were GlobNode bugs back then...

@@ -27,7 +27,7 @@ A diary of results can be found in `diary.txt`.
 
 Do this:
 ```
-$ creatdb en_nano
+$ createdb en_nano
 $ cat en_nano.sql | psql en_nano
 ```
 The above creates a database with 43752 atoms in it.
