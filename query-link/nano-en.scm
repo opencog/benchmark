@@ -115,8 +115,11 @@
 		(define nwrds (length WORD-LST))
 		(newline)
 		(newline)
-		(format #t "Elapsed: ~D secs Tot-cnt=~A Avg=~6F secs/word Rate=~6F cnts/sec\n"
-			ti tot-cnt (/ ti nwrds) (/ tot-cnt ti))
+		(if (not (= 152904 tot-cnt))
+			(format #t "Measurement failure: incorrect number of links found: ~D\n"
+				tot-cnt)
+			(format #t "Elapsed: ~D secs Tot-cnt=~A Avg=~6F secs/word Rate=~6F cnts/sec\n"
+				ti tot-cnt (/ ti nwrds) (/ tot-cnt ti)))
 		(newline)
 	)
 
