@@ -11,6 +11,5 @@ IF (benchmark_FOUND)
 		${ATOMSPACE_LIBRARIES}
 		${COGUTIL_LIBRARY}
 		benchmark::benchmark
-		benchmark::benchmark_main
 	)
 ENDIF(benchmark_FOUND)
