@@ -1,9 +1,15 @@
 # Micro-Benchmarking
 
 ## Prerequisites
-This requires the "Google Benchmark" micro-benchmarking tool.
+This requires the "Google Benchmark" micro-benchmarking tool v1.3.0 or higher.
 
 Google Benchmark is a library supporting C++ micro-benchmarking.
+
+Install it from repository:
+```
+apt-get install libbenchmark-dev
+```
+
 Build and install it:
 
 ```

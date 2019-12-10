@@ -51,7 +51,7 @@ ENDIF (ATOMSPACE_FOUND)
 
 # ----------------------------------------------------------
 # Google benchmark package (optional)
-FIND_PACKAGE(benchmark)
+FIND_PACKAGE(benchmark 1.3.0)
 IF (benchmark_FOUND)
 	MESSAGE(STATUS "Google Benchmark ${benchmark_VERSION} found.")
 ELSE (benchmark_FOUND)

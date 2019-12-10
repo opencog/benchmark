@@ -5,12 +5,12 @@ IF (benchmark_FOUND)
 		benchmark.cc
 		scopelink_bm.cc
 		evaluationlink_bm.cc
+		variables_bm.cc
 	)
 
 	TARGET_LINK_LIBRARIES (benchmark
 		${ATOMSPACE_LIBRARIES}
 		${COGUTIL_LIBRARY}
 		benchmark::benchmark
-		benchmark::benchmark_main
 	)
 ENDIF(benchmark_FOUND)
