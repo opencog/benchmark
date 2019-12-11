@@ -1,6 +1,10 @@
 
 Linas micro-benchmark diary
 ---------------------------
+General critique of the micro-benchmarks: they're not realistic, they
+repeatedly measure operations that no ordinary block of code would ever
+do (e.g. reinsert the same atom, over and over). But .. whatever.
+
 All tests on Fanny.  Header is always:
 
 Running micro/benchmark
@@ -58,5 +62,26 @@ BM_VariablesExt_NewVariable              196 ns        196 ns    3484511
 BM_VariablesExt_SameVarNoRestrict        200 ns        200 ns    3530943
 BM_VariablesExt_NewVarNoRestrict         202 ns        202 ns    3468749
 BM_VariablesExt_SameVarRestrict          495 ns        495 ns    1405215
+
+---------
+After commit 7738a4b9cda09707e4d344da6845777ff79a22e8
+Best of three
+
+BM_CreateScopeLinkWithVarList           1215 ns       1215 ns     566363
+BM_CreateScopeLinkWithoutVarList        2499 ns       2499 ns     282301
+BM_CreateScopeLinkWithLambda            1089 ns       1089 ns     635725
+BM_AddSameScopeLink                      223 ns        223 ns    3140910
+BM_AddScopeLink/4096                     258 ns        258 ns    2638276
+BM_AddScopeLink/8192                     264 ns        264 ns    2538248
+BM_AddScopeLink/16384                    298 ns        298 ns    2154139
+BM_CreateEvaluationLink                  799 ns        799 ns     881778
+BM_AddSameEvaluationLink                 243 ns        243 ns    2896684
+BM_AddEvaluationLink/16384               287 ns        287 ns    2359894
+BM_AddEvaluationLink/32768               320 ns        320 ns    1801575
+BM_AddEvaluationLink/65536               392 ns        392 ns    1584650
+BM_VariablesExt_NewVariable              204 ns        204 ns    3430119
+BM_VariablesExt_SameVarNoRestrict        200 ns        200 ns    3476118
+BM_VariablesExt_NewVarNoRestrict         204 ns        204 ns    3436843
+BM_VariablesExt_SameVarRestrict          503 ns        503 ns    1340012
 
 ---------
