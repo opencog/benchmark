@@ -37,3 +37,15 @@ BM_VariablesExt_NewVariable              205 ns        205 ns    3393251
 BM_VariablesExt_SameVarNoRestrict        201 ns        201 ns    3434521
 BM_VariablesExt_NewVarNoRestrict         200 ns        200 ns    3473376
 BM_VariablesExt_SameVarRestrict          511 ns        511 ns    1349081
+
+---------
+The last four changed after commit da68749c2c9228a38f2cf95eb5479163a14e99aa
+This appears to be a consistent change, holding for three runs.
+The others appear to be unaffected...
+
+BM_VariablesExt_NewVariable              194 ns        194 ns    3575603
+BM_VariablesExt_SameVarNoRestrict        192 ns        192 ns    3577560
+BM_VariablesExt_NewVarNoRestrict         196 ns        196 ns    3600698
+BM_VariablesExt_SameVarRestrict          484 ns        484 ns    1430776
+
+---------
