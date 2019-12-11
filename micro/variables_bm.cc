@@ -39,11 +39,12 @@ static void BM_VariablesExtend_NewVariable(benchmark::State& state)
 	Handle varY = atomspace.add_node(VARIABLE_NODE, "$Y");
 	Handle varDeclA = atomspace.add_link(VARIABLE_LIST, varX);
 	Handle varDeclB = atomspace.add_link(VARIABLE_LIST, varY);
-	Variables varsA(VariableList(varDeclA).get_variables());
+	auto& listA = VariableList(varDeclA).get_variables();
 	Variables varsB(VariableList(varDeclB).get_variables());
 
 	for (auto _ : state)
 	{
+		Variables varsA(listA);
 		varsA.extend(varsB);
 	}
 }
@@ -57,11 +58,12 @@ static void BM_VariablesExtend_SameVariableNoTypeRestrictions(benchmark::State& 
 	Handle varXTyped = atomspace.add_link(TYPED_VARIABLE_LINK, varX, conceptNodeType);
 	Handle varDeclA = atomspace.add_link(VARIABLE_LIST, varXTyped);
 	Handle varDeclB = atomspace.add_link(VARIABLE_LIST, varX);
-	Variables varsA(VariableList(varDeclA).get_variables());
+	auto& listA = VariableList(varDeclA).get_variables();
 	Variables varsB(VariableList(varDeclB).get_variables());
 
 	for (auto _ : state)
 	{
+		Variables varsA(listA);
 		varsA.extend(varsB);
 	}
 }
@@ -73,11 +75,12 @@ static void BM_VariablesExtend_NewVariableNoTypeRestrictions(benchmark::State& s
 	Handle varX = atomspace.add_node(VARIABLE_NODE, "$X");
 	Handle varDeclA = atomspace.add_link(VARIABLE_LIST);
 	Handle varDeclB = atomspace.add_link(VARIABLE_LIST, varX);
-	Variables varsA(VariableList(varDeclA).get_variables());
+	auto& listA = VariableList(varDeclA).get_variables();
 	Variables varsB(VariableList(varDeclB).get_variables());
 
 	for (auto _ : state)
 	{
+		Variables varsA(listA);
 		varsA.extend(varsB);
 	}
 }
@@ -91,11 +94,12 @@ static void BM_VariablesExtend_SameVariableWithTypeRestrictions(benchmark::State
 	Handle varXTyped = atomspace.add_link(TYPED_VARIABLE_LINK, varX, conceptNodeType);
 	Handle varDeclA = atomspace.add_link(VARIABLE_LIST, varXTyped);
 	Handle varDeclB = atomspace.add_link(VARIABLE_LIST, varXTyped);
-	Variables varsA(VariableList(varDeclA).get_variables());
+	auto& listA = VariableList(varDeclA).get_variables();
 	Variables varsB(VariableList(varDeclB).get_variables());
 
 	for (auto _ : state)
 	{
+		Variables varsA(listA);
 		varsA.extend(varsB);
 	}
 }
