@@ -1,0 +1,37 @@
+
+Linas micro-benchmark diary
+---------------------------
+All tests on Fanny.  Header is always:
+
+Running micro/benchmark
+Run on (24 X 2600 MHz CPU s)
+CPU Caches:
+  L1 Data 16K (x24)
+  L1 Instruction 64K (x12)
+  L2 Unified 2048K (x12)
+  L3 Unified 6144K (x4)
+
+11 Dec 2019
+-----------
+
+Measurements seem to vary by about 1%-2% from run to run.
+
+-------------------------------------------------------------------------
+Benchmark                                  Time           CPU Iterations
+-------------------------------------------------------------------------
+BM_CreateScopeLinkWithVarList           1278 ns       1278 ns     559285
+BM_CreateScopeLinkWithoutVarList        2629 ns       2629 ns     268253
+BM_CreateScopeLinkWithLambda            1100 ns       1100 ns     616450
+BM_AddSameScopeLink                     2845 ns       2845 ns     240867
+BM_AddScopeLink/4096                    3800 ns       3800 ns     180805
+BM_AddScopeLink/8192                    3967 ns       3967 ns     174620
+BM_AddScopeLink/16384                   4168 ns       4168 ns     167459
+BM_CreateEvaluationLink                  810 ns        810 ns     844208
+BM_AddSameEvaluationLink                1668 ns       1668 ns     415360
+BM_AddEvaluationLink/16384              2316 ns       2316 ns     282109
+BM_AddEvaluationLink/32768              2484 ns       2484 ns     244271
+BM_AddEvaluationLink/65536              2838 ns       2838 ns     191011
+BM_VariablesExt_NewVariable              210 ns        210 ns    3389676
+BM_VariablesExt_SameVarNoRestrict        201 ns        201 ns    3434521
+BM_VariablesExt_NewVarNoRestrict         208 ns        208 ns    3380425
+BM_VariablesExt_SameVarRestrict          511 ns        511 ns    1349081
