@@ -13,27 +13,27 @@ CPU Caches:
 
 11 Dec 2019
 -----------
+git revision c475d3b9f9e0c4fedc9f7e895d3e6197d0f14073
 
-Measurements seem to vary by about 1%-2% from run to run.
-Best of 2 runs
+Measurements seem to vary by about 2%-3% from run to run.
+Best of 3 runs
 
 -------------------------------------------------------------------------
 Benchmark                                  Time           CPU Iterations
 -------------------------------------------------------------------------
-BM_CreateScopeLinkWithVarList           1271 ns       1271 ns     551621
+BM_CreateScopeLinkWithVarList           1257 ns       1257 ns     549985
 BM_CreateScopeLinkWithoutVarList        2594 ns       2594 ns     273817
-BM_CreateScopeLinkWithLambda            1100 ns       1100 ns     616450
-BM_AddSameScopeLink                     2845 ns       2845 ns     240867
+BM_CreateScopeLinkWithLambda            1093 ns       1093 ns     629922
+BM_AddSameScopeLink                     2817 ns       2817 ns     249574
 BM_AddScopeLink/4096                    3761 ns       3761 ns     186827
-BM_AddScopeLink/8192                    3967 ns       3967 ns     174620
 BM_AddScopeLink/8192                    3953 ns       3953 ns     181103
 BM_AddScopeLink/16384                   4023 ns       4023 ns     160039
 BM_CreateEvaluationLink                  791 ns        791 ns     848020
 BM_AddSameEvaluationLink                1623 ns       1623 ns     424334
-BM_AddEvaluationLink/16384              2304 ns       2304 ns     284329
+BM_AddEvaluationLink/16384              2295 ns       2295 ns     271391
 BM_AddEvaluationLink/32768              2464 ns       2464 ns     250087
 BM_AddEvaluationLink/65536              2784 ns       2784 ns     195628
-BM_VariablesExt_NewVariable              210 ns        210 ns    3389676
+BM_VariablesExt_NewVariable              205 ns        205 ns    3393251
 BM_VariablesExt_SameVarNoRestrict        201 ns        201 ns    3434521
-BM_VariablesExt_NewVarNoRestrict         208 ns        208 ns    3380425
+BM_VariablesExt_NewVarNoRestrict         200 ns        200 ns    3473376
 BM_VariablesExt_SameVarRestrict          511 ns        511 ns    1349081
