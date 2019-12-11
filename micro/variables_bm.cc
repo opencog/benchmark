@@ -32,7 +32,7 @@
 
 using namespace opencog;
 
-static void BM_VariablesExtend_NewVariable(benchmark::State& state)
+static void BM_VariablesExt_NewVariable(benchmark::State& state)
 {
 	AtomSpace atomspace;
 	Handle varX = atomspace.add_node(VARIABLE_NODE, "$X");
@@ -48,9 +48,9 @@ static void BM_VariablesExtend_NewVariable(benchmark::State& state)
 		varsA.extend(varsB);
 	}
 }
-BENCHMARK(BM_VariablesExtend_NewVariable);
+BENCHMARK(BM_VariablesExt_NewVariable);
 
-static void BM_VariablesExtend_SameVariableNoTypeRestrictions(benchmark::State& state)
+static void BM_VariablesExt_SameVarNoRestrict(benchmark::State& state)
 {
 	AtomSpace atomspace;
 	Handle varX = atomspace.add_node(VARIABLE_NODE, "$X");
@@ -67,9 +67,9 @@ static void BM_VariablesExtend_SameVariableNoTypeRestrictions(benchmark::State& 
 		varsA.extend(varsB);
 	}
 }
-BENCHMARK(BM_VariablesExtend_SameVariableNoTypeRestrictions);
+BENCHMARK(BM_VariablesExt_SameVarNoRestrict);
 
-static void BM_VariablesExtend_NewVariableNoTypeRestrictions(benchmark::State& state)
+static void BM_VariablesExt_NewVarNoRestrict(benchmark::State& state)
 {
 	AtomSpace atomspace;
 	Handle varX = atomspace.add_node(VARIABLE_NODE, "$X");
@@ -84,9 +84,9 @@ static void BM_VariablesExtend_NewVariableNoTypeRestrictions(benchmark::State& s
 		varsA.extend(varsB);
 	}
 }
-BENCHMARK(BM_VariablesExtend_NewVariableNoTypeRestrictions);
+BENCHMARK(BM_VariablesExt_NewVarNoRestrict);
 
-static void BM_VariablesExtend_SameVariableWithTypeRestrictions(benchmark::State& state)
+static void BM_VariablesExt_SameVarRestrict(benchmark::State& state)
 {
 	AtomSpace atomspace;
 	Handle varX = atomspace.add_node(VARIABLE_NODE, "$X");
@@ -104,4 +104,4 @@ static void BM_VariablesExtend_SameVariableWithTypeRestrictions(benchmark::State
 	}
 }
 
-BENCHMARK(BM_VariablesExtend_SameVariableWithTypeRestrictions);
+BENCHMARK(BM_VariablesExt_SameVarRestrict);

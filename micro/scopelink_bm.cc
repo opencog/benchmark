@@ -52,7 +52,7 @@ static Handle create_scope_link(AtomSpace& atomspace)
 	return create_scope_link(atomspace, seed);
 }
 
-static void BM_CreateScopeLinkWithVariableList(benchmark::State& state)
+static void BM_CreateScopeLinkWithVarList(benchmark::State& state)
 {
 	AtomSpace atomspace;
 
@@ -71,9 +71,9 @@ static void BM_CreateScopeLinkWithVariableList(benchmark::State& state)
 	logger().fine(
 	        "variables: " + ScopeLinkCast(h)->get_variables().to_string());
 }
-BENCHMARK(BM_CreateScopeLinkWithVariableList);
+BENCHMARK(BM_CreateScopeLinkWithVarList);
 
-static void BM_CreateScopeLinkWithoutVariableList(benchmark::State& state)
+static void BM_CreateScopeLinkWithoutVarList(benchmark::State& state)
 {
 	AtomSpace atomspace;
 
@@ -91,9 +91,9 @@ static void BM_CreateScopeLinkWithoutVariableList(benchmark::State& state)
 	logger().fine(
 	        "variables: " + ScopeLinkCast(h)->get_variables().to_string());
 }
-BENCHMARK(BM_CreateScopeLinkWithoutVariableList);
+BENCHMARK(BM_CreateScopeLinkWithoutVarList);
 
-static void BM_CreateScopeLinkWithLambdaLink(benchmark::State& state)
+static void BM_CreateScopeLinkWithLambda(benchmark::State& state)
 {
 	AtomSpace atomspace;
 
@@ -112,7 +112,7 @@ static void BM_CreateScopeLinkWithLambdaLink(benchmark::State& state)
 	logger().fine(
 	        "variables: " + ScopeLinkCast(h)->get_variables().to_string());
 }
-BENCHMARK(BM_CreateScopeLinkWithLambdaLink);
+BENCHMARK(BM_CreateScopeLinkWithLambda);
 
 static void BM_AddSameScopeLink(benchmark::State& state)
 {
