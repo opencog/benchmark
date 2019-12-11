@@ -600,6 +600,7 @@ Type AtomSpaceBenchmark::randomType(Type t)
         nameserver().isA(candidateType, TYPE_LINK) or
         nameserver().isA(candidateType, UNIQUE_LINK) or
         candidateType == VARIABLE_LIST or
+        candidateType == VARIABLE_SET or
         candidateType == DEFINE_LINK or
         candidateType == NUMBER_NODE or
         nameserver().isA(candidateType, TYPE_NODE));
