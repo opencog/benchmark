@@ -103,6 +103,5 @@ static void BM_VariablesExtend_SameVariableWithTypeRestrictions(benchmark::State
 		varsA.extend(varsB);
 	}
 }
+
 BENCHMARK(BM_VariablesExtend_SameVariableWithTypeRestrictions);
-
-
