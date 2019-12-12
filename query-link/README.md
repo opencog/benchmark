@@ -12,13 +12,13 @@ loop. The timing loop measure the performance of computing 152904 links
 between 576 word-pairs, using a non-trivial search pattern. The search
 pattern has one variable and four GlobNodes in it; the Globs mean that
 this whole thing requires significant pattern-matching effort.  To
-avoid pulluting the atomspace with search results, this also uses
-temporary atomspaces for the search. Linux `perf_events` confirms that
+avoid polluting the AtomSpace with search results, this also uses
+temporary AtomSpaces for the search. Linux `perf_events` confirms that
 90% of all CPU time is spent in the pattern-matcher.
 
 This is a "real world" benchmark, in that it uses a real-world dataset,
 containing actual data from actual NLP experiments.  It's called "nano"
-only because its many thousands of tims smaller than the real datasets
+only because its many thousands of times smaller than the real datasets
 it was derived from.  As a "real-world" benchmark, it should represent
 "real-world" results that users can expect to get.
 
