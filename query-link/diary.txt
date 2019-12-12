@@ -30,21 +30,21 @@ Elapsed: 126 secs Tot-cnt=152904 Avg=0.2188 secs/word Rate=1213.5 cnts/sec
 As can be seen, there is relatively little variation, from run to run,
 in the measured performance.
 
-Older atomspace
----------------
-For a baseline, lets run a version from a year ago...
+12 Dec 2019
+-----------
+Recent commits altered how Atoms are inserted into the AtomSpace.  I don't
+think that should dominate the performance of this test, but .. its
+significant.
 
-guile: guile (GNU Guile) 2.2.2.2-fc84f
-git log:
-    commit f9b9c8ce3f46f6349f4ad65fd85c974a031ad819
-    Merge: a0944c3 1dcf062
-    Author: Nil Geisweiller <ngeiswei@gmail.com>
-    Date:   Sat May 5 18:31:20 2018 +0300
+guile (GNU Guile) 2.9.2
+gcc version 8.3.0 (Debian 8.3.0-6)
+ldconfig (Debian GLIBC 2.28-10) 2.28
+git commit f96a6c7bd0c3c41e06668b810193cad4d2d6dc4c
 
-Got this:
-Elapsed: 18 secs Tot-cnt=1487 Avg=0.0313 secs/word Rate=82.611 cnts/sec
-Elapsed: 18 secs Tot-cnt=1481 Avg=0.0313 secs/word Rate=82.278 cnts/sec
+three runs with *exactly* the same times:
 
-Well, the rate is much much higher, but the total cunt is also wrong.
-Conclude: pattern matcher at that version had a serious bug in it,
-probably with the GlobNodes. Yes, there were GlobNode bugs back then...
+Elapsed: 89 secs Tot-cnt=152904 Avg=0.1545 secs/word Rate=1718.0 cnts/sec
+Elapsed: 89 secs Tot-cnt=152904 Avg=0.1545 secs/word Rate=1718.0 cnts/sec
+Elapsed: 89 secs Tot-cnt=152904 Avg=0.1545 secs/word Rate=1718.0 cnts/sec
+
+-------------
