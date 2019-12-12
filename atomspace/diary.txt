@@ -1734,5 +1734,10 @@ Dec 2019 compiler: gcc (Debian 8.3.0-6) 8.3.0
   addLink -m         184          165           176            "
   removeAtom         924         1141          1122            "
 
+Notes: addNode and addLink improved signficantly, because the AtomTable
+interstion process was revised, including avoiding un-needed work, and
+also taking over memory management of un-owned atoms.  The take-over is
+particularly noticable for links, which avoided a copy.
+
 Conclude: Reorganizing the AtomTable insertion process, and taking over
 memory management of un-owned atoms provides a decent win.
