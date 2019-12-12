@@ -32,16 +32,28 @@ in the measured performance.
 
 12 Dec 2019
 -----------
-Recent commits altered how Atoms are inserted into the AtomSpace.  I don't
-think that should dominate the performance of this test, but .. its
-significant.
+Performance improves by a lot. But why? Going back to the above git
+version, but with today's compiler, shows:
+
+Elapsed: 87 secs Tot-cnt=152904 Avg=0.1510 secs/word Rate=1757.5 cnts/sec
+Elapsed: 88 secs Tot-cnt=152904 Avg=0.1528 secs/word Rate=1737.5 cnts/sec
+Elapsed: 89 secs Tot-cnt=152904 Avg=0.1545 secs/word Rate=1718.0 cnts/sec
+
+Compare to today's git (and today's compilers, etc.), below, which runs
+slightly slower (despite fixes to the AtomTable) (perhaps recent pattern
+matcher mods slowed thigs down?). So conclude: **all** of the perf
+improvement can be ascribed to either the compiler, or the diffferent
+glibc version (the `perf_events` tool suggests that a lot of cpu time,
+about 16% of it, is spent in `std::__shared_ptr<opencog::Atom, etc`
+and another 5% is in `std::_Rb_tree<opencog::Handle, etc.`) So this is
+definitely a "wow" moment.
 
 guile (GNU Guile) 2.9.2
 gcc version 8.3.0 (Debian 8.3.0-6)
 ldconfig (Debian GLIBC 2.28-10) 2.28
 git commit f96a6c7bd0c3c41e06668b810193cad4d2d6dc4c
 
-three runs with *exactly* the same times:
+Three runs with *exactly* the same times:
 
 Elapsed: 89 secs Tot-cnt=152904 Avg=0.1545 secs/word Rate=1718.0 cnts/sec
 Elapsed: 89 secs Tot-cnt=152904 Avg=0.1545 secs/word Rate=1718.0 cnts/sec

@@ -11,9 +11,10 @@ This matrix is loaded up (from an SQL database) outside of the timing
 loop. The timing loop measure the performance of computing 152904 links
 between 576 word-pairs, using a non-trivial search pattern. The search
 pattern has one variable and four GlobNodes in it; the Globs mean that
-this whole things requires significant pattern-matching effort.  To
+this whole thing requires significant pattern-matching effort.  To
 avoid pulluting the atomspace with search results, this also uses
-temporary atomspaces for the search.
+temporary atomspaces for the search. Linux `perf_events` confirms that
+90% of all CPU time is spent in the pattern-matcher.
 
 This is a "real world" benchmark, in that it uses a real-world dataset,
 containing actual data from actual NLP experiments.  It's called "nano"
@@ -25,7 +26,7 @@ A diary of results can be found in `diary.txt`.
 
 ==Running the benchmark
 
-Do this:
+Do this (once, the first time only):
 ```
 $ createdb en_nano
 $ cat en_nano.sql | psql en_nano
@@ -34,6 +35,7 @@ The above creates a database with 43752 atoms in it.
 This database consists of a matrix, of dimension 576 x 7660
 with a total of 27463 non-zero matrix entries.
 
+Then, to run each test:
 ```
 $ guile -l nano-en.scm
 ```
