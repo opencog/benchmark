@@ -16,6 +16,9 @@ commit a015b988246cd042cba836b30e050032fd5feca3
     Author: Nil Geisweiller <ngeiswei@gmail.com>
     Date:   Tue Jul 2 13:01:36 2019 +0300
 
+Not sure, I think the compiler was this (that's what it was in May...)
+compiler: gcc version 6.3.0 (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
+glibc: ldconfig -V (Debian GLIBC 2.24-11+deb9u4) 2.24
 
 Repeated testing. Run as "guile -l nano-en.scm".
 Got this:
