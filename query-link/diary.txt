@@ -63,3 +63,22 @@ Elapsed: 89 secs Tot-cnt=152904 Avg=0.1545 secs/word Rate=1718.0 cnts/sec
 Elapsed: 89 secs Tot-cnt=152904 Avg=0.1545 secs/word Rate=1718.0 cnts/sec
 
 -------------
+And again: on ubuntu 16.04 LTS:
+gcc version 5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.11)
+ldconfig (Ubuntu GLIBC 2.23-0ubuntu11) 2.23
+guile (GNU Guile) 2.9.2.36-89e28
+atomspace git: 6904dc0c2f0d3b122d46d5b00a6d28a0f2bfa279 (6 Sept 2019)
+
+Elapsed: 133 secs Tot-cnt=152904 Avg=0.2309 secs/word Rate=1149.7 cnts/sec
+Elapsed: 134 secs Tot-cnt=152904 Avg=0.2326 secs/word Rate=1141.1 cnts/sec
+Elapsed: 134 secs Tot-cnt=152904 Avg=0.2326 secs/word Rate=1141.1 cnts/sec
+
+and again, with todays atomspace git:
+git commit dc7bf87bdf51e0afd3a0870fd73f172bcd80239d
+
+Elapsed: 124 secs Tot-cnt=152904 Avg=0.2153 secs/word Rate=1233.1 cnts/sec
+Elapsed: 122 secs Tot-cnt=152904 Avg=0.2118 secs/word Rate=1253.3 cnts/sec
+Elapsed: 122 secs Tot-cnt=152904 Avg=0.2118 secs/word Rate=1253.3 cnts/sec
+
+Conclude: some atomspace changes made a difference. But also, the compiler
+and/or glibc is making a huge difference.
