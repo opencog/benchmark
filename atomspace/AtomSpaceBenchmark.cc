@@ -338,8 +338,8 @@ void AtomSpaceBenchmark::doBenchmark(const std::string& methodName,
     if (BENCH_SCM == testKind /* or BENCH_PYTHON == testKind */)
     {
         // Try to avoid excessive compilation times.
+        Nreps = (100 * baseNreps) / Nclock;
         Nclock /= 100;
-        Nreps *= 100;
 
         // Basic non-craziness.
         if (scm->input_pending() or scm->eval_error())
