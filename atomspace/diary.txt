@@ -1745,27 +1745,29 @@ memory management of un-owned atoms provides a decent win.
 =====================================================================
 
 13 Dec 2019
-----------
+-----------
 New guile baseline. Fanny.
+Compare 2.9.1 (which never worked) vs 2.9.2 (which works well)
+vs. 2.9.7 (the latest as of today)
 First, a compare of the interpreter, vs. previous Dec 2018 benchmark.
 
 atomspace_bm -A -g -n2000 -r100
 
-                    guile       guile       guile
-                   2.2.2.1      2.9.1       2.9.2     above raw
-                  -g -r100    -g -r100    -g -r100       -A
-   test            interp      interp      interp     AtomSpace
-   name           K-ops/sec   K-ops/sec   K-ops/sec   K-ops/sec
-   ----           ---------   ---------   ---------   ---------
-  noop             3e6         3e6         2.8e6     1.67e6
-  getType          26.4        31.1        41.2         97K
-  getTV            28.1        25.4        44.9          4546
-  setTV            13.4        16.8        20.5          1180
-  getIncomingSet   28.5        45.5        46.9          3078
-  getOutgoingSet   29.1        35.5        44.6         49.2K
-  addNode          20.0        19.4        29.4           399
-  addLink          14.4        16.2        24.8           176
-  removeAtom       20.0        22.7        31.5          1122
+                  guile      guile      guile      guile
+                 2.2.2.1     2.9.1      2.9.2      2.9.7     above raw
+                -g -r100   -g -r100   -g -r100    -g -r100      -A
+   test          interp     interp     interp       interp   AtomSpace
+   name         K-ops/sec  K-ops/sec  K-ops/sec  K-ops/sec   K-ops/sec
+   ----         ---------  ---------  ---------  ---------   ---------
+  noop             3e6        3e6        2.8e6      2.9e6   1.67e6
+  getType          26.4       31.1       41.2       42.5       97K
+  getTV            28.1       25.4       44.9       44.0        4546
+  setTV            13.4       16.8       20.5       19.6        1180
+  getIncomingSet   28.5       45.5       46.9       45.1        3078
+  getOutgoingSet   29.1       35.5       44.6       46.1       49.2K
+  addNode          20.0       19.4       29.4       29.0         399
+  addLink          14.4       16.2       24.8       19.2         176
+  removeAtom       20.0       22.7       31.5       28.5        1122
 
 Remarks:
 * Column labelled 2.9.1 is for Ubuntu Xenial 16.04 LTS
@@ -1777,26 +1779,28 @@ Remarks:
     gcc (Debian 8.3.0-6) 8.3.0
     guile 2.9.2 as tagged by Wingo, May 23 21:05:21 2019
     ldconfig (Debian GLIBC 2.28-10) 2.28
+* Column labelled 2.9.7 - as above, but tagged Dec 13 13:57:04 2019
 * Comparing 2.9.1 to 2.9.2: pleasantly improved.
+* Comparing 2.9.2 to 2.9.7: no discernable change.
 
 --------------------------------
 
 Next, a comparison of the compiled performance
 
-                    2.2.2.1      2.9.1       2.9.2       above raw
-                 -g -C -r100   -g -C -r100 -g -C -r100      -A
-   test            compile      compile     compile      AtomSpace
-   name           K-ops/sec    K-ops/sec   K-ops/sec     K-ops/sec
-   ----           ---------    ---------   ---------     ---------
-  noop              3e6          3e6         3e6         1.82e6
-  getType           460          715         444            97K
-  getTV             447          819         418             4546
-  setTV             262          344         233             1180
-  getIncomingSet    424          822         517             3078
-  getOutgoingSet    501         1043         651            49.2K
-  addNode           269          250         380              399
-  addLink           127          145         181              176
-  removeAtom          9.23         3.51       94             1122
+                  2.2.2.1      2.9.1     2.9.2    2.9.7      above raw
+                -g -C -r100 -g -C -r100 -C -r100  -r100         -A
+   test           compile    compile    compile    compile   AtomSpace
+   name          K-ops/sec  K-ops/sec  K-ops/sec  K-ops/sec  K-ops/sec
+   ----          ---------  ---------  ---------  ---------  ---------
+  noop             3e6        3e6        3e6        2e6     1.82e6
+  getType          460        715        444        450        97K
+  getTV            447        819        418        458         4546
+  setTV            262        344        233        226         1180
+  getIncomingSet   424        822        517        513         3078
+  getOutgoingSet   501       1043        651        567        49.2K
+  addNode          269        250        380        368          399
+  addLink          127        145        181        203          176
+  removeAtom         9.23       3.51      94         84         1122
 
 Remarks:
 * Column labelled 2.9.1 is for Ubuntu Xenial 16.04 LTS
@@ -1811,6 +1815,8 @@ Remarks:
 * Compare 2.9.1 vs. 2.9.2 -- why the backslide?
     Except for addNode and addLink, which match the native c++
     performance!?
+* Comparing 2.9.2 to 2.9.7: no discernable change.
+
 * The removeAtom benchmark is broken, because the lump of cog-delete
     calls are deleting non-existent atoms, causing exceptions to be
     thrown. So this is exception-overhead dominated.
