@@ -62,6 +62,20 @@ Elapsed: 89 secs Tot-cnt=152904 Avg=0.1545 secs/word Rate=1718.0 cnts/sec
 Elapsed: 89 secs Tot-cnt=152904 Avg=0.1545 secs/word Rate=1718.0 cnts/sec
 Elapsed: 89 secs Tot-cnt=152904 Avg=0.1545 secs/word Rate=1718.0 cnts/sec
 
+Again: wtih guile (GNU Guile) 2.9.7-dirty
+Elapsed: 89 secs Tot-cnt=152904 Avg=0.1545 secs/word Rate=1718.0 cnts/sec
+
+so no change at all for the newer guile version. Hmmm.
+
+-------------
+try this:
+HUGETLB_MORECORE=yes LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libhugetlbfs.so.0 guile -l nano-en.scm
+
+Wow! Even for this relatively small test, the difference is dramatic!
+Elapsed: 72 secs Tot-cnt=152904 Avg= 0.125 secs/word Rate=2123.7 cnts/sec
+Elapsed: 71 secs Tot-cnt=152904 Avg=0.1233 secs/word Rate=2153.6 cnts/sec
+Elapsed: 70 secs Tot-cnt=152904 Avg=0.1215 secs/word Rate=2184.3 cnts/sec
+
 -------------
 And again: on ubuntu 16.04 LTS:
 gcc version 5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.11)
@@ -82,3 +96,5 @@ Elapsed: 122 secs Tot-cnt=152904 Avg=0.2118 secs/word Rate=1253.3 cnts/sec
 
 Conclude: some atomspace changes made a difference. But also, the compiler
 and/or glibc is making a huge difference.
+
+------------------------
