@@ -1,16 +1,18 @@
 # Build file for the atomspace microbenchmarks
 
-IF (benchmark_FOUND)
+IF (BUILD_MICRO)
 	ADD_EXECUTABLE (benchmark
 		benchmark.cc
 		scopelink_bm.cc
 		evaluationlink_bm.cc
 		variables_bm.cc
+		forwardchainer_bm.cc
 	)
 
 	TARGET_LINK_LIBRARIES (benchmark
-		${ATOMSPACE_LIBRARIES}
 		${COGUTIL_LIBRARY}
+		${ATOMSPACE_LIBRARIES}
+		${URE_LIBRARY}
 		benchmark::benchmark
 	)
-ENDIF(benchmark_FOUND)
+ENDIF(BUILD_MICRO)
