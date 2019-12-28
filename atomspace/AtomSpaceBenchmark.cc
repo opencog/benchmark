@@ -20,8 +20,11 @@
 #include <opencog/atoms/truthvalue/SimpleTruthValue.h>
 #include <opencog/atoms/truthvalue/TruthValue.h>
 #include <opencog/atomspaceutils/TLB.h>
-#include <opencog/cython/PythonEval.h>
 #include <opencog/guile/SchemeEval.h>
+
+#ifdef HAVE_CYTHON
+#include <opencog/cython/PythonEval.h>
+#endif
 
 #include "AtomSpaceBenchmark.h"
 
