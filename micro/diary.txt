@@ -42,7 +42,7 @@ BM_VariablesExt_SameVarNoRestrict        201 ns        201 ns    3434521
 BM_VariablesExt_NewVarNoRestrict         200 ns        200 ns    3473376
 BM_VariablesExt_SameVarRestrict          511 ns        511 ns    1349081
 
----------
+-----------
 After commit 88b2fd82605f10eb60a4a803bc4340c4d381a2ec
 Best of three
 
@@ -63,7 +63,7 @@ BM_VariablesExt_SameVarNoRestrict        200 ns        200 ns    3530943
 BM_VariablesExt_NewVarNoRestrict         202 ns        202 ns    3468749
 BM_VariablesExt_SameVarRestrict          495 ns        495 ns    1405215
 
----------
+-----------
 After commit 7738a4b9cda09707e4d344da6845777ff79a22e8
 Best of three
 
@@ -84,4 +84,35 @@ BM_VariablesExt_SameVarNoRestrict        200 ns        200 ns    3476118
 BM_VariablesExt_NewVarNoRestrict         204 ns        204 ns    3436843
 BM_VariablesExt_SameVarRestrict          503 ns        503 ns    1340012
 
----------
+-----------
+
+28 Dec 2019
+-----------
+New test: BM_ForwardChainer_Basic
+
+Like above, maybe 1% faster... why??
+
+$ gcc --version
+gcc (Debian 8.3.0-6) 8.3.0
+
+$ /sbin/ldconfig --version
+ldconfig (Debian GLIBC 2.28-10) 2.28
+
+Best of three
+BM_CreateScopeLinkWithVarList           1195 ns       1195 ns     541650
+BM_CreateScopeLinkWithoutVarList        2494 ns       2494 ns     276217
+BM_CreateScopeLinkWithLambda            1112 ns       1112 ns     625793
+BM_AddSameScopeLink                      224 ns        224 ns    3142115
+BM_AddScopeLink/4096                     262 ns        262 ns    2613186
+BM_AddScopeLink/8192                     269 ns        269 ns    2515967
+BM_AddScopeLink/16384                    296 ns        296 ns    2142377
+BM_CreateEvaluationLink                  785 ns        785 ns     832299
+BM_AddSameEvaluationLink                 245 ns        245 ns    2876030
+BM_AddEvaluationLink/16384               283 ns        283 ns    2342071
+BM_AddEvaluationLink/32768               310 ns        310 ns    1820614
+BM_AddEvaluationLink/65536               386 ns        386 ns    1600033
+BM_VariablesExt_NewVariable              202 ns        202 ns    3438401
+BM_VariablesExt_SameVarNoRestrict        182 ns        182 ns    3416850
+BM_VariablesExt_NewVarNoRestrict         197 ns        197 ns    3511223
+BM_VariablesExt_SameVarRestrict          499 ns        499 ns    1378469
+BM_ForwardChainer_Basic              1183722 ns    1183730 ns        578
