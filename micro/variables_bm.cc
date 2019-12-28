@@ -22,13 +22,9 @@
 
 #include <benchmark/benchmark.h>
 
-#include <opencog/util/Logger.h>
-#include <opencog/atomspace/AtomSpace.h>
 #include <opencog/atomspace/AtomSpace.h>
 #include <opencog/atoms/core/Variables.h>
 #include <opencog/atoms/core/VariableList.h>
-
-#include "benchmark.h"
 
 using namespace opencog;
 

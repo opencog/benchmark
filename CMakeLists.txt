@@ -35,6 +35,8 @@ list(APPEND CMAKE_MODULE_PATH  ${COGUTIL_DATA_DIR}/cmake)
 include(${COGUTIL_DATA_DIR}/cmake/OpenCogGccOptions.cmake)
 include(${COGUTIL_DATA_DIR}/cmake/Summary.cmake)
 
+SET(BUILD_MICRO 1)
+
 # ===================================================================
 # Check for existance of various required, optional packages.
 
@@ -49,13 +51,23 @@ ELSE (ATOMSPACE_FOUND)
 	MESSAGE(FATAL_ERROR "AtomSpace missing: it is needed for everything!")
 ENDIF (ATOMSPACE_FOUND)
 
+# URE
+FIND_PACKAGE(URE 1.0.0 CONFIG)
+IF (URE_FOUND)
+	MESSAGE(STATUS "URE found.")
+	SET(HAVE_URE 1)
+ELSE (URE_FOUND)
+	MESSAGE(STATUS "URE was not found. URE micro benchmarks will not be built.")
+ENDIF (URE_FOUND)
+
 # ----------------------------------------------------------
 # Google benchmark package (optional)
 FIND_PACKAGE(benchmark 1.3.0)
 IF (benchmark_FOUND)
 	MESSAGE(STATUS "Google Benchmark ${benchmark_VERSION} found.")
 ELSE (benchmark_FOUND)
-	MESSAGE(STATUS "Google Benchmark not found. Hint: see the README!")
+	SET(BUILD_MICRO 0)
+	MESSAGE(STATUS "Google Benchmark not found. Micro benchmarks will not be built.")
 ENDIF(benchmark_FOUND)
 
 # ----------------------------------------------------------
@@ -113,7 +125,9 @@ ENDIF()
 # Add subdirectories
 
 ADD_SUBDIRECTORY(atomspace)
-ADD_SUBDIRECTORY(micro)
+IF (BUILD_MICRO)
+	ADD_SUBDIRECTORY(micro)
+ENDIF(BUILD_MICRO)
 ADD_SUBDIRECTORY(query-trite)
 
 # ===================================================================
@@ -122,5 +136,5 @@ ADD_SUBDIRECTORY(query-trite)
 SUMMARY_ADD("AtomSpace bench" "Synthetic benchmarks for AtomSpace methods" HAVE_ATOMSPACE)
 SUMMARY_ADD("Python bench" "Synthetic benchmarks for Python (cython) bindings" HAVE_CYTHON)
 SUMMARY_ADD("Scheme bench" "Synthetic benchmarks for Scheme (guile) bindings" HAVE_GUILE)
-SUMMARY_ADD("Micro bench" "Assorted microbenchmarks" benchmark_FOUND)
+SUMMARY_ADD("Micro bench" "Assorted microbenchmarks" BUILD_MICRO)
 SUMMARY_SHOW()
