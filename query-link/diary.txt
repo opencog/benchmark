@@ -44,9 +44,9 @@ Elapsed: 89 secs Tot-cnt=152904 Avg=0.1545 secs/word Rate=1718.0 cnts/sec
 
 Compare to today's git (and today's compilers, etc.), below, which runs
 slightly slower (despite fixes to the AtomTable) (perhaps recent pattern
-matcher mods slowed thigs down?). So conclude: **all** of the perf
-improvement can be ascribed to either the compiler, or the diffferent
-glibc version (the `perf_events` tool suggests that a lot of cpu time,
+matcher mods slowed things down?). So conclude: **all** of the perf
+improvement can be ascribed to either the compiler, or the different
+glibc version (the `perf_events` tool suggests that a lot of CPU time,
 about 16% of it, is spent in `std::__shared_ptr<opencog::Atom, etc`
 and another 5% is in `std::_Rb_tree<opencog::Handle, etc.`) So this is
 definitely a "wow" moment.
@@ -62,7 +62,7 @@ Elapsed: 89 secs Tot-cnt=152904 Avg=0.1545 secs/word Rate=1718.0 cnts/sec
 Elapsed: 89 secs Tot-cnt=152904 Avg=0.1545 secs/word Rate=1718.0 cnts/sec
 Elapsed: 89 secs Tot-cnt=152904 Avg=0.1545 secs/word Rate=1718.0 cnts/sec
 
-Again: wtih guile (GNU Guile) 2.9.7-dirty
+Again: with guile (GNU Guile) 2.9.7-dirty
 Elapsed: 89 secs Tot-cnt=152904 Avg=0.1545 secs/word Rate=1718.0 cnts/sec
 
 so no change at all for the newer guile version. Hmmm.
@@ -77,7 +77,7 @@ Elapsed: 71 secs Tot-cnt=152904 Avg=0.1233 secs/word Rate=2153.6 cnts/sec
 Elapsed: 70 secs Tot-cnt=152904 Avg=0.1215 secs/word Rate=2184.3 cnts/sec
 
 -------------
-And again: on ubuntu 16.04 LTS:
+And again: on Ubuntu 16.04 LTS:
 gcc version 5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.11)
 ldconfig (Ubuntu GLIBC 2.23-0ubuntu11) 2.23
 guile (GNU Guile) 2.9.2.36-89e28
