@@ -1,18 +1,22 @@
 # Build file for the atomspace microbenchmarks
 
-IF (BUILD_MICRO)
-	ADD_EXECUTABLE (benchmark
-		benchmark.cc
-		scopelink_bm.cc
-		evaluationlink_bm.cc
-		variables_bm.cc
-		forwardchainer_bm.cc
+LIST(APPEND LIST_MODULES
+	benchmark.cc
+	scopelink_bm.cc
+	evaluationlink_bm.cc
+	variables_bm.cc
 	)
 
-	TARGET_LINK_LIBRARIES (benchmark
-		${COGUTIL_LIBRARY}
-		${ATOMSPACE_LIBRARIES}
-		${URE_LIBRARY}
-		benchmark::benchmark
+LIST(APPEND LIST_LIBRARIES
+	${COGUTIL_LIBRARY}
+	${ATOMSPACE_LIBRARIES}
+	benchmark::benchmark
 	)
-ENDIF(BUILD_MICRO)
+
+IF (HAVE_URE)
+	LIST(APPEND LIST_MODULES forwardchainer_bm.cc)
+	LIST(APPEND LIST_LIBRARIES ${URE_LIBRARY})
+ENDIF(HAVE_URE)
+
+ADD_EXECUTABLE (benchmark "${LIST_MODULES}")
+TARGET_LINK_LIBRARIES (benchmark "${LIST_LIBRARIES}")
