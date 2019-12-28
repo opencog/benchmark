@@ -47,3 +47,10 @@ Elapsed: 124 secs Tot-cnt=152904 Avg=0.2153 secs/word Rate=1233.1 cnts/sec
 ```
 
 The Tot-cnt should always be the same.
+
+This test shows a large benefit from using Linux Huge Pages.
+Not a surprise: it's accessing a lot of memory in a very random
+kind of way.  Try it:
+```
+HUGETLB_MORECORE=yes LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libhugetlbfs.so.0 guile -l nano-en.scm
+```
