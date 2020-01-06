@@ -97,4 +97,13 @@ Elapsed: 122 secs Tot-cnt=152904 Avg=0.2118 secs/word Rate=1253.3 cnts/sec
 Conclude: some atomspace changes made a difference. But also, the compiler
 and/or glibc is making a huge difference.
 
-------------------------
+5 Jan 2020
+----------
+After pull req opencog/atomspace#2464 which avoids some pointless
+IncomingSet wasteage, I now measure:
+
+Elapsed: 60 secs Tot-cnt=152904 Avg=0.1042 secs/word Rate=2548.4 cnts/sec
+Elapsed: 59 secs Tot-cnt=152904 Avg=0.1024 secs/word Rate=2591.6 cnts/sec
+Elapsed: 59 secs Tot-cnt=152904 Avg=0.1024 secs/word Rate=2591.6 cnts/sec
+
+Prior reesult for this was 72 secs (fanny, with hugetlb).
