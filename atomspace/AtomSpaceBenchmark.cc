@@ -172,8 +172,7 @@ void AtomSpaceBenchmark::printTypeSizes()
     cout << "ConceptNode \"this is a test\" = "
          << estimateOfAtomSize(h) << endl;
 
-    HandleSeq empty;
-    h = createLink(empty, LIST_LINK);
+    h = createLink(LIST_LINK);
     cout << "Empty ListLink = " << estimateOfAtomSize(h) << endl;
 
     Handle na = ND(CONCEPT_NODE, "first atom");
@@ -653,13 +652,13 @@ clock_t AtomSpaceBenchmark::makeRandomNodes(const std::string& csi)
     case BENCH_TABLE: {
         clock_t t_begin = clock();
         for (unsigned int i=0; i<Nclock; i++)
-            atab->add(createNode(ta[i], nn[i]), false);
+            atab->add(createNode(ta[i], std::move(nn[i])), false);
         return clock() - t_begin;
     }
     case BENCH_AS: {
         clock_t t_begin = clock();
         for (unsigned int i=0; i<Nclock; i++)
-            asp->add_node(ta[i], nn[i]);
+            asp->add_node(ta[i], std::move(nn[i]));
         return clock() - t_begin;
     }
 #if HAVE_GUILE
@@ -813,7 +812,7 @@ clock_t AtomSpaceBenchmark::makeRandomLinks()
     case BENCH_TABLE: {
         clock_t tAddLinkStart = clock();
         for (unsigned int i=0; i<Nclock; i++)
-            atab->add(createLink(og[i], ta[i]), false);
+            atab->add(createLink(std::move(og[i]), ta[i]), false);
         return clock() - tAddLinkStart;
     }
     case BENCH_AS: {
