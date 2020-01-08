@@ -1735,7 +1735,7 @@ Dec 2019 compiler: gcc (Debian 8.3.0-6) 8.3.0
   removeAtom         924         1141          1122            "
 
 Notes: addNode and addLink improved signficantly, because the AtomTable
-interstion process was revised, including avoiding un-needed work, and
+insertion process was revised, including avoiding un-needed work, and
 also taking over memory management of un-owned atoms.  The take-over is
 particularly noticable for links, which avoided a copy.
 
@@ -1820,3 +1820,40 @@ Remarks:
 * The removeAtom benchmark is broken, because the lump of cog-delete
     calls are deleting non-existent atoms, causing exceptions to be
     thrown. So this is exception-overhead dominated.
+
+=====================================================================
+
+7 Jan 2020
+-----------
+New core baseline. Fanny.  Pull req #2466 - clean up cruft.
+
+May 2019 compiler: gcc version 6.3.0 (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
+            glibc: ldconfig -V (Debian GLIBC 2.24-11+deb9u4) 2.24
+
+Dec 2019 compiler: gcc (Debian 8.3.0-6) 8.3.0
+            glibc: ldconfig -V (Debian GLIBC 2.28-10) 2.28
+
+./atomspace_bm -A -n 4000000
+
+                     -A          -A           -A
+   test            May 2019    Dec 2019      Today
+   name            K-ops/sec   K-ops/sec      2020         Comments
+   ----            ---------   ---------      ----      -----------------
+  noop          2.15e6        1.67e6        2.03e6      no change expected
+  getType          98K           97K           98K             "
+  getTV             4578          4546          4580           "
+  setTV             1075          1180          1184           "
+  pointerCast      11.5K         11.3K         12.0K           "
+  getIncomingSet    3091          3078          3230           "
+  getOutgoingSet   52.3K         49.2K         51.3K           "
+  addNode            364           399           664       see notes
+  addLink -A          85           138           177           "
+  addLink -m         165           176           203           "
+  removeAtom        1141          1122          1347           "
+
+Notes: addNode and addLink improved signficantly, because the AtomTable
+was simplified, removing an un-needed index. Percentage-wise, this is
+particularly noticable for nodes, having made up a large fraction of
+that process.
+
+Conclude: Getting rid of cruft if a win.
