@@ -1526,8 +1526,8 @@ compiler: gcc version 6.3.0
   getIncomingSet    2086       2530         2530
   getOutgoingSet   45.6K      52.7K        46.7K
   addNode            315        383          361
-  addLink            142        135           76       wtf!????
-  addLink            142        135          184       A hah!
+  addLink -A         142        135           76       wtf!????
+  addLink -m         142        135          184       A hah!
   removeAtom         573        705          924
 
 addLink: two different results, based on whether the test is run with
