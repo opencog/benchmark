@@ -113,3 +113,9 @@ Prior reesult for this was 72 secs (fanny, with hugetlb).
 After rework on direct upward moves, now hitting
 
 Elapsed: 58 secs Tot-cnt=152904 Avg=0.1007 secs/word Rate=2636.3 cnts/sec
+
+Disabling #define DEBUG in the pattern matcher takes us down one more
+second:
+
+Elapsed: 57 secs Tot-cnt=152904 Avg=0.0990 secs/word Rate=2682.5 cnts/sec
+
