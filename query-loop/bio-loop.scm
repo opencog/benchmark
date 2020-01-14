@@ -12,14 +12,22 @@
 	(set! start-time now)
 	diff)
 
-; Hack around custom Atom definitions
-(define Gene Concept)
-
 (load "gene-list.scm")
+
+; Non-human-readable definitions to compress the size of the data file.
+(define e Evaluation)
+(define l List)
+(define g Gene)
+(define c Concept)
+(define Gene Concept)
+(define i (Predicate "interacts_with"))
+(define d (Predicate "has_pubmed_ID"))
+(define z (Predicate "has_entrez_id"))
 
 (format #t "Start loading raw data ...\n")
 (elapsed-secs)
-(primitive-load "biogrid.scm")
+; (primitive-load "biogrid.scm")
+(primitive-load "biogrid-full.scm")
 (format #t "Loaded raw data in ~6f seconds\n" (elapsed-secs))
 (format #t "AtomSpace contents: ~A\n" (cog-report-counts))
 
@@ -50,15 +58,29 @@
 ; Run the benchmark
 (for-each
 	(lambda (gene-name)
+		; Create a search patterns for each gene in the gene list.
 		(define gene (Gene gene-name))
 		(define query (find-output-interactors gene))
+
+		; Perform the search
 		(elapsed-secs)
 		(define result (cog-execute! query))
+
+		; Collect up some stats
+		; (cog-inc-count! gene (cog-arity result))
+		(for-each
+			(lambda (gene-pair)
+				(define gene-a (cog-outgoing-atom gene-pair 0))
+				(define gene-b (cog-outgoing-atom gene-pair 1))
+				(cog-inc-count! gene-a 1)
+				(cog-inc-count! gene-b 1))
+			(cog-outgoing-set result))
+
 		(format #t "Ran query ~A in ~6f seconds; got ~A results\n"
 			gene-name (elapsed-secs) (cog-arity result))
 		(cog-delete result)
 	)
 	gene-list)
 
-(exit)
+; (exit)
 ; ------------------------------------------------------------------
