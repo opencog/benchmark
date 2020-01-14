@@ -26,6 +26,9 @@
 ; ------------------------------------------------------------------
 ; Define the main benchmarking routine
 
+;; This defines a triangle-shaped search; one endpoint is fixed,
+;; and we are looking for two other genes that interact with the
+;; endpoint and form a triangle.
 (define (find-output-interactors gene)
 	(Get
 		(VariableList
