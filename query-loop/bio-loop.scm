@@ -15,14 +15,16 @@
 ; Hack around custom Atom definitions
 (define Gene Concept)
 
+(load "gene-list.scm")
+
 (format #t "Start loading raw data ...\n")
+(elapsed-secs)
 (primitive-load "biogrid.scm")
 (format #t "Loaded raw data in ~6f seconds\n" (elapsed-secs))
 (format #t "AtomSpace contents: ~A\n" (cog-report-counts))
 
 ; ------------------------------------------------------------------
 ; Define the main benchmarking routine
-
 
 (define (find-output-interactors gene)
 	(Get
@@ -42,13 +44,18 @@
 				(List gene (Variable "$b")))
 		)))
 
-(define g (find-output-interactors (Gene "MAP2K4")))
-(elapsed-secs)
-(define result (cog-execute! g))
-(format #t "Ran query in ~6f seconds; got ~A results\n"
-	(elapsed-secs) (cog-arity result))
-
-
 ; Run the benchmark
+(for-each
+	(lambda (gene-name)
+		(define gene (Gene gene-name))
+		(define query (find-output-interactors gene))
+		(elapsed-secs)
+		(define result (cog-execute! query))
+		(format #t "Ran query ~A in ~6f seconds; got ~A results\n"
+			gene-name (elapsed-secs) (cog-arity result))
+		(cog-delete result)
+	)
+	gene-list)
+
 (exit)
 ; ------------------------------------------------------------------
