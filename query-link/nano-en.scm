@@ -1,5 +1,5 @@
 ;
-; nano-scm.scm
+; nano-en.scm
 ;
 (use-modules (srfi srfi-1))
 (use-modules (opencog) (opencog matrix) (opencog exec))
