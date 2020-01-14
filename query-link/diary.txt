@@ -107,3 +107,9 @@ Elapsed: 59 secs Tot-cnt=152904 Avg=0.1024 secs/word Rate=2591.6 cnts/sec
 Elapsed: 59 secs Tot-cnt=152904 Avg=0.1024 secs/word Rate=2591.6 cnts/sec
 
 Prior reesult for this was 72 secs (fanny, with hugetlb).
+
+13 Jan 2020
+-----------
+After rework on direct upward moves, now hitting
+
+Elapsed: 58 secs Tot-cnt=152904 Avg=0.1007 secs/word Rate=2636.3 cnts/sec
