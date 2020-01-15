@@ -134,7 +134,7 @@
 						(cog-inc-count! gene-b 1))
 					(cog-outgoing-set result))
 
-				;; (format #t "Ran query ~A in ~6f seconds; got ~A results\n"
+				;; (format #t "Ran triangle ~A in ~6f seconds; got ~A results\n"
 				;; 	gene-name (gene-secs) rlen)
 				(display ".")
 				(cog-delete result)
@@ -182,18 +182,20 @@
 				(define rlen (cog-arity result))
 
 				; Collect up some stats
-				; (cog-inc-count! pathway rlen)
-#!
+				(cog-inc-count! pathway rlen)
 				(for-each
-					(lambda (gene-pair)
-						(define gene-a (cog-outgoing-atom gene-pair 0))
-						(define gene-b (cog-outgoing-atom gene-pair 1))
+					(lambda (g-g-m-m)
+						(define gene-a (cog-outgoing-atom g-g-m-m 0))
+						(define gene-b (cog-outgoing-atom g-g-m-m 1))
+						(define prot-a (cog-outgoing-atom g-g-m-m 2))
+						(define prot-b (cog-outgoing-atom g-g-m-m 3))
 						(cog-inc-count! gene-a 1)
-						(cog-inc-count! gene-b 1))
+						(cog-inc-count! gene-b 1)
+						(cog-inc-count! prot-a 1)
+						(cog-inc-count! prot-b 1))
 					(cog-outgoing-set result))
-!#
 
-				(format #t "Ran query ~A in ~6f seconds; got ~A results\n"
+				(format #t "Ran path ~A in ~6f seconds; got ~A results\n"
 					(cog-name pathway) (path-secs) rlen)
 				(display ".")
 				(cog-delete result)
@@ -210,17 +212,18 @@
 	*unspecified*
 )
 
-#!
 ; Run the benchmark three times
-(display "Will run the benchmark three times ...\n")
+(display "Will run the triangle benchmark three times ...\n")
 (run-triangle-benchmark)
 (sleep 1)
 (run-triangle-benchmark)
 (sleep 1)
 (run-triangle-benchmark)
+(sleep 1)
+(display "Will run the pentagon benchmark once ...\n")
+(run-pentagon-benchmark)
 
 (exit)
-!#
 
 ; =================================================================
 
