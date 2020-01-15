@@ -64,6 +64,25 @@
 				(List gene (Variable "$b")))
 		)))
 
+;; This defines a pentagon-shaped search; one endpoint, a reaction
+;; pathway, is fixed, and we are looking for two proteins that
+;; participate in that pathway. These two are expressed with a pair
+;; of genes that interact with one-another, forming a pentagon.
+(define (pathway-gene-interactors pw)
+	(Get
+		(VariableList
+			(TypedVariable (Variable "$g1") (Type 'GeneNode))
+			(TypedVariable (Variable "$g2") (Type 'GeneNode))
+			(TypedVariable (Variable "$p1") (Type 'MoleculeNode))
+			(TypedVariable (Variable "$p2") (Type 'MoleculeNode)))
+		(And
+			(Member (Variable "$p1") pw)
+			(Member (Variable "$p2") pw)
+			(Evaluation (Predicate "expresses") (List (Variable "$g1") (Variable "$p1")))
+			(Evaluation (Predicate "expresses") (List (Variable "$g2") (Variable "$p2")))
+			(Evaluation (Predicate "interacts_with") (List (Variable "$g1") (Variable "$g2")))
+		)))
+
 ; Run the benchmark
 (define (run-benchmark)
 	(define bench-secs (make-timer))
@@ -115,6 +134,9 @@
 (run-benchmark)
 
 (exit)
+
+; =================================================================
+
 
 #! -----------------------------------------------------------------
 ; Some stuff to create a ranked graph of the results found above.
