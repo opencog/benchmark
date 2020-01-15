@@ -31,6 +31,7 @@
 (define g Gene)
 (define m Molecule)
 (define c Concept)
+(define s Member)
 (define i (Predicate "interacts_with"))
 (define x (Predicate "expresses"))
 (define b (Predicate "has_biogridID"))
@@ -46,6 +47,8 @@
 (format #t "Loaded entrez data in ~6f seconds\n" (elapsed-secs))
 (primitive-load "uniprot.scm")
 (format #t "Loaded uniprot data in ~6f seconds\n" (elapsed-secs))
+(primitive-load "reactome-chebi.scm")
+(format #t "Loaded chebi reactome in ~6f seconds\n" (elapsed-secs))
 (format #t "AtomSpace contents: ~A\n" (cog-report-counts))
 
 ; ------------------------------------------------------------------
