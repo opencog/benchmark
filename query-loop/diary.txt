@@ -18,3 +18,16 @@ Analyzed 681 genes in 105.89 seconds
 Analyzed 681 genes in 107.60 seconds
 
 This is using the AtomSpace of the day.
+
+The above are the triangle-dataset, only. Repeat, with hugetlb, for the
+combined dataset, triangles and pentagons:
+
+Triangle relations for 681 genes in 131.95 seconds
+Triangle relations for 681 genes in 141.52 seconds
+Triangle relations for 681 genes in 141.10 seconds
+Protein expression for 12 pathways in 101.21 seconds
+Protein expression for 12 pathways in 105.71 seconds
+Protein expression for 12 pathways in 107.90 seconds
+
+Wow!  Looks like loading up all that additional data slowed down
+the triangle-search by 30%!  That's not ... good.
