@@ -25,10 +25,17 @@ benchmark (because it has a very long measurement history).
   pattern matcher queries.
 
 * __query-links__ -- A real-world benchmark for performing a complex
-  pattern match on a real-world natural-language dataset.
+  pattern match on a real-world natural-language dataset. Creates 576
+  BindLink's with two GlobNodes and a Variable, each. The Globs are
+  used to search for connectable connectors, similar to parsing tasks.
+  That is, a search over "jigsaw puzzle pieces", looking for pairs
+  of jigsaw pieces that can connect.
 
 * __query-loop__ -- A real-world benchmark for performing a complex
-  pattern match on a real-world genome dataset.
+  pattern match on a real-world genome dataset. Uses EvaluationLink
+  in a simple/stright-forward way to represent the edges and vertexes
+  of a large graph (for gene/protein interactions), and then hunts
+  for triangles and pentagons in that graph.
 
 * __cogserver__ -- Benchmark of network I/O to the cogserver.
   Highlights issues created by using `netcat` instead of using native

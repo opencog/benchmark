@@ -1,14 +1,16 @@
 
 Pattern Matcher benchmark HOWTO
 -------------------------------
-This is a "full-stack" pattern-matcher benchmark. It uses an AtomSpace
-of a non-trivial size, of almost 2 million (1967867) Atoms in total.
-The data itself has a very simple structure: it consists entirely of
-vertexes and labelled edges. Each vertex represents either a gene,
-or a formal database name for it (the Entrez ID).  There are two edge
-labels (two types of edges), either `(Predicate "interacts_with")` or
-`(Predicate "has_entrez_id")`. A third predicate `(Predicate
-"has_biomed_ID")` is used to label edges.
+This is a "full-stack" pattern-matcher benchmark on a "real-world"
+genome/proteome/reactome dataset.
+
+It uses `EvaluationLink`'s to represent the edges and vertexes of
+a graph, and then searches that graph for triangles and pentagons.
+The (labelled-) vertex and (labelled-) edge representation is
+straight-forward, just a classic use of `EvaluationLink`. The
+graph contains 250K vertexes and 1.2M edges, with most of the
+edges representing gene-gene or gene-protein interactions, although
+some of them are used to attach tags for PubMed/Entrez/UniProt id's.
 
 Edges are represented with `EvaluationLinks` as usual. For example:
 ```
@@ -19,25 +21,25 @@ Edges are represented with `EvaluationLinks` as usual. For example:
 			GeneNode "RAD23A"
 ```
 
-The specific pattern search is for triangular loops, of the form
+One of the two benchmarks searches for triangular loops in the
+graph, specificially, those of the form
 ```
    (Evaluation (Predicate "interacts") (List gene (Variable "$a")))
    (Evaluation (Predicate "interacts") (List (Variable "$a") (Variable "$b"))
    (Evaluation (Predicate "interacts") (List gene (Variable "$b")))
 ```
 where `gene` is a given gene, specified by the scientist, and `$a` and
-`$b` are two other genes that interact with it.  Given the above
-contraints, these interaction make a loop or triangle.
+`$b` are two other genes that interact with it.
 
-The dataset is further charcachterized
+The other benchmark looks for pentagons,and so is similar, except that
+two of the edges are gene-protein expression relations, and one vertex
+is a reactome pathway label.
+
+The structure of the dataset is explored
 [in the dataset-notes directory.](./dataset-notes)
 
-This is a "real world" benchmark, in that it uses a real-world dataset,
-containing actual data from genomics datasets.  As a "real-world"
-benchmark, it should represent "real-world" results that users can
-expect to get.
-
-A diary of results can be found in `diary.txt`.
+A historical diary of performance measurement results can be found in
+`diary.txt`.
 
 ==Running the benchmark
 
