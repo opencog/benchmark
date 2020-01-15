@@ -1,0 +1,17 @@
+#! /usr/bin/env gnuplot
+#
+# Create a graph of the genes participating in triangles.
+#
+set term png
+set out 'loop-participants.png'
+
+set logscale x
+set logscale y
+set format y "10^{%L}"
+set title "Number triangular loops that were participated in"
+set xlabel "Gene Rank"
+set ylabel "Number of triangles participated in"
+
+# Eyeballed fit to the data.
+plot "loop-participants.csv" using 1:3 title "data", \
+     "loop-participants.csv" using 1:(10000 / ($1)**0.5) with lines title "1/sqrt(rank)"

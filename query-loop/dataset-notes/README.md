@@ -20,12 +20,13 @@ There are then two questions:
 
 These questions are answered below.
 
-===gene-paths.csv===
-The number of triangle shaped paths for each gene.  When plotted
-on a log-log graph, the distribution is clearly not Zipfian, except
-maybe at the very beginning. The eyeballed fit is 1/sqrt(rank).
+===gene-loops.csv===
+The number of triangle shaped interactions for each given gene.
+When plotted on a log-log graph, the distribution is clearly not
+Zipfian, except maybe at the very beginning. The eyeballed fit
+is 1/sqrt(rank).
 
-===path-participants.csv===
+===loop-participants.csv===
 A count of the number of times that a gene appered in a triangle.
 Perhaps its Zipfian initially, but certainly not at the tail end.
 As before, the eyeballed fit is 1/sqrt(rank).
@@ -33,5 +34,8 @@ As before, the eyeballed fit is 1/sqrt(rank).
 ==Remarks==
 The reason for the intial 1/sqrt(rank) is mysterious. Why this
 isn't true Zipfian is also unknown to me.  I was expecting something
-scale-free, and its not.  Is this just due to bad (incomplete)
-genetic interaction data, or is nature actually like this?
+scale-free, and its not.
+* Is it because the list of 681 genes to look at was hand-picked,
+  and not a random sampling?
+* Is this just due to bad (incomplete) genetic interaction data,
+  or is nature actually like this?
