@@ -6,7 +6,7 @@ genome/proteome/reactome dataset.
 
 It uses `EvaluationLink`'s to represent the edges and vertexes of
 a graph, and then searches that graph for triangles and pentagons.
-The (labelled-) vertex and (labelled-) edge representation is
+The (labeled-) vertex and (labeled-) edge representation is
 straight-forward, just a classic use of `EvaluationLink`. The
 graph contains 250K vertexes and 1.2M edges, with most of the
 edges representing gene-gene or gene-protein interactions, although
@@ -22,7 +22,7 @@ Edges are represented with `EvaluationLinks` as usual. For example:
 ```
 
 One of the two benchmarks searches for triangular loops in the
-graph, specificially, those of the form
+graph, specifically, those of the form
 ```
    (Evaluation (Predicate "interacts") (List gene (Variable "$a")))
    (Evaluation (Predicate "interacts") (List (Variable "$a") (Variable "$b"))

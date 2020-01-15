@@ -34,7 +34,7 @@ history, despite being deeply flawed).
 
 * __query-loop__ -- A real-world benchmark for performing a complex
   pattern match on a real-world genome dataset. Uses EvaluationLink
-  in a simple/stright-forward way to represent the edges and vertexes
+  in a simple/straight-forward way to represent the edges and vertexes
   of a large graph (for gene/protein interactions), and then hunts
   for triangles and pentagons in that graph.
 
