@@ -56,7 +56,7 @@ it was derived from.  As a "real-world" benchmark, it should represent
 
 A diary of results can be found in `diary.txt`.
 
-==Running the benchmark
+## Running the benchmark
 
 Do this (once, the first time only):
 ```
