@@ -100,13 +100,22 @@
 		)))
 
 ;; -----------
+;; This defines a single edge search; one endpoint is the given
+;; gene, the other is a pathway.
+(define (find-pathways gene)
+	(Get
+		(TypedVariable (Variable "$p") (Type 'ConceptNode))
+		(Member gene (Variable "$p"))
+	))
+
+;; -----------
 ;; Run the triangle-benchmark
 (define (run-triangle-benchmark)
 	(define bench-secs (make-timer))
 	(define interaction-counts
 		(map
 			(lambda (gene-name)
-				; Create a search patterns for each gene in the gene list.
+				; Create a search pattern for each gene in the gene list.
 				(define gene (Gene gene-name))
 				(define query (find-output-interactors gene))
 
@@ -145,12 +154,26 @@
 ;; -----------
 ;; Run the pentagon-benchmark
 (define (run-pentagon-benchmark)
+
+	; Create a list of the pathways that the genes are in.
+	(define pathways (delete-duplicates
+		(append-map
+			(lambda (gene-name)
+				(define gene (Gene gene-name))
+				(define query (find-pathways gene))
+				; Perform the search
+				(define path-set (cog-execute! query))
+				(define pathways (cog-outgoing-set path-set))
+				(cog-delete path-set)
+				pathways
+			)
+			gene-list)))
+
 	(define bench-secs (make-timer))
 	(define path-counts
 		(map
-			(lambda (pathway-name)
-				; Create a search patterns for each gene in the gene list.
-				(define pathway (Concept pathway-name))
+			(lambda (pathway)
+				; Create a search pattern for each pathway in the list.
 				(define query (pathway-gene-interactors pathway))
 
 				; Perform the search
@@ -171,12 +194,12 @@
 !#
 
 				(format #t "Ran query ~A in ~6f seconds; got ~A results\n"
-					pathway-name (path-secs) rlen)
+					(cog-name pathway) (path-secs) rlen)
 				(display ".")
 				(cog-delete result)
-				(cons pathway-name rlen)
+				(cons (cog-name pathway) rlen)
 			)
-			gene-list))
+			pathways))
 	(define run-time (bench-secs))
 	(format #t "\n")
 	(format #t "Analyzed ~A pathways in ~6f seconds\n"
