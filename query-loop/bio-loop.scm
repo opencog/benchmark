@@ -4,6 +4,9 @@
 (use-modules (srfi srfi-1))
 (use-modules (opencog) (opencog exec))
 
+; Needeed for definition of GeneNode and MoleculeNode
+(use-modules (opencog bioscience))
+
 ; Performance stats
 (define (make-timer)
 	(let ((start-time (current-time)))
@@ -16,7 +19,7 @@
 (load "gene-list.scm")
 
 ; Non-human-readable definitions to compress the size of the data file.
-(define Gene Concept)
+; (define Gene Concept)
 (define e Evaluation)
 (define l List)
 (define g Gene)
@@ -57,48 +60,82 @@
 		)))
 
 ; Run the benchmark
-(define bench-secs (make-timer))
-(define interaction-counts
-	(map
-		(lambda (gene-name)
-			; Create a search patterns for each gene in the gene list.
-			(define gene (Gene gene-name))
-			(define query (find-output-interactors gene))
+(define (run-benchmark)
+	(define bench-secs (make-timer))
+	(define interaction-counts
+		(map
+			(lambda (gene-name)
+				; Create a search patterns for each gene in the gene list.
+				(define gene (Gene gene-name))
+				(define query (find-output-interactors gene))
 
-			; Perform the search
-			(define gene-secs (make-timer))
-			(define result (cog-execute! query))
-			(define rlen (cog-arity result))
+				; Perform the search
+				(define gene-secs (make-timer))
+				(define result (cog-execute! query))
+				(define rlen (cog-arity result))
 
-			; Collect up some stats
-			; (cog-inc-count! gene rlen)
-			(for-each
-				(lambda (gene-pair)
-					(define gene-a (cog-outgoing-atom gene-pair 0))
-					(define gene-b (cog-outgoing-atom gene-pair 1))
-					(cog-inc-count! gene-a 1)
-					(cog-inc-count! gene-b 1))
-				(cog-outgoing-set result))
+				; Collect up some stats
+				; (cog-inc-count! gene rlen)
+				(for-each
+					(lambda (gene-pair)
+						(define gene-a (cog-outgoing-atom gene-pair 0))
+						(define gene-b (cog-outgoing-atom gene-pair 1))
+						(cog-inc-count! gene-a 1)
+						(cog-inc-count! gene-b 1))
+					(cog-outgoing-set result))
 
-			(format #t "Ran query ~A in ~6f seconds; got ~A results\n"
-				gene-name (gene-secs) rlen)
-			(cog-delete result)
-			(cons gene-name rlen)
-		)
-		gene-list))
-(define run-time (bench-secs))
-(define x (format #t "Analyzed ~A genes in ~6f seconds\n"
-		(length interaction-counts) run-time))
+				(format #t "Ran query ~A in ~6f seconds; got ~A results\n"
+					gene-name (gene-secs) rlen)
+				(cog-delete result)
+				(cons gene-name rlen)
+			)
+			gene-list))
+	(define run-time (bench-secs))
+	(define x (format #t "Analyzed ~A genes in ~6f seconds\n"
+			(length interaction-counts) run-time))
 
+	; Return the list of counts.
+	interaction-counts
+)
+
+(run-benchmark)
+
+#! -----------------------------------------------------------------
+; Some stuff to create a ranked graph of the results found above.
+; Look in the directory called `dataset-notes`.
+
+; Sort according to descending rank.
 (define sorted-counts (sort interaction-counts
 	(lambda (a b) (> (cdr a) (cdr b)))))
 
+; Dump to file.
 (define f (open-file "gene-paths.csv" "w"))
 (define cnt 1)
 (for-each
 	(lambda (gu) (format f "~A	~A	~A\n" cnt (car gu) (cdr gu))
 		(set! cnt (+ 1 cnt)))
 	sorted-counts)
+(close f)
+
+!# ; ---------------------------------------------------------------
+
+; Genes that appeared in the pathway.
+(define path-participants
+	(map
+		(lambda (gene) (cons (cog-name gene) (cog-count gene)))
+		(cog-get-atoms 'GeneNode))
+)
+
+(define sorted-participants (sort path-participants
+	(lambda (a b) (> (cdr a) (cdr b)))))
+
+; Dump to file.
+(define f (open-file "path-participants.csv" "w"))
+(define cnt 1)
+(for-each
+	(lambda (gu) (format f "~A	~A	~A\n" cnt (car gu) (cdr gu))
+		(set! cnt (+ 1 cnt)))
+	sorted-participants)
 (close f)
 
 
