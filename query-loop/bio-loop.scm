@@ -261,18 +261,24 @@
 ; Some stuff to create a ranked graph of the results found above.
 ; Look in the directory called `dataset-notes`.
 
-; Sort according to descending rank.
-(define sorted-counts (sort interaction-counts
-	(lambda (a b) (> (cdr a) (cdr b)))))
+(define (dump-to-csv pair-list filename)
 
-; Dump to file.
-(define f (open-file "gene-loops.csv" "w"))
-(define cnt 1)
-(for-each
-	(lambda (gu) (format f "~A	~A	~A\n" cnt (car gu) (cdr gu))
-		(set! cnt (+ 1 cnt)))
-	sorted-counts)
-(close f)
+	; Sort according to descending rank.
+	(define sorted-counts (sort pair-list
+		(lambda (a b) (> (cdr a) (cdr b)))))
+
+	; Dump to file.
+	(define f (open-file filename "w"))
+	(define cnt 1)
+	(format f "#\n# ~A\n#\n# Rank-ordered counts\n#\n" filename)
+	(for-each
+		(lambda (gu) (format f "~A	~A	~A\n" cnt (car gu) (cdr gu))
+			(set! cnt (+ 1 cnt)))
+		sorted-counts)
+	(close f)
+)
+
+(dump-to-csv interaction-counts "gene-loops.csv")
 
 !# ; ---------------------------------------------------------------
 
@@ -280,24 +286,35 @@
 ; Some stuff to create a ranked graph of the results found above.
 ; Look in the directory called `dataset-notes`.
 
-; Genes that appeared in the pathway.
-(define path-participants
+; Genes that appeared in a triangular loop.
+(define loop-participants
 	(map (lambda (gene) (cons (cog-name gene) (cog-count gene)))
 		(filter (lambda (gene) (< 0 (cog-count gene)))
-			(cog-get-atoms 'GeneNode)))
-)
+			(cog-get-atoms 'GeneNode))))
 
-(define sorted-participants (sort path-participants
-	(lambda (a b) (> (cdr a) (cdr b)))))
+(dump-to-csv loop-participants "loop-participants.csv")
 
-; Dump to file.
-(define f (open-file "path-participants.csv" "w"))
-(define cnt 1)
-(for-each
-	(lambda (gu) (format f "~A	~A	~A\n" cnt (car gu) (cdr gu))
-		(set! cnt (+ 1 cnt)))
-	sorted-participants)
-(close f)
+; Genes that appeared in the pentagonal loop
+(define path-genes
+	(map (lambda (gene) (cons (cog-name gene) (cog-count gene)))
+		(filter (lambda (gene) (< 0 (cog-count gene)))
+			(cog-get-atoms 'GeneNode))))
+
+(dump-to-csv path-genes "path-genes.csv")
+
+(define path-proteins
+	(map (lambda (protein) (cons (cog-name protein) (cog-count protein)))
+		(filter (lambda (protein) (< 0 (cog-count protein)))
+			(cog-get-atoms 'MoleculeNode))))
+
+(dump-to-csv path-proteins "path-proteins.csv")
+
+(define path-counts
+	(map (lambda (pathway) (cons (cog-name pathway) (cog-count pathway)))
+		(filter (lambda (pathway) (< 0 (cog-count pathway)))
+			(cog-get-atoms 'ConceptNode))))
+
+(dump-to-csv path-counts "path-counts.csv")
 
 !# ; ---------------------------------------------------------------
 
