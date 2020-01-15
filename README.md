@@ -7,9 +7,10 @@ matcher and other OpenCog processes.
 Each distinct benchmark has it's own instructions for building and
 running it.  See individual directories for details.
 
-The most interesting benchmarks are probably the **query-links**
-benchmark (because it is a real-world benchmark) and the **atomspace**
-benchmark (because it has a very long measurement history).
+The most interesting benchmarks are probably the **query-links** and
+**query-loop** benchmarks (because they are "real-world" benchmarks)
+and the **atomspace** benchmark (because it has a very long measurement
+history, despite being deeply flawed).
 
 * __atomspace__ -- A synthetic benchmark for measuring core AtomSpace
   functions, such as rates for creating Nodes and Links, rates for
