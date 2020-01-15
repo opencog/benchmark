@@ -7,7 +7,7 @@
 ; Needeed for definition of GeneNode and MoleculeNode
 (use-modules (opencog bioscience))
 
-; Performance stats
+; Performance stats timer
 (define (make-timer)
 	(let ((start-time (get-internal-real-time)))
 		(lambda ()
@@ -16,9 +16,14 @@
 			(set! start-time now)
 			diff)))
 
+; List of genes on which to perform the query.
 (load "gene-list.scm")
 
-; Non-human-readable definitions to compress the size of the data file.
+; Non-human-readable definitions are used to compress the size
+; of the data file to something reasonable-ish.
+;
+; The `(opencog bioscience)` module defines GeneNode and MoleculeNode
+; but if that is not avaoiable, just redefine it to be ConceptNode.
 ; (define Gene Concept)
 (define e Evaluation)
 (define l List)
@@ -97,10 +102,19 @@
 			(length interaction-counts) run-time)
 
 	; Return the list of counts.
-	interaction-counts
+	; interaction-counts
+	*unspecified*
 )
 
+; Run the benchmark three times
+(display "Will run the benchmark three times ...\n")
 (run-benchmark)
+(sleep 1)
+(run-benchmark)
+(sleep 1)
+(run-benchmark)
+
+(exit)
 
 #! -----------------------------------------------------------------
 ; Some stuff to create a ranked graph of the results found above.
@@ -146,5 +160,4 @@
 
 !# ; ---------------------------------------------------------------
 
-(exit)
 ; ------------------------------------------------------------------
