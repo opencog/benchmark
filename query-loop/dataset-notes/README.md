@@ -31,10 +31,25 @@ A count of the number of times that a gene appered in a triangle.
 Perhaps its Zipfian initially, but certainly not at the tail end.
 As before, the eyeballed fit is 1/sqrt(rank).
 
+===path-*.csv===
+As above, but now for the pentagon shapes. So `path-loops.png`
+shows how many pentagons each of the 681 genes participated in.
+The `path-proteins.png` shows how many distinct proteins show up
+in the loops, and how many loops each of the proteins participate
+in. The `path-genes.png` is the same, but for the genes showing
+up in the loops.
+
+These are called "paths" because each pathway is tagged with a distinct
+pathway tag from the NCBI dataset.
+
+As before, the eyeballed fit is 1/sqrt(rank). This time, there is
+a region where this fit is almost exact.
+
 ==Remarks==
 The reason for the intial 1/sqrt(rank) is mysterious. Why this
 isn't true Zipfian is also unknown to me.  I was expecting something
 scale-free, and its not.
+
 * Is it because the list of 681 genes to look at was hand-picked,
   and not a random sampling?
 * Is this just due to bad (incomplete) genetic interaction data,
