@@ -190,7 +190,7 @@
 			pathways))
 	(define run-time (bench-secs))
 	(format #t "\n")
-	(format #t "Analyzed ~A pathways in ~6f seconds\n"
+	(format #t "Protein expression for ~A pathways in ~6f seconds\n"
 			(length path-counts) run-time)
 
 	; Return the list of counts.

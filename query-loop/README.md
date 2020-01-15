@@ -45,14 +45,16 @@ To run each test:
 ```
 $ guile -l bio-loop.scm
 ```
-The above should take about 2 minutes (or less) to load the dataset.
-It will then run the benchmark three times, printing something similar
-to this:
+The above should take about 2 minutes (or less) to load the various
+datasets, providing a print after each.  It will then run two different
+benchmarks three times each, printing something similar to this:
 
 ```
-Analyzed 681 genes in 187.32 seconds
-Analyzed 681 genes in 191.09 seconds
+Triangle relations for 681 genes in 187.32 seconds
+Protein expression for 12 pathways in 120.01 seconds
 ```
+The third benchmark is an expanded version of the second one; it takes
+hours to run.
 
 This test shows a large benefit from using Linux Huge Pages.
 Not a surprise: it's accessing a lot of memory in a very random
