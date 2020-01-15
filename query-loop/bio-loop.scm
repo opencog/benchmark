@@ -309,12 +309,12 @@
 
 (dump-to-csv path-proteins "path-proteins.csv")
 
-(define path-counts
+(define path-loops
 	(map (lambda (pathway) (cons (cog-name pathway) (cog-count pathway)))
 		(filter (lambda (pathway) (< 0 (cog-count pathway)))
 			(cog-get-atoms 'ConceptNode))))
 
-(dump-to-csv path-counts "path-counts.csv")
+(dump-to-csv path-loops "path-loops.csv")
 
 !# ; ---------------------------------------------------------------
 
