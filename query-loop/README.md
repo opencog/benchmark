@@ -1,6 +1,6 @@
 
-Pattern Matcher benchmark HOWTO
--------------------------------
+Pattern Matcher (Genomic) Benchmark HOWTO
+-----------------------------------------
 This is a "full-stack" pattern-matcher benchmark on a "real-world"
 genome/proteome/reactome dataset.
 
@@ -31,9 +31,12 @@ graph, specificially, those of the form
 where `gene` is a given gene, specified by the scientist, and `$a` and
 `$b` are two other genes that interact with it.
 
-The other benchmark looks for pentagons,and so is similar, except that
-two of the edges are gene-protein expression relations, and one vertex
-is a reactome pathway label.
+The other benchmark looks for pentagons, and so is similar, except that
+one vertex is a reactome pathway label, two edges connect that pathway
+to proteins that participate in that pathway, two edges are gene-protein
+expression relations, and the fifth edge indicates that the two genes
+interact with each-other. (Thus, one pathway vertex, two protein vertexes,
+and two gene vertexes).
 
 The structure of the dataset is explored
 [in the dataset-notes directory.](./dataset-notes)
@@ -41,7 +44,7 @@ The structure of the dataset is explored
 A historical diary of performance measurement results can be found in
 `diary.txt`.
 
-==Running the benchmark
+## Running the benchmark
 
 To run each test:
 ```
