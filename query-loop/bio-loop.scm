@@ -152,22 +152,8 @@
 )
 
 ;; -----------
-;; Run the pentagon-benchmark
-(define (run-pentagon-benchmark)
-
-	; Create a list of the pathways that the genes are in.
-	(define pathways (delete-duplicates
-		(append-map
-			(lambda (gene-name)
-				(define gene (Gene gene-name))
-				(define query (find-pathways gene))
-				; Perform the search
-				(define path-set (cog-execute! query))
-				(define pathways (cog-outgoing-set path-set))
-				(cog-delete path-set)
-				pathways
-			)
-			gene-list)))
+;; The pentagon-benchmark; a list of pathways must be supplied.
+(define (pentagon-benchmark pathways)
 
 	(define bench-secs (make-timer))
 	(define path-counts
@@ -195,8 +181,8 @@
 						(cog-inc-count! prot-b 1))
 					(cog-outgoing-set result))
 
-				(format #t "Ran path ~A in ~6f seconds; got ~A results\n"
-					(cog-name pathway) (path-secs) rlen)
+				; (format #t "Ran path ~A in ~6f seconds; got ~A results\n"
+				; 	(cog-name pathway) (path-secs) rlen)
 				(display ".")
 				(cog-delete result)
 				(cons (cog-name pathway) rlen)
@@ -212,6 +198,41 @@
 	*unspecified*
 )
 
+;; -----------
+;; The long pentagon-benchmark. This takes several hours.
+;;
+(define (run-long-pentagon-benchmark)
+
+	; Create a list of the pathways that the genes are in.
+	(define pathways (delete-duplicates
+		(append-map
+			(lambda (gene-name)
+				(define gene (Gene gene-name))
+				(define query (find-pathways gene))
+				; Perform the search
+				(define path-set (cog-execute! query))
+				(define pathways (cog-outgoing-set path-set))
+				(cog-delete path-set)
+				pathways
+			)
+			gene-list)))
+	(pentagon-benchmark pathways)
+)
+
+;; -----------
+;; The short pentagon-benchmark. This takes several minutes.
+;;
+(define (run-short-pentagon-benchmark)
+
+	; A selected short list of pathways.
+	(define paths (list
+		"R-HSA-6799198" "R-HSA-72163" "R-HSA-352230" "R-HSA-611105"
+		"R-HSA-389661" "R-HSA-77289" "R-HSA-4641258" "R-HSA-5663220"
+		"R-HSA-201681" "R-HSA-4086400" "R-HSA-5099900" "R-HSA-4608870"))
+
+	(pentagon-benchmark (map Concept paths))
+)
+
 ; Run the benchmark three times
 (display "Will run the triangle benchmark three times ...\n")
 (run-triangle-benchmark)
@@ -220,8 +241,16 @@
 (sleep 1)
 (run-triangle-benchmark)
 (sleep 1)
-(display "Will run the pentagon benchmark once ...\n")
-(run-pentagon-benchmark)
+(display "Will run the short pentagon benchmark three times ...\n")
+(run-short-pentagon-benchmark)
+(sleep 1)
+(run-short-pentagon-benchmark)
+(sleep 1)
+(run-short-pentagon-benchmark)
+
+(display "Will run the long pentagon benchmark once ...\n")
+(display "This takes hours...")
+(run-long-pentagon-benchmark)
 
 (exit)
 
