@@ -5,6 +5,7 @@
 (use-modules (opencog) (opencog exec))
 
 ; Needeed for definition of GeneNode and MoleculeNode
+; You can skip this by redefining these two, below.
 (use-modules (opencog bioscience))
 
 ; Performance stats timer
@@ -71,11 +72,12 @@
 				(List gene (Variable "$b")))
 		)))
 
+;; -----------
 ;; This defines a pentagon-shaped search; one endpoint, a reaction
 ;; pathway, is fixed, and we are looking for two proteins that
 ;; participate in that pathway. These two are expressed with a pair
 ;; of genes that interact with one-another, forming a pentagon.
-(define (pathway-gene-interactors pw)
+(define (pathway-gene-interactors pathway)
 	(Get
 		(VariableList
 			(TypedVariable (Variable "$g1") (Type 'GeneNode))
@@ -83,15 +85,16 @@
 			(TypedVariable (Variable "$p1") (Type 'MoleculeNode))
 			(TypedVariable (Variable "$p2") (Type 'MoleculeNode)))
 		(And
-			(Member (Variable "$p1") pw)
-			(Member (Variable "$p2") pw)
+			(Member (Variable "$p1") pathway)
+			(Member (Variable "$p2") pathway)
 			(Evaluation (Predicate "expresses") (List (Variable "$g1") (Variable "$p1")))
 			(Evaluation (Predicate "expresses") (List (Variable "$g2") (Variable "$p2")))
 			(Evaluation (Predicate "interacts_with") (List (Variable "$g1") (Variable "$g2")))
 		)))
 
-; Run the benchmark
-(define (run-benchmark)
+;; -----------
+;; Run the triangle-benchmark
+(define (run-triangle-benchmark)
 	(define bench-secs (make-timer))
 	(define interaction-counts
 		(map
@@ -124,7 +127,7 @@
 			gene-list))
 	(define run-time (bench-secs))
 	(format #t "\n")
-	(format #t "Analyzed ~A genes in ~6f seconds\n"
+	(format #t "Triangle relations for ~A genes in ~6f seconds\n"
 			(length interaction-counts) run-time)
 
 	; Return the list of counts.
@@ -132,15 +135,62 @@
 	*unspecified*
 )
 
+;; -----------
+;; Run the pentagon-benchmark
+(define (run-pentagon-benchmark)
+	(define bench-secs (make-timer))
+	(define path-counts
+		(map
+			(lambda (pathway-name)
+				; Create a search patterns for each gene in the gene list.
+				(define pathway (Concept pathway-name))
+				(define query (pathway-gene-interactors pathway))
+
+				; Perform the search
+				(define path-secs (make-timer))
+				(define result (cog-execute! query))
+				(define rlen (cog-arity result))
+
+				; Collect up some stats
+				; (cog-inc-count! pathway rlen)
+#!
+				(for-each
+					(lambda (gene-pair)
+						(define gene-a (cog-outgoing-atom gene-pair 0))
+						(define gene-b (cog-outgoing-atom gene-pair 1))
+						(cog-inc-count! gene-a 1)
+						(cog-inc-count! gene-b 1))
+					(cog-outgoing-set result))
+!#
+
+				(format #t "Ran query ~A in ~6f seconds; got ~A results\n"
+					pathway-name (path-secs) rlen)
+				(display ".")
+				(cog-delete result)
+				(cons pathway-name rlen)
+			)
+			gene-list))
+	(define run-time (bench-secs))
+	(format #t "\n")
+	(format #t "Analyzed ~A pathways in ~6f seconds\n"
+			(length path-counts) run-time)
+
+	; Return the list of counts.
+	; path-counts
+	*unspecified*
+)
+
+#!
 ; Run the benchmark three times
 (display "Will run the benchmark three times ...\n")
-(run-benchmark)
+(run-triangle-benchmark)
 (sleep 1)
-(run-benchmark)
+(run-triangle-benchmark)
 (sleep 1)
-(run-benchmark)
+(run-triangle-benchmark)
 
 (exit)
+!#
 
 ; =================================================================
 
