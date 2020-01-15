@@ -20,18 +20,22 @@ There are then two questions:
 
 These questions are answered below.
 
-===gene-loops.csv===
+=== gene-loops.csv ===
 The number of triangle shaped interactions for each given gene.
 When plotted on a log-log graph, the distribution is clearly not
 Zipfian, except maybe at the very beginning. The eyeballed fit
 is 1/sqrt(rank).
 
-===loop-participants.csv===
+![Loops per gene](gene-loops.png)
+
+=== loop-participants.csv ===
 A count of the number of times that a gene appered in a triangle.
 Perhaps its Zipfian initially, but certainly not at the tail end.
 As before, the eyeballed fit is 1/sqrt(rank).
 
-===path-*.csv===
+![Genes in loops](loop-participants.png)
+
+=== path-*.csv ===
 As above, but now for the pentagon shapes. So `path-loops.png`
 shows how many pentagons each of the 681 genes participated in.
 The `path-proteins.png` shows how many distinct proteins show up
@@ -45,7 +49,11 @@ pathway tag from the NCBI dataset.
 As before, the eyeballed fit is 1/sqrt(rank). This time, there is
 a region where this fit is almost exact.
 
-==Remarks==
+![Loops per path](path-loops.png)
+![Genes in loops](path-genes.png)
+![Proteins in loops](path-proteins.png)
+
+== Remarks ==
 The reason for the intial 1/sqrt(rank) is mysterious. Why this
 isn't true Zipfian is also unknown to me.  I was expecting something
 scale-free, and its not.
