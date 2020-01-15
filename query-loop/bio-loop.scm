@@ -32,6 +32,7 @@
 (define c Concept)
 (define i (Predicate "interacts_with"))
 (define x (Predicate "expresses"))
+(define b (Predicate "has_biogridID"))
 (define d (Predicate "has_pubmed_ID"))
 (define z (Predicate "has_entrez_id"))
 
@@ -42,6 +43,8 @@
 (format #t "Loaded biogrid data in ~6f seconds\n" (elapsed-secs))
 (primitive-load "entrez.scm")
 (format #t "Loaded entrez data in ~6f seconds\n" (elapsed-secs))
+(primitive-load "uniprot.scm")
+(format #t "Loaded uniprot data in ~6f seconds\n" (elapsed-secs))
 (format #t "AtomSpace contents: ~A\n" (cog-report-counts))
 
 ; ------------------------------------------------------------------
