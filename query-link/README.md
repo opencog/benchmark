@@ -1,6 +1,6 @@
 
-Pattern Matcher benchmark HOWTO
--------------------------------
+Pattern Matcher (NLP) Benchmark HOWTO
+-------------------------------------
 This is a "full-stack" pattern-matcher benchmark, using a "real-world"
 natural language dataset to perform a "typical" search used in natural
 language machine learning.
