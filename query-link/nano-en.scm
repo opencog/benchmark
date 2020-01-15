@@ -1,5 +1,5 @@
 ;
-; nano-scm.scm
+; nano-en.scm
 ;
 (use-modules (srfi srfi-1))
 (use-modules (opencog) (opencog matrix) (opencog exec))
@@ -53,7 +53,7 @@
 		(ConnectorSeq
 			(Glob "l-pre")
 			(Connector (Variable "r-word") (ConnectorDir "+"))
-		(Glob "l-post")))
+			(Glob "l-post")))
 
 	; Create a BindLink that will obtain the links between sections,
 	; and report the results.

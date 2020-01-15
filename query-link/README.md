@@ -1,11 +1,43 @@
 
 Pattern Matcher benchmark HOWTO
 -------------------------------
-This is a "full-stack" pattern-matcher benchmark. It uses an AtomSpace
-of a non-trivial size (43752 Atoms total) with a non-trivial structure
-(27463 Sections which consist of word-disjunct pairs; there are 576
-words and 6982 disjuncts.  That is, this is a matrix of dimension
-576 x 6982 of which only 27463 matrix entries are non-zero.)
+This is a "full-stack" pattern-matcher benchmark, using a "real-world"
+natural language dataset to perform a "typical" search used in natural
+language machine learning.
+
+The dataset consists of 27K Sections (precisely, 27463 Sections which
+consist of word-disjunct pairs; there are 576 words and 6982 disjuncts
+That is, this is a matrix of dimension 576 x 6982 of which only 27463
+matrix entries are non-zero.)
+
+Each Section can be (should be) thought of as a distinct "jigsaw puzzle
+piece". Each disjunct can be (should be) thought of as a collection of
+one or more tabs/connectors on that jigsaw-puzzle piece. The search to
+be performed (to be benchmarked) is to locate pairs of connectable
+puzzle pieces (pairs of connectable words), and then to increment counts
+whenever a connection (a word-pair) is possible. The search makes very
+heavy use of GlobNodes to identify the connector-sets to the left and
+right of the connecting-connectors.
+
+The benchmark creates 576 BindLinks, one for each word. Each BindLink
+has one Variable (its the word that is being connected-to) and four
+GlobNodes. Two GlobNodes specify the connector-sets to the left/right
+of the base word, and the other two GlobNodes specify the left/right
+connector sets of the other word.
+
+In ASCII-art:
+```
+         \       /
+        --*-----*--
+         /       \
+```
+with the `*` being a word, the long `-----` being the connector-pair
+joining the two words, and the diagonal slashes and dashes being the
+other unconnected-connectors left dangling.  So this is an edge-mining
+task. Easy, in principle; hard only because of the need to partition
+the unconnected connectors (aka "half-edges") into sets.
+
+The AtomSpace contains 43752 Atoms in total.
 
 This matrix is loaded up (from an SQL database) outside of the timing
 loop. The timing loop measure the performance of computing 152904 links

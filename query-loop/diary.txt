@@ -1,0 +1,33 @@
+
+Measurement results
+-------------------
+Performed on `fanny`, a circa-2015 vintage AMD Opteron 6344 (Abu Dhabi)
+
+14 January 2020
+---------------
+Got this with ordinary pages (not hugetlb):
+
+Analyzed 681 genes in 137.09 seconds
+Analyzed 681 genes in 141.01 seconds
+Analyzed 681 genes in 141.91 seconds
+
+Got this w/ hugetlb: (2MB pagesize)
+
+Analyzed 681 genes in 106.90 seconds
+Analyzed 681 genes in 105.89 seconds
+Analyzed 681 genes in 107.60 seconds
+
+This is using the AtomSpace of the day.
+
+The above are the triangle-dataset, only. Repeat, with hugetlb, for the
+combined dataset, triangles and pentagons:
+
+Triangle relations for 681 genes in 131.95 seconds
+Triangle relations for 681 genes in 141.52 seconds
+Triangle relations for 681 genes in 141.10 seconds
+Protein expression for 12 pathways in 101.21 seconds
+Protein expression for 12 pathways in 105.71 seconds
+Protein expression for 12 pathways in 107.90 seconds
+
+Wow!  Looks like loading up all that additional data slowed down
+the triangle-search by 30%!  That's not ... good.
