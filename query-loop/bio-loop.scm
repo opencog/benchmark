@@ -24,7 +24,7 @@
 ; of the data file to something reasonable-ish.
 ;
 ; The `(opencog bioscience)` module defines GeneNode and MoleculeNode
-; but if that is not avaoiable, just redefine it to be ConceptNode.
+; but if that is not available, just redefine it to be ConceptNode.
 ; (define Gene Concept)
 (define e Evaluation)
 (define l List)
@@ -266,7 +266,7 @@
 	(lambda (a b) (> (cdr a) (cdr b)))))
 
 ; Dump to file.
-(define f (open-file "gene-paths.csv" "w"))
+(define f (open-file "gene-loops.csv" "w"))
 (define cnt 1)
 (for-each
 	(lambda (gu) (format f "~A	~A	~A\n" cnt (car gu) (cdr gu))

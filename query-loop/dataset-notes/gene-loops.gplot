@@ -1,9 +1,9 @@
 #! /usr/bin/env gnuplot
 #
-# Create a graph of the number of pathways found.
+# Create a graph of the number of loops found.
 #
 set term png
-set out 'gene-paths.png'
+set out 'gene-loops.png'
 
 set logscale x
 set logscale y
@@ -13,5 +13,5 @@ set xlabel "Gene Rank"
 set ylabel "Number of triangles"
 
 # Eyeballed fit to the data.
-plot "gene-paths.csv" using 1:3 title "data", \
-     "gene-paths.csv" using 1:(10000 / ($1)**0.5) with lines title "1/sqrt(rank)"
+plot "gene-loops.csv" using 1:3 title "data", \
+     "gene-loops.csv" using 1:(10000 / ($1)**0.5) with lines title "1/sqrt(rank)"
