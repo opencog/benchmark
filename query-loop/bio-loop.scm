@@ -9,10 +9,10 @@
 
 ; Performance stats
 (define (make-timer)
-	(let ((start-time (current-time)))
+	(let ((start-time (get-internal-real-time)))
 		(lambda ()
-			(define now (current-time))
-			(define diff (- now start-time))
+			(define now (get-internal-real-time))
+			(define diff (/ (- now start-time) internal-time-units-per-second))
 			(set! start-time now)
 			diff)))
 
@@ -44,11 +44,11 @@
 (define (find-output-interactors gene)
 	(Get
 		(VariableList
-			; (TypedVariable (Variable "$a") (Type 'GeneNode))
-			; (TypedVariable (Variable "$b") (Type 'GeneNode))
+			(TypedVariable (Variable "$a") (Type 'GeneNode))
+			(TypedVariable (Variable "$b") (Type 'GeneNode))
 
-			(TypedVariable (Variable "$a") (Type 'ConceptNode))
-			(TypedVariable (Variable "$b") (Type 'ConceptNode))
+			; (TypedVariable (Variable "$a") (Type 'ConceptNode))
+			; (TypedVariable (Variable "$b") (Type 'ConceptNode))
 		)
 		(And
 			(Evaluation (Predicate "interacts_with")
@@ -84,15 +84,17 @@
 						(cog-inc-count! gene-b 1))
 					(cog-outgoing-set result))
 
-				(format #t "Ran query ~A in ~6f seconds; got ~A results\n"
-					gene-name (gene-secs) rlen)
+				;; (format #t "Ran query ~A in ~6f seconds; got ~A results\n"
+				;; 	gene-name (gene-secs) rlen)
+				(display ".")
 				(cog-delete result)
 				(cons gene-name rlen)
 			)
 			gene-list))
 	(define run-time (bench-secs))
-	(define x (format #t "Analyzed ~A genes in ~6f seconds\n"
-			(length interaction-counts) run-time))
+	(format #t "\n")
+	(format #t "Analyzed ~A genes in ~6f seconds\n"
+			(length interaction-counts) run-time)
 
 	; Return the list of counts.
 	interaction-counts
@@ -119,11 +121,15 @@
 
 !# ; ---------------------------------------------------------------
 
+#! -----------------------------------------------------------------
+; Some stuff to create a ranked graph of the results found above.
+; Look in the directory called `dataset-notes`.
+
 ; Genes that appeared in the pathway.
 (define path-participants
-	(map
-		(lambda (gene) (cons (cog-name gene) (cog-count gene)))
-		(cog-get-atoms 'GeneNode))
+	(map (lambda (gene) (cons (cog-name gene) (cog-count gene)))
+		(filter (lambda (gene) (< 0 (cog-count gene)))
+			(cog-get-atoms 'GeneNode)))
 )
 
 (define sorted-participants (sort path-participants
@@ -138,6 +144,7 @@
 	sorted-participants)
 (close f)
 
+!# ; ---------------------------------------------------------------
 
-; (exit)
+(exit)
 ; ------------------------------------------------------------------
