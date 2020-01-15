@@ -49,6 +49,8 @@
 (format #t "Loaded uniprot data in ~6f seconds\n" (elapsed-secs))
 (primitive-load "reactome-chebi.scm")
 (format #t "Loaded chebi reactome in ~6f seconds\n" (elapsed-secs))
+(primitive-load "reactome-ncbi.scm")
+(format #t "Loaded ncbi reactome in ~6f seconds\n" (elapsed-secs))
 (format #t "AtomSpace contents: ~A\n" (cog-report-counts))
 
 ; ------------------------------------------------------------------
