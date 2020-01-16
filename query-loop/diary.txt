@@ -28,6 +28,7 @@ Triangle relations for 681 genes in 141.10 seconds
 Protein expression for 12 pathways in 101.21 seconds
 Protein expression for 12 pathways in 105.71 seconds
 Protein expression for 12 pathways in 107.90 seconds
+Protein expression for 704 pathways in 4895.7 seconds
 
 Wow!  Looks like loading up all that additional data slowed down
 the triangle-search by 30%!  That's not ... good.
