@@ -62,3 +62,6 @@ scale-free, and its not.
   and not a random sampling?
 * Is this just due to bad (incomplete) genetic interaction data,
   or is nature actually like this?
+
+The answer seems to be "no" to both questions; the experiments were
+repeated on larger sets of data, and the distribution persists.
