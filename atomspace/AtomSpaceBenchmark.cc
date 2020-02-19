@@ -1416,7 +1416,7 @@ timepair_t AtomSpaceBenchmark::bm_pointerCast()
         // To avoid the optimizer from playing tricks, we hav to do
         // something with the resulting pointer.  We already know that
         // get_type() is very fast -- a method call, so we treat that as
-        // a lind-of no-op.
+        // a kind-of no-op.
         int sum = 0;
         clock_t t_begin = clock();
         for (unsigned int i=0; i<Nclock; i++)

@@ -1881,7 +1881,7 @@ Dec 2019 compiler: gcc (Debian 8.3.0-6) 8.3.0
   addLink -m          176           203         205            "
   removeAtom         1122          1347        1225            "
 
-Notes: Expected getIncomingSet to imrpove more than it did. But OK,
+Notes: Expected getIncomingSet to improve more than it did. But OK,
 whatever. The change in addNode is more than expected; yes, it used
 to have LinkPtr<-->Handle casts in it. Oddly, no change to addLink.
 The pull req measured here, #2469, changed the IncomingSet to be Handle,
