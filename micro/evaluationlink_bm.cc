@@ -34,6 +34,8 @@
 
 using namespace opencog;
 
+// XXX FIXME, this is not a realistic EvaluationLink.
+// This is more like an ordinary ListLink...
 static Handle create_evaluation_link(AtomSpace& atomspace, size_t& seed)
 {
 	Handle X = atomspace.add_node(VARIABLE_NODE, get_unique_name("$X", seed));
