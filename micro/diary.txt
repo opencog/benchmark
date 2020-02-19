@@ -116,3 +116,41 @@ BM_VariablesExt_SameVarNoRestrict        182 ns        182 ns    3416850
 BM_VariablesExt_NewVarNoRestrict         197 ns        197 ns    3511223
 BM_VariablesExt_SameVarRestrict          499 ns        499 ns    1378469
 BM_ForwardChainer_Basic              1183722 ns    1183730 ns        578
+
+19 Feb 2020
+-----------
+New tests: BM_NodeCast, BM_LinkCast
+commit d1d898dc6daa179982ddaec2860d1164acbdc048
+
+$ gcc --version
+gcc (Debian 8.3.0-6) 8.3.0
+
+$ /sbin/ldconfig --version
+ldconfig (Debian GLIBC 2.28-10) 2.28
+
+Compared to before:
+* More than 2x improvement in add_node, add_link (no surprise,
+  there were atomspace changes)
+* VariablesExt slightly slower, probably due to recent fixes.
+* No change to the create* performance.
+
+Best of three
+BM_NodeCast                               54 ns         54 ns   12861414
+BM_LinkCast                               58 ns         58 ns   12262010
+BM_CreateScopeLinkWithVarList           1217 ns       1217 ns     583519
+BM_CreateScopeLinkWithoutVarList        2451 ns       2451 ns     285413
+BM_CreateScopeLinkWithLambda            1042 ns       1042 ns     639869
+BM_AddSameScopeLink                       91 ns         91 ns    7455939
+BM_AddScopeLink/4096                     123 ns        123 ns    5356251
+BM_AddScopeLink/8192                     124 ns        124 ns    5062155
+BM_AddScopeLink/16384                    146 ns        146 ns    4054132
+BM_CreateEvaluationLink                  755 ns        755 ns     898268
+BM_AddSameEvaluationLink                  92 ns         92 ns    7380738
+BM_AddEvaluationLink/16384               124 ns        124 ns    4924050
+BM_AddEvaluationLink/32768               139 ns        139 ns    4028242
+BM_AddEvaluationLink/65536               179 ns        179 ns    3525047
+BM_VariablesExt_NewVariable              214 ns        214 ns    3267656
+BM_VariablesExt_SameVarNoRestrict        211 ns        211 ns    3309448
+BM_VariablesExt_NewVarNoRestrict         214 ns        214 ns    3262795
+BM_VariablesExt_SameVarRestrict          385 ns        385 ns    1839271
+BM_ForwardChainer_Basic              1108895 ns    1108773 ns        627
