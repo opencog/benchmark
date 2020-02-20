@@ -36,7 +36,7 @@ static void BM_ForwardChainer_Basic(benchmark::State& state)
 	for (int i = 0; i < 1024; i++) {
 		atoms.push_back(Evaluation(Predicate("croaks"), Concept("Fritz" + std::to_string(i))));
 	}
-	Handle source = as.add_link(SET_LINK, atoms);
+	Handle source = as.add_link(SET_LINK, std::move(atoms));
 
 	as.add_atom(
 			Define(

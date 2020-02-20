@@ -818,7 +818,7 @@ clock_t AtomSpaceBenchmark::makeRandomLinks()
     case BENCH_AS: {
         clock_t tAddLinkStart = clock();
         for (unsigned int i=0; i<Nclock; i++)
-            asp->add_link(ta[i], og[i]);
+            asp->add_link(ta[i], std::move(og[i]));
         return clock() - tAddLinkStart;
     }}
     return 0;
