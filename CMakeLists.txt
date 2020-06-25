@@ -33,6 +33,8 @@ ENDIF (COGUTIL_FOUND)
 list(APPEND CMAKE_MODULE_PATH  ${COGUTIL_DATA_DIR}/cmake)
 
 include(${COGUTIL_DATA_DIR}/cmake/OpenCogGccOptions.cmake)
+include(${COGUTIL_DATA_DIR}/cmake/OpenCogLibOptions.cmake)
+include(${COGUTIL_DATA_DIR}/cmake/OpenCogInstallOptions.cmake)
 include(${COGUTIL_DATA_DIR}/cmake/Summary.cmake)
 
 # ===================================================================
@@ -82,43 +84,10 @@ IF(NOT Boost_FOUND)
 ENDIF(NOT Boost_FOUND)
 
 # ----------------------------------------------------------
-# This is required for Guile
-FIND_LIBRARY(GMP_LIBRARY gmp)
-FIND_PATH(GMP_INCLUDE_DIR gmp.h)
+# This is required for Guile, python
 
-# Gnu Guile scheme interpreter
-# Version 2.2.2 is already specified by the atomspace.
-FIND_PACKAGE(Guile 2.2.2.)
-IF (GUILE_FOUND AND GMP_LIBRARY AND GMP_INCLUDE_DIR)
-	ADD_DEFINITIONS(-DHAVE_GUILE)
-	SET(HAVE_GUILE 1)
-	INCLUDE_DIRECTORIES(${GUILE_INCLUDE_DIR})
-ELSE (GUILE_FOUND AND GMP_LIBRARY AND GMP_INCLUDE_DIR)
-	SET(GUILE_DIR_MESSAGE "Guile was not found; needed for guile benchmarks.")
-	MESSAGE(STATUS "${GUILE_DIR_MESSAGE}")
-ENDIF (GUILE_FOUND AND GMP_LIBRARY AND GMP_INCLUDE_DIR)
-
-# ----------------------------------------------------------
-# Python
-
-FIND_PACKAGE(Python3Interp)
-IF (3.4.0 VERSION_LESS ${PYTHON3_VERSION_STRING})
-	SET (HAVE_PY_INTERP 1)
-	SET (PYTHON_VER python3.5)
-	MESSAGE(STATUS "Python ${PYTHON3_VERSION_STRING} interpreter found.")
-ENDIF()
-
-FIND_PACKAGE(PythonLibs)
-IF (PYTHONLIBS_FOUND)
-	IF ((PYTHON3INTERP_FOUND AND 3.4.0 VERSION_LESS ${PYTHONLIBS_VERSION_STRING})
-     OR
-     (2.7.0 VERSION_LESS ${PYTHONLIBS_VERSION_STRING}))
-		SET (HAVE_PY_LIBS 1)
-		MESSAGE(STATUS "Python ${PYTHONLIBS_VERSION_STRING} libraries found.")
-	ENDIF()
-ELSE()
-	MESSAGE(STATUS "Python libraries NOT found.")
-ENDIF()
+include(OpenCogFindGuile)
+include(OpenCogFindPython)
 
 # ===================================================================
 # Add subdirectories
