@@ -486,7 +486,7 @@ void AtomSpaceBenchmark::startBenchmark(int numThreads)
             // run on a different atomspace, than the one containing
             // all the atoms.  And that would give bad results.
             std::ostringstream dss;
-            dss << "from opencog.atomspace import AtomSpace, types, TruthValue, Atom" << std::endl;
+            dss << "from atomspace import AtomSpace, types, TruthValue, Atom" << std::endl;
             dss << "aspace = AtomSpace(" << asp << ")" << std::endl;
             pyev->eval(dss.str());
 #endif
