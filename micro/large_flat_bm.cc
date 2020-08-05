@@ -65,37 +65,22 @@ public:
 
 LargeFlatUTest::LargeFlatUTest(size_t nchunks)
 {
-	n1.reserve(nchunks);
-	n2.reserve(nchunks);
-	n3.reserve(nchunks);
-	n4.reserve(nchunks);
-	l.reserve(nchunks);
-	l2.reserve(nchunks);
-	l3.reserve(nchunks);
-	h1.reserve(nchunks);
-	h2.reserve(nchunks);
-	h3.reserve(nchunks);
-	h4.reserve(nchunks);
-	hl.reserve(nchunks);
-	hl2.reserve(nchunks);
-	hl3.reserve(nchunks);
-
 	for (size_t idx = 0; idx < nchunks; idx++)
 	{
-		n1[idx] = nullptr;
-		n2[idx] = nullptr;
-		n3[idx] = nullptr;
-		n4[idx] = nullptr;
-		l[idx] = nullptr;
-		l2[idx] = nullptr;
-		l3[idx] = nullptr;
-		h1[idx] = nullptr;
-		h2[idx] = nullptr;
-		h3[idx] = nullptr;
-		h4[idx] = nullptr;
-		hl[idx] = nullptr;
-		hl2[idx] = nullptr;
-		hl3[idx] = nullptr;
+		n1.push_back(NodePtr());
+		n2.push_back(NodePtr());
+		n3.push_back(NodePtr());
+		n4.push_back(NodePtr());
+		l.push_back(LinkPtr());
+		l2.push_back(LinkPtr());
+		l3.push_back(LinkPtr());
+		h1.push_back(Handle::UNDEFINED);
+		h2.push_back(Handle::UNDEFINED);
+		h3.push_back(Handle::UNDEFINED);
+		h4.push_back(Handle::UNDEFINED);
+		hl.push_back(Handle::UNDEFINED);
+		hl2.push_back(Handle::UNDEFINED);
+		hl3.push_back(Handle::UNDEFINED);
 	}
 }
 
@@ -169,15 +154,20 @@ static void BM_LargeFlat(benchmark::State& state)
 
 	// The LargeFlatUTest create 56 atoms for each call to filler_up()
 	// That's (4 nodes + 3 links) x 8 for each call.
-	LargeFlatUTest* lfut = new LargeFlatUTest(8*(nchks+1));
+	LargeFlatUTest* lfut = new LargeFlatUTest(nchks/7+10);
 
 	AtomSpace* as = new AtomSpace();
 	size_t i=0;
+	size_t j=0;
 	for (auto _ : state)
 	{
-		i = lfut->filler_up(as, i);
-		i %= 8*nchks;
+		if (j % 56 == 0)
+		{
+			i = lfut->filler_up(as, i);
+			i %= nchks/7;
+		}
+		j++;
 	}
 	delete as;
 }
-BENCHMARK(BM_LargeFlat)->Arg(2<<6)->Arg(2<<11)->Arg(2<<13)->Arg(2<<15);
+BENCHMARK(BM_LargeFlat)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17)->Arg(2<<18)->Arg(2<<19);
