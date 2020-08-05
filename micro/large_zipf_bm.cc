@@ -137,10 +137,19 @@ static void BM_LargeZipf(benchmark::State& state)
 {
 	size_t natoms = state.range(0);
 
-	size_t nwords
-	size_t npairs = count(nwords);
-	// printf("nwords=%lu npairs=%lu\n", nwords, npairs);
-	size_t loop = nwords + npairs;
+	// We want the benchmark to create `natoms` so that we can compare
+	// to other benchmarks. But we have to count to anticipate that...
+	size_t nwords = natoms / 14;
+	size_t loop = 0;
+	size_t npairs = 0;
+	while (loop < natoms)
+	{
+		nwords ++;
+		npairs = count(nwords);
+		loop = nwords + npairs;
+	}
+	printf("natoms = %lu ntotal = %lu nwords = %lu npairs = %lu rat=%lu\n",
+		natoms, loop, nwords, npairs, natoms/nwords);
 
 	size_t j=0;
 	for (auto _ : state)
@@ -154,4 +163,4 @@ static void BM_LargeZipf(benchmark::State& state)
 		j++;
 	}
 }
-BENCHMARK(BM_LargeZipf)->Arg(2<<6)->Arg(2<<13)->Arg(2<<14)->Arg(2<<14)->Arg(2<<16);
+BENCHMARK(BM_LargeZipf)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17)->Arg(2<<18)->Arg(2<<19);
