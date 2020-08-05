@@ -8,6 +8,7 @@ LIST(APPEND LIST_MODULES
 	addlink_bm.cc
 	evaluationlink_bm.cc
 	large_flat_bm.cc
+	large_zipf_bm.cc
 	values_bm.cc
 	scopelink_bm.cc
 	variables_bm.cc
