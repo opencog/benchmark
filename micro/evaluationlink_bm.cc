@@ -58,12 +58,20 @@ static void BM_AddSameEvaluationLink(benchmark::State& state)
 {
 	AtomSpace* as = new AtomSpace;
 
-	Handle evalLink = create_evaluation_link(0);
+	const size_t number_of_links = state.range(0);
+	std::vector<Handle> links(number_of_links);
+
+	// Create multiple copies of the same atom.
+	// The AtomSpace takes over memory management of the
+	// added C++ Atom, so we have to keep feeding it unique Atoms.
+	for (size_t i = 0; i < number_of_links; ++i)
+		links[i] = create_evaluation_link(0);
 
 	logger().fine("atomspace size before adding: %d", as->get_size());
+	size_t i = 0;
 	for (auto _ : state)
 	{
-		as->add_atom(evalLink);
+		as->add_atom(links[i++ % number_of_links]);
 	}
 
 	delete as;
