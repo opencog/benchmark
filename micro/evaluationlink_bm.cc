@@ -104,7 +104,7 @@ static void BM_AddEvalLink(benchmark::State& state)
 	logger().fine("atomspace size after adding: %d", as->get_size());
 	delete as;
 }
-BENCHMARK(BM_AddEvalLink)->Arg(2<<9)->Arg(2<<15)->Arg(2<<17);
+BENCHMARK(BM_AddEvalLink)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17)->Arg(2<<18)->Arg(2<<19);
 
 static void BM_CreateAddEvalLink(benchmark::State& state)
 {
@@ -124,4 +124,4 @@ static void BM_CreateAddEvalLink(benchmark::State& state)
 	logger().fine("atomspace size after adding: %d", as->get_size());
 	delete as;
 }
-BENCHMARK(BM_CreateAddEvalLink)->Arg(2<<9)->Arg(2<<15)->Arg(2<<17);
+BENCHMARK(BM_CreateAddEvalLink)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17)->Arg(2<<18)->Arg(2<<19);
