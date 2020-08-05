@@ -139,21 +139,36 @@ void Zipf::report()
 
 static void BM_LargeZipf(benchmark::State& state)
 {
+	size_t num_adds = state.range(0);
+	// printf("Running benchmark to add: %lu\n", num_adds);
+
 	AtomSpace* as = new AtomSpace();
 	Zipf* zp = new Zipf(as);
 
-	size_t natoms = 1;
+	size_t nadds = 1;
 	size_t j=0;
 	for (auto _ : state)
 	{
-		if (natoms < j)
+		if (j < num_adds)
 		{
-			natoms = zp->add_some();
+			if (nadds < j)
+			{
+				nadds = zp->add_some();
+			}
+		}
+		else
+		{
+			// zp->report();
+			delete zp;
+			delete as;
+			as = new AtomSpace();
+			zp = new Zipf(as);
+			j = 0;
+			nadds = 1;
 		}
 		j++;
 	}
 
-	// zp->report();
 	delete as;
 }
 BENCHMARK(BM_LargeZipf)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17)->Arg(2<<18)->Arg(2<<19);
