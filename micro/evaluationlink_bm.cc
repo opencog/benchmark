@@ -67,8 +67,8 @@ static void BM_AddSameEvaluationLink(benchmark::State& state)
 		as->add_atom(create_evaluation_link(0));
 	}
 
-	delete as;
 	logger().fine("atomspace size after adding: %d", as->get_size());
+	delete as;
 }
 BENCHMARK(BM_AddSameEvaluationLink);
 
