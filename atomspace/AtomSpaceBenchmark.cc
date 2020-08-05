@@ -597,9 +597,12 @@ Type AtomSpaceBenchmark::randomType(Type t)
     } while (!nameserver().isA(candidateType, t) or
         nameserver().isA(candidateType, BOOLEAN_LINK) or
         nameserver().isA(candidateType, FREE_LINK) or
+        nameserver().isA(candidateType, TYPE_INPUT_LINK) or
+        nameserver().isA(candidateType, TYPE_OUTPUT_LINK) or
         nameserver().isA(candidateType, NUMERIC_LINK) or
         nameserver().isA(candidateType, SCOPE_LINK) or
         nameserver().isA(candidateType, UNIQUE_LINK) or
+        nameserver().isA(candidateType, TYPED_VARIABLE_LINK) or
         candidateType == VARIABLE_LIST or
         candidateType == VARIABLE_SET or
         candidateType == DEFINE_LINK or
