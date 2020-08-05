@@ -44,9 +44,12 @@ static void BM_AddLink(benchmark::State& state)
 			createNode(CONCEPT_NODE, "blingometry" + std::to_string(i%233)));
 
 	size_t i = 0;
+	size_t j = 0;
 	for (auto _ : state)
 	{
-		as->add_atom(atoms[i++ % number_of_atoms]);
+		if (j%3 == 0) // we are creating 3 atoms per pop...
+			as->add_atom(atoms[i++ % number_of_atoms]);
+		j++;
 	}
 	delete as;
 }
@@ -64,13 +67,18 @@ static void BM_CreateAddLink(benchmark::State& state)
 		bname[i] = "blingometry" + std::to_string(i);
 
 	size_t i = 0;
+	size_t j = 0;
 	for (auto _ : state)
 	{
-		// Make a copy so that move constructore works right.
-		as->add_link(LIST_LINK,
-			as->add_node(CONCEPT_NODE, std::string({aname[i % 101]})),
-			as->add_node(CONCEPT_NODE, std::string({bname[i % 233]})));
-		i++;
+		if (j%3 == 0) // we are creating 3 atoms per pop...
+		{
+			// Make a copy so that move constructore works right.
+			as->add_link(LIST_LINK,
+				as->add_node(CONCEPT_NODE, std::string({aname[i % 101]})),
+				as->add_node(CONCEPT_NODE, std::string({bname[i % 233]})));
+			i++;
+		}
+		j++;
 	}
 	delete as;
 }

@@ -47,9 +47,12 @@ static Handle create_evaluation_link(size_t i)
 
 static void BM_CreateEvaluationLink(benchmark::State& state)
 {
+	size_t j = 0;
 	for (auto _ : state)
 	{
-		create_evaluation_link(0);
+		if (j % 5 == 0) // we are creating 5 atoms per pop.
+			create_evaluation_link(0);
+		j++;
 	}
 }
 BENCHMARK(BM_CreateEvaluationLink);
@@ -58,13 +61,18 @@ static void BM_AddSameEvaluationLink(benchmark::State& state)
 {
 	AtomSpace* as = new AtomSpace;
 
+	size_t j = 0;
 	logger().fine("atomspace size before adding: %d", as->get_size());
 	for (auto _ : state)
 	{
-		// Create multiple copies of the same atom.
-		// The AtomSpace takes over memory management of the
-		// added C++ Atom, so we have to keep feeding it unique Atoms.
-		as->add_atom(create_evaluation_link(0));
+		if (j % 5 == 0) // we are creating 5 atoms per pop.
+		{
+			// Create multiple copies of the same atom.
+			// The AtomSpace takes over memory management of the
+			// added C++ Atom, so we have to keep feeding it unique Atoms.
+			as->add_atom(create_evaluation_link(0));
+		}
+		j++;
 	}
 
 	logger().fine("atomspace size after adding: %d", as->get_size());
@@ -85,9 +93,12 @@ static void BM_AddEvalLink(benchmark::State& state)
 	logger().fine("atomspace size before adding: %d", as->get_size());
 
 	size_t i = 0;
+	size_t j = 0;
 	for (auto _ : state)
 	{
-		as->add_atom(links[i++ % number_of_links]);
+		if (j % 5 == 0) // we are creating 5 atoms per pop.
+			as->add_atom(links[i++ % number_of_links]);
+		j++;
 	}
 
 	logger().fine("atomspace size after adding: %d", as->get_size());
@@ -102,9 +113,12 @@ static void BM_CreateAddEvalLink(benchmark::State& state)
 	logger().fine("atomspace size before adding: %d", as->get_size());
 
 	size_t i = 0;
+	size_t j = 0;
 	for (auto _ : state)
 	{
-		as->add_atom(create_evaluation_link(i++));
+		if (j % 5 == 0) // we are creating 5 atoms per pop.
+			as->add_atom(create_evaluation_link(i++));
+		j++;
 	}
 
 	logger().fine("atomspace size after adding: %d", as->get_size());
