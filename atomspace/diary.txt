@@ -1921,3 +1921,30 @@ Feb 2020 compiler: gcc (Debian 8.3.0-6) 8.3.0
 
 Notes: Expected to maybe see some kind of change in performance.
 It seems to be miniscule, lost in the noise.
+
+4 Aug 2020
+-----------
+Partial measurements. Fanny. One pull req of concern:
+
+  Pull req #2744 - Stub out signals. No one uses them.
+
+./atomspace_bm -A -n 4000000
+
+                     -A          -A
+   test           pull #2744   Feb 2020
+   name            K-ops/sec   K-ops/sec         Comments
+   ----            ---------   ---------      -----------------
+  noop           1.70e6        2.00e6         no change expected
+  getType           94K           96K                "
+  getTV              4689          4535           see notes
+  setTV              1244          1163              "
+  pointerCast       11.0K         11.4K       no change expected
+  getIncomingSet     3253          3332              "
+  getOutgoingSet    50.5K         49.8K              "
+  addNode             711           701           see notes
+  addLink -A          189           183              "
+  addLink -m          217           206              "
+  removeAtom         1359          1213              "
+
+Notes: Removing the signal callbacks should improve performance.
+... and now we know how much. We'll go for 3% to 7%, depending...
