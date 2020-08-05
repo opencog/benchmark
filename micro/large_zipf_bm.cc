@@ -22,6 +22,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <math.h>
 #include <benchmark/benchmark.h>
 
 #include <opencog/atoms/base/Node.h>
@@ -86,6 +87,8 @@ public:
 		wmax = 1;
 	}
 	size_t add_some();
+
+	void report();
 };
 
 // ============================================================
@@ -121,6 +124,17 @@ size_t Zipf::add_some()
 	return nwords + npairs;
 }
 
+void Zipf::report()
+{
+	double rt = sqrt(npairs);
+	printf("In the end, nwords=%lu npairs=%lu sqrt*log=%f\n",
+		nwords, npairs, rt*log(rt));
+	printf("AtomSpace holds nwords=%lu npairs=%lu\n",
+		_as->get_num_atoms_of_type(CONCEPT_NODE),
+		_as->get_num_atoms_of_type(LIST_LINK));
+	printf("\n");
+}
+
 // ============================================================
 
 static void BM_LargeZipf(benchmark::State& state)
@@ -138,6 +152,8 @@ static void BM_LargeZipf(benchmark::State& state)
 		}
 		j++;
 	}
+
+	// zp->report();
 	delete as;
 }
 BENCHMARK(BM_LargeZipf)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17)->Arg(2<<18)->Arg(2<<19);
