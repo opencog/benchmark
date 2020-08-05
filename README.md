@@ -17,7 +17,10 @@ history, despite being deeply flawed).
   deleting them, and rates for setting and getting TruthValues and
   IncomingSets.
 
-* __micro__ -- Micro-benchmarks for misc items.
+* __micro__ -- Micro-benchmarks for misc items. **These benchmarks
+  do not work correctly! They're just plain broken! They report
+  incorrect results! DO NOT USE!**  See the README in the subdirectory
+  for details about what's wrong.
 
 * __python__ -- Benchmarks for the python bindings to various AtomSpace
   subsystems.

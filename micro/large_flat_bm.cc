@@ -166,7 +166,7 @@ static void BM_LargeFlat(benchmark::State& state)
 			if (j < as->get_size())
 			{
 				i = lfut->filler_up(as, i);
-				i %= nchks/7;
+				i %= num_adds/7;
 			}
 			j++;
 		}

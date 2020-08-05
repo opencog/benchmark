@@ -96,18 +96,27 @@ static void BM_AddEvalLink(benchmark::State& state)
 	size_t j = 0;
 	for (auto _ : state)
 	{
-		if (j % 5 == 0) // we are creating 5 atoms per pop.
+		if (j < as->get_size()) // we are creating 5 atoms per pop.
 			as->add_atom(links[i++ % number_of_links]);
 		j++;
+		if (number_of_links < j)
+		{
+			as->clear();
+			j = 0;
+		}
 	}
 
 	logger().fine("atomspace size after adding: %d", as->get_size());
 	delete as;
 }
-BENCHMARK(BM_AddEvalLink)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17)->Arg(2<<18)->Arg(2<<19);
+
+// Cannot go higher than 17 because the benchmark doesn't
+// iterate enough times.
+BENCHMARK(BM_AddEvalLink)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17);
 
 static void BM_CreateAddEvalLink(benchmark::State& state)
 {
+	const size_t num_to_add = state.range(0);
 	AtomSpace* as = new AtomSpace;
 
 	logger().fine("atomspace size before adding: %d", as->get_size());
@@ -116,12 +125,20 @@ static void BM_CreateAddEvalLink(benchmark::State& state)
 	size_t j = 0;
 	for (auto _ : state)
 	{
-		if (j % 5 == 0) // we are creating 5 atoms per pop.
+		if (j < as->get_size()) // we are creating 5 atoms per pop.
 			as->add_atom(create_evaluation_link(i++));
 		j++;
+		if (num_to_add < j)
+		{
+			as->clear();
+			j = 0;
+		}
 	}
 
 	logger().fine("atomspace size after adding: %d", as->get_size());
 	delete as;
 }
-BENCHMARK(BM_CreateAddEvalLink)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17)->Arg(2<<18)->Arg(2<<19);
+
+// Cannot go higher than 17 because the benchmark doesn't
+// iterate enough times.
+BENCHMARK(BM_CreateAddEvalLink)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17);

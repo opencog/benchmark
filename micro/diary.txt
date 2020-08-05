@@ -1,4 +1,8 @@
 
+IMPORTANT Update 5 August 2020:
+This benchmark is fucked up. Read the README. All numbers that it
+reports are JUST PLAIN WRONG!
+
 Linas micro-benchmark diary
 ---------------------------
 General critique of the micro-benchmarks: they're not realistic, they
@@ -189,3 +193,6 @@ gcc (Debian 8.3.0-6) 8.3.0
 
 $ /sbin/ldconfig --version
 ldconfig (Debian GLIBC 2.28-10) 2.28
+
+This benchmark is fucked up. Read the README. All numbers that it
+reports are JUST PLAIN WRONG!

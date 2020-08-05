@@ -32,6 +32,7 @@ using namespace opencog;
 
 static void BM_AddLink(benchmark::State& state)
 {
+	const size_t num_to_add = state.range(0);
 	AtomSpace* as = new AtomSpace();
 
 	// 101 and 233 are prime numbers. Thus, the links will interconnect
@@ -50,13 +51,23 @@ static void BM_AddLink(benchmark::State& state)
 		if (j%3 == 0) // we are creating 3 atoms per pop...
 			as->add_atom(atoms[i++ % number_of_atoms]);
 		j++;
+
+		if (num_to_add < j)
+		{
+			as->clear();
+			j = 0;
+		}
 	}
 	delete as;
 }
-BENCHMARK(BM_AddLink)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17)->Arg(2<<18)->Arg(2<<19);
+
+// Cannot go higher than 17 because the benchmark doesn't
+// iterate enough times.
+BENCHMARK(BM_AddLink)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17);
 
 static void BM_CreateAddLink(benchmark::State& state)
 {
+	const size_t num_to_add = state.range(0);
 	AtomSpace* as = new AtomSpace();
 
 	std::vector<std::string> aname(101);
@@ -79,7 +90,16 @@ static void BM_CreateAddLink(benchmark::State& state)
 			i++;
 		}
 		j++;
+
+		if (num_to_add < j)
+		{
+			as->clear();
+			j = 0;
+		}
 	}
 	delete as;
 }
-BENCHMARK(BM_CreateAddLink)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17)->Arg(2<<18)->Arg(2<<19);
+
+// Cannot go higher than 17 because the benchmark doesn't
+// iterate enough times.
+BENCHMARK(BM_CreateAddLink)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17);

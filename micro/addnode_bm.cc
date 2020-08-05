@@ -42,11 +42,19 @@ static void BM_AddNode(benchmark::State& state)
 	size_t i = 0;
 	for (auto _ : state)
 	{
-		as->add_atom(nodes[i++ % number_of_nodes]);
+		as->add_atom(nodes[i++]);
+		if (number_of_nodes <= i)
+		{
+			as->clear();
+			i = 0;
+		}
 	}
 	delete as;
 }
-BENCHMARK(BM_AddNode)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17)->Arg(2<<18)->Arg(2<<19);
+
+// Cannot go higher than 17 because the benchmark doesn't
+// iterate enough times.
+BENCHMARK(BM_AddNode)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17);
 
 static void BM_CreateAddNode(benchmark::State& state)
 {
@@ -62,8 +70,16 @@ static void BM_CreateAddNode(benchmark::State& state)
 	for (auto _ : state)
 	{
 		// Make a copy so that move constructore works right.
-		as->add_node(CONCEPT_NODE, std::string({names[i++ % number_of_names]}));
+		as->add_node(CONCEPT_NODE, std::string({names[i++]}));
+		if (number_of_names <= i)
+		{
+			as->clear();
+			i = 0;
+		}
 	}
 	delete as;
 }
-BENCHMARK(BM_CreateAddNode)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17)->Arg(2<<18)->Arg(2<<19);
+
+// Cannot go higher than 17 because the benchmark doesn't
+// iterate enough times.
+BENCHMARK(BM_CreateAddNode)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17);
