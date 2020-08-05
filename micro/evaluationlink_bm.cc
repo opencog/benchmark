@@ -34,72 +34,79 @@
 
 using namespace opencog;
 
-// XXX FIXME, this is not a realistic EvaluationLink.
-// This is more like an ordinary ListLink...
-static Handle create_evaluation_link(AtomSpace& atomspace, size_t& seed)
+static Handle create_evaluation_link(size_t i)
 {
-	Handle X = atomspace.add_node(VARIABLE_NODE, get_unique_name("$X", seed));
-	Handle P = atomspace.add_node(PREDICATE_NODE, get_unique_name("P", seed));
-	return createLink(EVALUATION_LINK, P, X);
-}
-
-static Handle create_evaluation_link(AtomSpace& atomspace)
-{
-	size_t seed = 0;
-	return create_evaluation_link(atomspace, seed);
+	// The numbers 101 and 233 are prime numbers, so this whole
+	// thing will interconnect to form some nice polytope.
+	return createLink(EVALUATION_LINK,
+		createNode(PREDICATE_NODE, "kind-of " + std::to_string(i%11)),
+		createLink(LIST_LINK,
+			createNode(CONCEPT_NODE, "barfology" + std::to_string(i%101)),
+			createNode(CONCEPT_NODE, "blingometry" + std::to_string(i%233))));
 }
 
 static void BM_CreateEvaluationLink(benchmark::State& state)
 {
-	AtomSpace atomspace;
-	Handle X = atomspace.add_node(VARIABLE_NODE, "$X");
-	Handle P = atomspace.add_node(PREDICATE_NODE, "P");
-
 	for (auto _ : state)
 	{
-		createLink(EVALUATION_LINK, P, X);
+		create_evaluation_link(0);
 	}
 }
 BENCHMARK(BM_CreateEvaluationLink);
 
 static void BM_AddSameEvaluationLink(benchmark::State& state)
 {
-	AtomSpace atomspace;
-	Handle evaluationLink = create_evaluation_link(atomspace);
+	AtomSpace* as = new AtomSpace;
 
-	logger().fine("atomspace size before adding: %d", atomspace.get_size());
+	Handle evalLink = create_evaluation_link(0);
 
+	logger().fine("atomspace size before adding: %d", as->get_size());
 	for (auto _ : state)
 	{
-		atomspace.add_atom(evaluationLink);
+		as->add_atom(evalLink);
 	}
 
-	logger().fine("atomspace size after adding: %d", atomspace.get_size());
-
+	delete as;
+	logger().fine("atomspace size after adding: %d", as->get_size());
 }
 BENCHMARK(BM_AddSameEvaluationLink);
 
-static void BM_AddEvaluationLink(benchmark::State& state)
+static void BM_AddEvalLink(benchmark::State& state)
 {
-	AtomSpace atomspace;
+	AtomSpace* as = new AtomSpace;
 
 	const size_t number_of_links = state.range(0);
 	std::vector<Handle> links(number_of_links);
-	size_t seed = 0;
-	for (size_t i = 0; i < number_of_links; ++i)
-	{
-		links[i] = create_evaluation_link(atomspace, seed);
-	}
 
-	logger().fine("atomspace size before adding: %d", atomspace.get_size());
+	for (size_t i = 0; i < number_of_links; ++i)
+		links[i] = create_evaluation_link(i);
+
+	logger().fine("atomspace size before adding: %d", as->get_size());
 
 	size_t i = 0;
 	for (auto _ : state)
 	{
-		atomspace.add_atom(links[i++ % number_of_links]);
+		as->add_atom(links[i++ % number_of_links]);
 	}
 
-	logger().fine("atomspace size after adding: %d", atomspace.get_size());
+	logger().fine("atomspace size after adding: %d", as->get_size());
+	delete as;
 }
+BENCHMARK(BM_AddEvalLink)->Arg(2<<9)->Arg(2<<15)->Arg(2<<17);
 
-BENCHMARK(BM_AddEvaluationLink)->Arg(2<<13)->Arg(2<<14)->Arg(2<<15);
+static void BM_CreateAddEvalLink(benchmark::State& state)
+{
+	AtomSpace* as = new AtomSpace;
+
+	logger().fine("atomspace size before adding: %d", as->get_size());
+
+	size_t i = 0;
+	for (auto _ : state)
+	{
+		as->add_atom(create_evaluation_link(i++));
+	}
+
+	logger().fine("atomspace size after adding: %d", as->get_size());
+	delete as;
+}
+BENCHMARK(BM_CreateAddEvalLink)->Arg(2<<9)->Arg(2<<15)->Arg(2<<17);

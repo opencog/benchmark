@@ -34,6 +34,8 @@ static void BM_AddLink(benchmark::State& state)
 {
 	AtomSpace* as = new AtomSpace();
 
+	// 101 and 233 are prime numbers. Thus, the links will interconnect
+	// to form some kind of nice polytope.
 	const size_t number_of_atoms = state.range(0);
 	std::vector<Handle> atoms(number_of_atoms);
 	for (size_t i = 0; i < number_of_atoms; ++i)

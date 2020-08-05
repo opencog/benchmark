@@ -6,8 +6,8 @@ LIST(APPEND LIST_MODULES
 	atomspace_bm.cc
 	addnode_bm.cc
 	addlink_bm.cc
-	values_bm.cc
 	evaluationlink_bm.cc
+	values_bm.cc
 	scopelink_bm.cc
 	variables_bm.cc
 	)
