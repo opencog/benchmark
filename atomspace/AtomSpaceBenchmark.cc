@@ -478,7 +478,7 @@ void AtomSpaceBenchmark::startBenchmark(int numThreads)
         else {
             asp = new AtomSpace();
 #if HAVE_CYTHON
-            pyev = new PythonEval(asp);
+            pyev = new PythonEval();
             // And now ... create a Python instance of the atomspace.
             // Pass in the raw C++ atomspace address into cython.
             // Kind-of tacky, but I don't see any better way.
@@ -599,7 +599,6 @@ Type AtomSpaceBenchmark::randomType(Type t)
         nameserver().isA(candidateType, FREE_LINK) or
         nameserver().isA(candidateType, NUMERIC_LINK) or
         nameserver().isA(candidateType, SCOPE_LINK) or
-        nameserver().isA(candidateType, TYPE_LINK) or
         nameserver().isA(candidateType, UNIQUE_LINK) or
         candidateType == VARIABLE_LIST or
         candidateType == VARIABLE_SET or

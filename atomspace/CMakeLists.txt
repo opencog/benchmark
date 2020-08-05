@@ -15,8 +15,10 @@ IF (HAVE_CYTHON)
 		${PYTHON_INCLUDE_DIRS}
 	)
 	TARGET_LINK_LIBRARIES (atomspace_bm
-		${Boost_SYSTEM_LIBRARY}
+		PythonEval
+		# ${ATOMSPACE_PythonEval_LIBRARY}
+		# ${Boost_SYSTEM_LIBRARY}
 		${PYTHON_LIBRARIES}
-		${ATOMSPACE_PythonEval_LIBRARY}
+		boost_system
 	)
 ENDIF(HAVE_CYTHON)
