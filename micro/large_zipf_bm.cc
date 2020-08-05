@@ -45,11 +45,14 @@ using namespace opencog;
 
 class Zipf
 {
-	// Emulate a zipfian distribution.
+	// Emulate a Zipfian distribution.
 	// Half of words linked once.  rpt = 1, wmax = NWORDS
 	// quarter of words linked twice.  rpt = 2, wmax = NWORDS/2
 	// eighth of words linked 4 times.  rpt = 4, wmax = NWORDS/4
 	// 1/16 of words linked 8 times. rpt = 8, wmax = NWORDS/8
+	//
+	// I'm no longer sure the below works correctly, but whatever...
+	// good enough, maybe?
 	std::vector<Handle> hword;
 	size_t nwords;
 	size_t w1;
@@ -69,7 +72,6 @@ public:
 
 		w1 = 0;
 		w2 = 0;
-		wmax = 0;
 		npairs = 0;
 
 		// Emulate a word, with a spelling that is not long, not short ...
@@ -81,6 +83,7 @@ public:
 		hword.emplace_back(hw);
 
 		nwords = 1;
+		wmax = 1;
 	}
 	size_t add_some();
 };
@@ -91,7 +94,9 @@ size_t Zipf::add_some()
 {
 	Handle hpair = _as->add_link(LIST_LINK, hword[w1], hword[w2]);
 	TruthValuePtr tv = hpair->getTruthValue();
-	size_t cnt = CountTruthValueCast(tv)->get_count();
+	size_t cnt = 0;
+	if (COUNT_TRUTH_VALUE == tv->get_type())
+		cnt = CountTruthValueCast(tv)->get_count();
 	hpair->setTruthValue(CountTruthValue::createTV(1, 0, ++cnt));
 
 	w2++;
@@ -100,7 +105,6 @@ size_t Zipf::add_some()
 	{
 		w2=0;
 		w1++;
-		wmax = nwords / (w1 + 1);
 		if (nwords <= w1)
 		{
 			Handle hw = _as->add_node(CONCEPT_NODE,
@@ -109,10 +113,10 @@ size_t Zipf::add_some()
 			hw->setTruthValue(tv);
 			hword.emplace_back(hw);
 			nwords++;
+			w1 = 0;
 		}
 
-		if (nwords <= w1)
-			w1 = 0;
+		wmax = nwords / (w1+1);
 	}
 	return nwords + npairs;
 }
