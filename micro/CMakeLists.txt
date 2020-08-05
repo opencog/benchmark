@@ -5,6 +5,7 @@ LIST(APPEND LIST_MODULES
 	pointercast_bm.cc
 	atomspace_bm.cc
 	addnode_bm.cc
+	addlink_bm.cc
 	values_bm.cc
 	evaluationlink_bm.cc
 	scopelink_bm.cc
