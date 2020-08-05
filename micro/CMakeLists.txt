@@ -7,6 +7,7 @@ LIST(APPEND LIST_MODULES
 	addnode_bm.cc
 	addlink_bm.cc
 	evaluationlink_bm.cc
+	large_simple_bm.cc
 	large_flat_bm.cc
 	large_zipf_bm.cc
 	values_bm.cc
