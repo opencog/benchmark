@@ -66,10 +66,30 @@ static void BM_AtomSpace_Nodes(benchmark::State& state)
 
 	for (auto _ : state)
 	{
-		size_t i = 0;
 		as = new AtomSpace();
-		as->add_atom(nodes[i++ % number_of_nodes]);
+		for (size_t i=0; i< number_of_nodes; i++)
+			as->add_atom(nodes[i]);
 		delete as;
 	}
 }
 BENCHMARK(BM_AtomSpace_Nodes)->Arg(2<<11)->Arg(2<<13)->Arg(2<<15);
+
+static void BM_AtomSpace_CreateNodes(benchmark::State& state)
+{
+	AtomSpace* as;
+
+	size_t seed = 0;
+	const size_t number_of_names = state.range(0);
+	std::vector<std::string> names(number_of_names);
+	for (size_t i = 0; i < number_of_names; ++i)
+		names[i] = get_unique_name("barfology", seed);
+
+	for (auto _ : state)
+	{
+		as = new AtomSpace();
+		for (size_t i=0; i< number_of_names; i++)
+			as->add_node(CONCEPT_NODE, std::string({names[i]}));
+		delete as;
+	}
+}
+BENCHMARK(BM_AtomSpace_CreateNodes)->Arg(2<<11)->Arg(2<<13)->Arg(2<<15);
