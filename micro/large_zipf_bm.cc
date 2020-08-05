@@ -155,6 +155,7 @@ static void BM_LargeZipf(benchmark::State& state)
 			{
 				nadds = zp->add_some();
 			}
+			j++;
 		}
 		else
 		{
@@ -166,9 +167,10 @@ static void BM_LargeZipf(benchmark::State& state)
 			j = 0;
 			nadds = 1;
 		}
-		j++;
 	}
 
 	delete as;
 }
-BENCHMARK(BM_LargeZipf)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17)->Arg(2<<18)->Arg(2<<19);
+// Cannot go higher than 17 because the benchmark doesn't
+// iterate enough times.
+BENCHMARK(BM_LargeZipf)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17);

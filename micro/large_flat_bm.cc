@@ -150,24 +150,39 @@ size_t LargeFlatUTest::filler_up(AtomSpace* _as, size_t idx)
 
 static void BM_LargeFlat(benchmark::State& state)
 {
-	size_t nchks = state.range(0);
+	size_t num_adds = state.range(0);
 
 	// The LargeFlatUTest create 56 atoms for each call to filler_up()
 	// That's (4 nodes + 3 links) x 8 for each call.
-	LargeFlatUTest* lfut = new LargeFlatUTest(nchks/7+10);
+	LargeFlatUTest* lfut = new LargeFlatUTest(num_adds/7+10);
 
 	AtomSpace* as = new AtomSpace();
 	size_t i=0;
 	size_t j=0;
 	for (auto _ : state)
 	{
-		if (j < as->get_size())
+		if (j < num_adds)
 		{
-			i = lfut->filler_up(as, i);
-			i %= nchks/7;
+			if (j < as->get_size())
+			{
+				i = lfut->filler_up(as, i);
+				i %= nchks/7;
+			}
+			j++;
 		}
-		j++;
+		else
+		{
+			delete lfut;
+			delete as;
+			as = new AtomSpace();
+			lfut = new LargeFlatUTest(num_adds/7+10);
+			i = 0;
+			j = 0;
+		}
 	}
 	delete as;
 }
-BENCHMARK(BM_LargeFlat)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17)->Arg(2<<18)->Arg(2<<19);
+
+// Cannot go higher than 17 because the benchmark doesn't
+// iterate enough times.
+BENCHMARK(BM_LargeFlat)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17);

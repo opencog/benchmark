@@ -111,6 +111,8 @@ void LargeSimpleFlatUTest::filler_up(size_t idx)
 
 static void BM_LargeSimpleFlat(benchmark::State& state)
 {
+	const size_t num_adds = state.range(0);
+
 	AtomSpace* as = new AtomSpace();
 
 	// The LargeSimpleFlatUTest create 56 atoms for each call
@@ -121,13 +123,28 @@ static void BM_LargeSimpleFlat(benchmark::State& state)
 	size_t j=0;
 	for (auto _ : state)
 	{
-		if (j < as->get_size())
+		if (j < num_adds)
 		{
-			lfut->filler_up(i);
-			i++;
+			if (j < as->get_size())
+			{
+				lfut->filler_up(i);
+				i++;
+			}
+			j++;
 		}
-		j++;
+		else
+		{
+			delete lfut;
+			delete as;
+			as = new AtomSpace();
+			lfut = new LargeSimpleFlatUTest(as);
+			i = 0;
+			j = 0;
+		}
 	}
 	delete as;
 }
-BENCHMARK(BM_LargeSimpleFlat)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17)->Arg(2<<18)->Arg(2<<19);
+
+// Cannot go higher than 17 because the benchmark doesn't
+// iterate enough times.
+BENCHMARK(BM_LargeSimpleFlat)->Arg(2<<9)->Arg(2<<16)->Arg(2<<17);

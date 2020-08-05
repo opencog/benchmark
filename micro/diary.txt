@@ -175,3 +175,17 @@ BM_VariablesExt_NewVarNoRestrict         214 ns        214 ns    3262795
 BM_VariablesExt_SameVarRestrict          385 ns        385 ns    1839271
 
 BM_ForwardChainer_Basic              1108895 ns    1108773 ns        627
+
+
+5 Aug 2020
+----------
+All new, all immproved. Hacked on the Evaluation test to do it
+correctly.  Ported LargeFLatUTest and LargeZipfUTest to get a
+sanity check.  gcc and ldconfig unchanged.  Atomspace mostly
+unchanged.
+
+$ gcc --version
+gcc (Debian 8.3.0-6) 8.3.0
+
+$ /sbin/ldconfig --version
+ldconfig (Debian GLIBC 2.28-10) 2.28
