@@ -32,3 +32,10 @@ Protein expression for 704 pathways in 4895.7 seconds
 
 Wow!  Looks like loading up all that additional data slowed down
 the triangle-search by 30%!  That's not ... good.
+
+Memory usage, w/4K pages, from `ps aux`
+This holds more-or-less steady for all of the benchmarks.
+    VSZ   RSS
+2013500 1706312
+
+i.e. 2GB virtual size, 1.6GB working-set size.
