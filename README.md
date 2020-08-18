@@ -44,3 +44,21 @@ history, despite being deeply flawed).
 * __cogserver__ -- Benchmark of network I/O to the cogserver.
   Highlights issues created by using `netcat` instead of using native
   socket I/O.
+
+## Using perf
+It can be useful to use `perf`. Sometimes. Maybe. here's the
+cheat-sheet:
+
+To record 15 seconds worth:
+```
+sudo perf record -F 199 -p pid --call-graph fp -- sleep 15
+```
+CAUTION: need to run perf as root, and it writes crap into the
+/root/.debug folder!  This eats disk!
+
+View reports:
+```
+perf report
+perf report -n
+perf report --stdio -n -g -G
+```
