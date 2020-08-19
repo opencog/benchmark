@@ -9,6 +9,12 @@
 ; You can skip this by redefining these two, below.
 (use-modules (opencog bioscience))
 
+; Optionally run the cogserver.
+; This allows the system to be monitored by saying
+; `rlwrap telnet localhost 17001`
+; (use-modules (opencog cogserver))
+; (start-cogserver)
+
 ; Performance stats timer
 (define (make-timer)
 	(let ((start-time (get-internal-real-time)))
