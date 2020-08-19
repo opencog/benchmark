@@ -94,6 +94,7 @@
 	)
 
 	(define base-time 0)
+	(define rlen (length gene-list))
 
 	(define (report nthreads run-time)
 		(format #t "Triangle relations for ~A threads in ~6f seconds\n"
