@@ -72,7 +72,6 @@
 				(lambda (rslt)
 					; Collect up some stats
 					(define tri-list (cog-value->list rslt))
-					(define first-tri (car tri-list))  ; better not be empty!
 					(define gene-name
 						(if (= 0 (length tri-list)) ""
 							(cog-name (gar (car tri-list)))))
