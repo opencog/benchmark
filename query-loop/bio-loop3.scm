@@ -59,6 +59,8 @@
 		(ExecuteThreadedLink (Number nthreads) exec-set))
 
 	(define (interaction-counts nthreads)
+		(define junk (format #t "Start benchmark for ~A threads\n" nthreads))
+
 		; Perform the search
 		(define bench-secs (make-timer))
 		(define results (cog-execute! (make-exec-thr nthreads)))
