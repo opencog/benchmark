@@ -75,8 +75,13 @@ There are several variants here, for exploration.
 * `bio-loop2.scm` -- same as `bio-loop.scm` above, except it uses
   `MeetLink`s instead of `GetLink`s, thus avoiding the creation of
   SetLink, and also it's deletion.  That is, `MeetLink`s return
-  thier results in a `QueueValue` instead of a `SetLink`.
+  their results in a `QueueValue` instead of a `SetLink`.
+  At this time, there is no particularly noticeable difference in
+  performance as a result of this change. Almost all CPU time is spent
+  in the pattern matcher.
 
-At this time, there is no particularly noticalble difference in
-performance as a result of this change. Almost all CPU time is spent
-in the pattern matcher.
+* `bio-loop3.scm` -- same as `bio-loop.scm` above, except it runs
+  a threaded version of the query, in varying numbers of threads.
+  Useful for quantifying the parallelizability of the pattern matcher.
+  See https://github.com/opencog/atomspace/issues/2758 for current
+  problem with parallelizability.
