@@ -89,23 +89,34 @@
 						tri-list)
 					(cons gene-name rlen))
 				result-list))
-
 		(define run-time (bench-secs))
+		run-time
+	)
+
+	(define base-time 0)
+
+	(define (report nthreads run-time)
 		(format #t "Triangle relations for ~A threads in ~6f seconds\n"
 				nthreads run-time)
 		(format #t "Rate ~6f genes/sec Rate per thread: ~6f genes/sec\n"
 				(/ rlen run-time) (/ rlen (* run-time nthreads)))
+		(if (= 1 nthreads)
+			(set! base-time run-time)
+			(format #t "Speedup vs 1x = ~6f\n" (/ base-time run-time)))
 		(sleep 1)
 	)
 
-	(interaction-counts 1)
-	(interaction-counts 2)
-	(interaction-counts 3)
-	(interaction-counts 4)
-	(interaction-counts 6)
-	(interaction-counts 8)
-	(interaction-counts 12)
-	(interaction-counts 16)
+	(define (run-bench nthreads)
+		(report nthreads (interaction-counts nthreads)))
+
+	(run-bench 1)
+	(run-bench 2)
+	(run-bench 3)
+	(run-bench 4)
+	(run-bench 6)
+	(run-bench 8)
+	(run-bench 12)
+	(run-bench 16)
 	*unspecified*
 )
 
