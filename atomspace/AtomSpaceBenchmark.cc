@@ -985,7 +985,7 @@ timepair_t AtomSpaceBenchmark::bm_rmAtom()
             for (unsigned int j=0; j<Nloops; j++) {
                 std::string bar = symb + std::to_string(i*Nloops + j);
                 guile_define(bar, h);
-                ss << "(cog-delete-recursive " << bar << ")\n";
+                ss << "(cog-extract-recursive! " << bar << ")\n";
                 h = getRandomHandle();
                 // XXX FIXME --- this may have trouble finding
                 // anything if Nloops is bigger than the number

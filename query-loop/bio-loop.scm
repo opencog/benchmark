@@ -88,7 +88,7 @@
 				;; (format #t "Ran triangle ~A in ~6f seconds; got ~A results\n"
 				;; 	gene-name (gene-secs) rlen)
 				(display ".")
-				(cog-delete result)
+				(cog-extract! result)
 				(cons gene-name rlen)
 			)
 			gene-list))
@@ -135,7 +135,7 @@
 				; (format #t "Ran path ~A in ~6f seconds; got ~A results\n"
 				; 	(cog-name pathway) (path-secs) rlen)
 				(display ".")
-				(cog-delete result)
+				(cog-extract! result)
 				(cons (cog-name pathway) rlen)
 			)
 			pathways))
@@ -163,7 +163,7 @@
 				; Perform the search
 				(define path-set (cog-execute! query))
 				(define pathways (cog-outgoing-set path-set))
-				(cog-delete path-set)
+				(cog-extract! path-set)
 				pathways
 			)
 			gene-list)))
