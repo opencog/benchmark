@@ -69,6 +69,34 @@
 			(CountOf (Variable "$sect-b")))))
 
 ; ------------
+; A lambda variant of above.
+(define (qdot-lambda WRD-A WRD-B)
+	(Query
+		; The search variable.
+		(VariableList
+			(TypedVariable (Variable "$conseq") (Type 'ConnectorSeq))
+			(TypedVariable (Variable "$sect-a") (Type 'Section))
+			(TypedVariable (Variable "$sect-b") (Type 'Section))
+		)
+
+		; What to look for.
+		(And
+			(Identical (Variable "$sect-a")
+				(Section WRD-A (Variable "$conseq")))
+			(Identical (Variable "$sect-b")
+				(Section WRD-B (Variable "$conseq")))
+		)
+
+		; Multiply the counts on the search results.
+		(Put
+			(Lambda
+				(VariableList (Variable "$x") (Variable "$y"))
+				(Times
+					(CountOf (Variable "$x"))
+					(CountOf (Variable "$y"))))
+			(List (Variable "$sect-a") (Variable "$sect-b")))))
+
+; ------------
 ; A version suitable for Shapes.
 (define (qdot-choice WRD-A WRD-B)
 	(Query
@@ -138,8 +166,8 @@
 		(if (not (= EXPECTED-CNT TOT-CNT))
 			(format #t "Measurement failure: incorrect number of links found: ~D\n"
 				TOT-CNT)
-			(format #t "~A Elapsed: ~D secs Tot-cnt=~D Avg=~6F secs/word Rate=~6F words/sec\n"
-				(procedure-name QRY) ti TOT-CNT (/ ti nwrds) (/ nwrds ti)))
+			(format #t "~A: Elapsed: ~D secs Avg=~6F secs/word Rate=~6F words/sec\n"
+				(procedure-name QRY) ti (/ ti nwrds) (/ nwrds ti)))
 		(newline)
 	)
 
@@ -158,6 +186,7 @@
 (define expected-count 3884127978)
 (measure-dot-products wrds qdot-simple expected-count)
 (measure-dot-products wrds qdot-identical expected-count)
+(measure-dot-products wrds qdot-lambda expected-count)
 (measure-dot-products wrds qdot-choice expected-count)
 (exit)
 ; ------------------------------------------------------------------
