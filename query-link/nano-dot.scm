@@ -182,29 +182,28 @@
 		(wrap func))
 
 	; Performance stats
-	(define start-time (current-time))
+	(define (get-wallclock)
+		(/ (get-internal-real-time) internal-time-units-per-second))
+	(define start-time (get-wallclock))
 	(define (elapsed-secs)
-		(define now (current-time))
+		(define now (get-wallclock))
 		(define diff (- now start-time))
 		(set! start-time now)
 		diff)
 
 	(define (dot-prod-x LEFT-WRD)
 		(define dot (cog-value->list (dot-prod LEFT-WRD)))
-		(display ".")
+		; (display ".")
 		(if (< 0 (length dot)) (car dot) 0))
 
 	(define (report TOT-CNT)
 		(define ti (elapsed-secs))
 		(define nwrds (length WORD-LST))
-		(newline)
-		(newline)
 		(if (not (= EXPECTED-CNT TOT-CNT))
 			(format #t "Measurement failure: incorrect number of links found: ~D\n"
 				TOT-CNT)
-			(format #t "~A: Elapsed: ~D secs Avg=~6F secs/word Rate=~6F words/sec\n"
+			(format #t "~A: Elapsed: ~4,2F secs Avg=~6F secs/word Rate=~6F words/sec\n"
 				(procedure-name QRY) ti (/ ti nwrds) (/ nwrds ti)))
-		(newline)
 	)
 
 	; Loop over all words.
@@ -217,7 +216,7 @@
 )
 
 ; Run the benchmark
-(format #t "Will count ~D words " (psa 'left-basis-size))
+(format #t "Will take dot products of ~D words\n" (psa 'left-basis-size))
 (define wrds (psa 'left-basis))
 (define expected-count 3884127978)
 (measure-dot-products wrds qdot-simple expected-count)
