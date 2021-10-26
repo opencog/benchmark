@@ -127,6 +127,42 @@
 			(CountOf (Variable "$sect-a"))
 			(CountOf (Variable "$sect-b")))))
 
+; ------------
+; A mashup of all the above.
+(define (qdot-mashup WRD-A WRD-B)
+	(Query
+		; The search variable.
+		(VariableList
+			(TypedVariable (Variable "$conseq")
+				(TypeChoice (Type 'ConnectorSeq) (Type 'Shape)))
+			(TypedVariable (Variable "$sect-a")
+				(TypeChoice (Type 'Section) (Type 'CrossSection)))
+			(TypedVariable (Variable "$sect-b")
+				(TypeChoice (Type 'Section) (Type 'CrossSection)))
+		)
+
+		; What to look for.
+		(And
+			(Identical (Variable "$sect-a")
+				(Choice
+					(Section WRD-A (Variable "$conseq"))
+					(CrossSection WRD-A (Variable "$conseq"))))
+			(Identical (Variable "$sect-b")
+				(Choice
+					(Section WRD-B (Variable "$conseq"))
+					(CrossSection WRD-B (Variable "$conseq"))))
+		)
+
+		; Multiply the counts on the search results.
+		(Put
+			(Lambda
+				(VariableList (Variable "$x") (Variable "$y"))
+				(Times
+					(CountOf (Variable "$x"))
+					(CountOf (Variable "$y"))))
+			(List (Variable "$sect-a") (Variable "$sect-b")))))
+
+
 ; ------------------------------------------------------------------
 ; Define the main benchmarking routine
 ; Takes dot products in varrious ways.
@@ -188,5 +224,6 @@
 (measure-dot-products wrds qdot-identical expected-count)
 (measure-dot-products wrds qdot-lambda expected-count)
 (measure-dot-products wrds qdot-choice expected-count)
+(measure-dot-products wrds qdot-mashup expected-count)
 (exit)
 ; ------------------------------------------------------------------
