@@ -22,11 +22,11 @@
 #include <opencog/persist/tlb/TLB.h>
 #include <opencog/guile/SchemeEval.h>
 
+#include "AtomSpaceBenchmark.h"
+
 #ifdef HAVE_CYTHON
 #include <opencog/cython/PythonEval.h>
 #endif
-
-#include "AtomSpaceBenchmark.h"
 
 const char* VERSION_STRING = "Version 1.1.1";
 
@@ -582,6 +582,7 @@ Type AtomSpaceBenchmark::randomType(Type t)
         candidateType = ATOM + randomGenerator->randint(numberOfTypes - ATOM - 1);
     } while (!nameserver().isA(candidateType, t) or
         nameserver().isA(candidateType, BOOLEAN_LINK) or
+        nameserver().isA(candidateType, EXECUTE_THREADED_LINK) or
         nameserver().isA(candidateType, FREE_LINK) or
         nameserver().isA(candidateType, TYPE_INPUT_LINK) or
         nameserver().isA(candidateType, TYPE_OUTPUT_LINK) or
