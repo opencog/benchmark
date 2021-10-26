@@ -86,3 +86,13 @@ kind of way.  Try it:
 ```
 HUGETLB_MORECORE=yes LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libhugetlbfs.so.0 guile -l nano-en.scm
 ```
+
+## Dot Products
+
+A different benchmark, using the same dataset, computes the dot products
+between word pairs. This is the conventional vector product, implemented
+in Atomese. It compares five diffferent search techniques, from the most
+direct to the most flexible (i.e. practical in real-world code).
+```
+$ guile -l nano-dot.scm
+```
