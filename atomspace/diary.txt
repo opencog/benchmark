@@ -1948,3 +1948,34 @@ Partial measurements. Fanny. One pull req of concern:
 
 Notes: Removing the signal callbacks should improve performance.
 ... and now we know how much. We'll go for 3% to 7%, depending...
+
+26 Oct 2021
+-----------
+Measurements. Fanny. Post getting rid of AtomTable. Pull req #2864
+
+(This measurement at this date, i.e. after pull req #2875)
+
+./atomspace_bm -A -n 4000000
+
+                     -A          -A
+   test            Oct 2021    Feb 2020
+   name            K-ops/sec   K-ops/sec         Comments
+   ----            ---------   ---------      -----------------
+  noop           1.40e6        2.00e6         no change expected
+  getType           92K           96K                "
+  getTV              4519          4535              "
+  setTV               998          1163              "
+  pointerCast       10.4K         11.4K              "
+  getIncomingSet     3005          3332              "
+  getOutgoingSet    44.8K         49.8K              "
+  addNode             670           701              "
+  addLink -A          175           183              "
+  addLink -m          197           206              "
+  removeAtom         1375          1213           see notes
+
+No change expected, except for removeAtom, which was mildly simplified.
+And, indeed, performance went up slightly.
+
+Everything else seems mildly slower. Don't know why. Maybe compiler?
+compiler: gcc (Debian 10.2.1-6) 10.2.1 20210110
+glibc: ldconfig -V: (Debian GLIBC 2.31-13+deb11u2) 2.31
