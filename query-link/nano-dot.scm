@@ -162,7 +162,20 @@
 					(CountOf (Variable "$y"))))
 			(List (Variable "$sect-a") (Variable "$sect-b")))))
 
+; --------
+; Wrapper to return plain numbers.
+(define (dot-wrap QRY WRD-A WRD-B)
+	(define fv (cog-execute! (Accumulate (QRY WRD-A WRD-B))))
+	(define dot (cog-value->list fv))
+	(if (< 0 (length dot)) (car dot) 0))
 
+(define (dot-simple WRD-A WRD-B) (dot-wrap qdot-simple WRD-A WRD-B))
+(define (dot-identical WRD-A WRD-B) (dot-wrap qdot-identical WRD-A WRD-B))
+(define (dot-lambda WRD-A WRD-B) (dot-wrap qdot-lambda WRD-A WRD-B))
+(define (dot-choice WRD-A WRD-B) (dot-wrap qdot-choice WRD-A WRD-B))
+(define (dot-mashup WRD-A WRD-B) (dot-wrap qdot-mashup WRD-A WRD-B))
+
+; ==================================================================
 ; ------------------------------------------------------------------
 ; Define the main benchmarking routine
 ; Takes dot products in varrious ways.
@@ -177,8 +190,7 @@
 
 	; Return a dot-product of a word with "the".
 	(define (dot-prod LEFT-WRD)
-		(define (func)
-			(cog-execute! (Accumulate (QRY LEFT-WRD (Word "the")))))
+		(define (func) (QRY LEFT-WRD (Word "the")))
 		(wrap func))
 
 	; Performance stats
@@ -190,11 +202,6 @@
 		(define diff (- now start-time))
 		(set! start-time now)
 		diff)
-
-	(define (dot-prod-x LEFT-WRD)
-		(define dot (cog-value->list (dot-prod LEFT-WRD)))
-		; (display ".")
-		(if (< 0 (length dot)) (car dot) 0))
 
 	(define (report TOT-CNT)
 		(define ti (elapsed-secs))
@@ -209,7 +216,7 @@
 	; Loop over all words.
 	(define tot-cnt
 		(fold
-			(lambda (WRD CNT) (+ CNT (dot-prod-x WRD)))
+			(lambda (WRD CNT) (+ CNT (dot-prod WRD)))
 			0 WORD-LST))
 
 	(report tot-cnt)
@@ -219,10 +226,17 @@
 (format #t "Will take dot products of ~D words\n" (psa 'left-basis-size))
 (define wrds (psa 'left-basis))
 (define expected-count 3884127978)
-(measure-dot-products wrds qdot-simple expected-count)
-(measure-dot-products wrds qdot-identical expected-count)
-(measure-dot-products wrds qdot-lambda expected-count)
-(measure-dot-products wrds qdot-choice expected-count)
-(measure-dot-products wrds qdot-mashup expected-count)
+(measure-dot-products wrds dot-simple expected-count)
+(measure-dot-products wrds dot-identical expected-count)
+(measure-dot-products wrds dot-lambda expected-count)
+(measure-dot-products wrds dot-choice expected-count)
+(measure-dot-products wrds dot-mashup expected-count)
+
+; The olde-school mattrix code.
+(define sim (add-similarity-compute psa))
+(define (dot-matrix WRD-A WRD-B) (sim 'right-product WRD-A WRD-B))
+
+(measure-dot-products wrds dot-matrix expected-count)
+
 (exit)
 ; ------------------------------------------------------------------
