@@ -26,24 +26,27 @@
 	(length (psa 'get-all-elts)))
 
 ; ------------------------------------------------------------------
+; The various kinds of dot products to measure.
+
+(define (qdot-simple WRD-A WRD-B)
+	(Query
+		; The search variable.
+		(TypedVariable (Variable "$conseq") (Type 'ConnectorSeq))
+
+		; What to look for.
+		(Present
+			(Section WRD-A (Variable "$conseq"))
+			(Section WRD-B (Variable "$conseq")))
+
+		; Multiply the counts on the search results.
+		(Times
+			(CountOf (Section WRD-A (Variable "$conseq")))
+			(CountOf (Section WRD-B (Variable "$conseq"))))))
+
+; ------------------------------------------------------------------
 ; Define the main benchmarking routine
 ; Takes dot products in varrious ways.
-(define (measure-dot-products WORD-LST)
-
-	(define (qdot-simple WRD-A WRD-B)
-		(Query
-			; The search variable.
-			(TypedVariable (Variable "$conseq") (Type 'ConnectorSeq))
-
-			; What to look for.
-			(Present
-				(Section WRD-A (Variable "$conseq"))
-				(Section WRD-B (Variable "$conseq")))
-
-			; Multiply the counts on the search results.
-			(Times
-				(CountOf (Section WRD-A (Variable "$conseq")))
-				(CountOf (Section WRD-B (Variable "$conseq"))))))
+(define (measure-dot-products WORD-LST QRY EXPECTED-CNT)
 
 	; Avoid atomspace polution.
 	(define (wrap func)
@@ -53,9 +56,9 @@
 			rc))
 
 	; Return a dot-product of a word with "the".
-	(define (simple-dot LEFT-WRD)
+	(define (dot-prod LEFT-WRD)
 		(define (func)
-			(cog-execute! (Accumulate (qdot-simple LEFT-WRD (Word "the")))))
+			(cog-execute! (Accumulate (QRY LEFT-WRD (Word "the")))))
 		(wrap func))
 
 	; Performance stats
@@ -66,35 +69,36 @@
 		(set! start-time now)
 		diff)
 
-	(define (simple-dot-x LEFT-WRD)
+	(define (dot-prod-x LEFT-WRD)
+		(define dot (cog-value->list (dot-prod LEFT-WRD)))
 		(display ".")
-(display LEFT-WRD) (newline)
-		(cog-value-ref (simple-dot LEFT-WRD) 0))
+		(if (< 0 (length dot)) (car dot) 0))
 
-	; Loop over all words.
-	(define tot-cnt
-		(fold
-			(lambda (WRD CNT) (+ CNT (simple-dot-x WRD)))
-			0 WORD-LST))
-		
-	(define (report)
+	(define (report TOT-CNT)
 		(define ti (elapsed-secs))
 		(define nwrds (length WORD-LST))
 		(newline)
 		(newline)
-		(if (not (= 152904 tot-cnt))
+		(if (not (= EXPECTED-CNT TOT-CNT))
 			(format #t "Measurement failure: incorrect number of links found: ~D\n"
-				tot-cnt)
-			(format #t "Elapsed: ~D secs Tot-cnt=~A Avg=~6F secs/word Rate=~6F cnts/sec\n"
-				ti tot-cnt (/ ti nwrds) (/ tot-cnt ti)))
+				TOT-CNT)
+			(format #t "~A Elapsed: ~D secs Tot-cnt=~D Avg=~6F secs/word Rate=~6F words/sec\n"
+				(procedure-name QRY) ti TOT-CNT (/ ti nwrds) (/ nwrds ti)))
 		(newline)
 	)
 
-	(report)
+	; Loop over all words.
+	(define tot-cnt
+		(fold
+			(lambda (WRD CNT) (+ CNT (dot-prod-x WRD)))
+			0 WORD-LST))
+
+	(report tot-cnt)
 )
 
 ; Run the benchmark
 (format #t "Will count ~D words " (psa 'left-basis-size))
-(measure-dot-products (psa 'left-basis))
+(define wrds (psa 'left-basis))
+(measure-dot-products wrds qdot-simple 3884127978)
 (exit)
 ; ------------------------------------------------------------------
