@@ -17,8 +17,7 @@ IF (HAVE_CYTHON)
 	TARGET_LINK_LIBRARIES (atomspace_bm
 		PythonEval
 		# ${ATOMSPACE_PythonEval_LIBRARY}
-		# ${Boost_SYSTEM_LIBRARY}
+		tlb
 		${PYTHON_LIBRARIES}
-		boost_system
 	)
 ENDIF(HAVE_CYTHON)
