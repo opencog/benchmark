@@ -51,7 +51,6 @@ class AtomSpaceBenchmark
     float maxSize; //! never make the atomspace bigger than this while building it
 
     AtomSpace* asp;
-    AtomTable* atab;
 #if HAVE_GUILE
     SchemeEval* scm;
 #endif

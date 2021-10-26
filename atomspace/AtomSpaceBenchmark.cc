@@ -19,7 +19,7 @@
 #include <opencog/atoms/truthvalue/IndefiniteTruthValue.h>
 #include <opencog/atoms/truthvalue/SimpleTruthValue.h>
 #include <opencog/atoms/truthvalue/TruthValue.h>
-#include <opencog/atomspaceutils/TLB.h>
+#include <opencog/persist/tlb/TLB.h>
 #include <opencog/guile/SchemeEval.h>
 
 #ifdef HAVE_CYTHON
@@ -83,7 +83,6 @@ AtomSpaceBenchmark::AtomSpaceBenchmark()
     randomseed = (unsigned long) time(NULL);
 
     asp = NULL;
-    atab = NULL;
     randomGenerator = NULL;
 }
 
@@ -355,8 +354,7 @@ void AtomSpaceBenchmark::doBenchmark(const std::string& methodName,
     // Must not remove more atoms than there are
     if (methodToCall == &AtomSpaceBenchmark::bm_rmAtom)
     {
-        size_t asz = (testKind == BENCH_TABLE ?
-                      atab->getSize() : asp->get_size());
+        size_t asz = asp->get_size();
         if (asz < 4*Nreps*Nclock*Nloops/3)
             Nreps = asz / (4*Nclock*Nloops/3);
     }
@@ -402,8 +400,7 @@ void AtomSpaceBenchmark::doBenchmark(const std::string& methodName,
             // Try to negate the memory increase due to adding atoms
             rssFromIncrease += (getMemUsage() - rssBeforeIncrease);
         }
-        size_t atomspaceSize = (testKind == BENCH_TABLE ?
-                                atab->getSize() : asp->get_size());
+        size_t atomspaceSize = asp->get_size();
         timepair_t timeTaken = CALL_MEMBER_FN(*this, methodToCall)();
         sumAsyncTime += get<0>(timeTaken);
         counter++;
@@ -472,28 +469,23 @@ void AtomSpaceBenchmark::startBenchmark(int numThreads)
     for (unsigned int i = 0; i < methodNames.size(); i++) {
         UUID_begin = 1;
         UUID_end = tlbuf.size() + UUID_PAD;
-        if (testKind == BENCH_TABLE) {
-            atab = new AtomTable();
-        }
-        else {
-            asp = new AtomSpace();
+        asp = new AtomSpace();
 #if HAVE_CYTHON
-            pyev = new PythonEval();
-            // And now ... create a Python instance of the atomspace.
-            // Pass in the raw C++ atomspace address into cython.
-            // Kind-of tacky, but I don't see any better way.
-            // (We must do this because otherwise, the benchmark would
-            // run on a different atomspace, than the one containing
-            // all the atoms.  And that would give bad results.
-            std::ostringstream dss;
-            dss << "from atomspace import AtomSpace, types, TruthValue, Atom" << std::endl;
-            dss << "aspace = AtomSpace(" << asp << ")" << std::endl;
-            pyev->eval(dss.str());
+        pyev = new PythonEval();
+        // And now ... create a Python instance of the atomspace.
+        // Pass in the raw C++ atomspace address into cython.
+        // Kind-of tacky, but I don't see any better way.
+        // (We must do this because otherwise, the benchmark would
+        // run on a different atomspace, than the one containing
+        // all the atoms.  And that would give bad results.
+        std::ostringstream dss;
+        dss << "from atomspace import AtomSpace, types, TruthValue, Atom" << std::endl;
+        dss << "aspace = AtomSpace(" << asp << ")" << std::endl;
+        pyev->eval(dss.str());
 #endif
 #if HAVE_GUILE
-            scm = new SchemeEval(asp);
+        scm = new SchemeEval(asp);
 #endif
-        }
         numberOfTypes = nameserver().getNumberOfClasses();
 
         if (buildTestData) buildAtomSpace(atomCount, percentLinks, false);
@@ -501,16 +493,12 @@ void AtomSpaceBenchmark::startBenchmark(int numThreads)
 
         doBenchmark(methodNames[i], methodsToTest[i]);
 
-        if (testKind == BENCH_TABLE)
-            delete atab;
-        else {
 #if HAVE_GUILE
-            delete scm;
+        delete scm;
 #endif
 #if HAVE_CYTHON
-            delete pyev;
+        delete pyev;
 #endif
-            delete asp;
         }
     }
 
@@ -651,12 +639,6 @@ clock_t AtomSpaceBenchmark::makeRandomNodes(const std::string& csi)
     }
 
     switch (testKind) {
-    case BENCH_TABLE: {
-        clock_t t_begin = clock();
-        for (unsigned int i=0; i<Nclock; i++)
-            atab->add(createNode(ta[i], std::move(nn[i])), false);
-        return clock() - t_begin;
-    }
     case BENCH_AS: {
         clock_t t_begin = clock();
         for (unsigned int i=0; i<Nclock; i++)
@@ -811,12 +793,6 @@ clock_t AtomSpaceBenchmark::makeRandomLinks()
         return clock() - t_begin;
     }
 #endif /* HAVE_GUILE */
-    case BENCH_TABLE: {
-        clock_t tAddLinkStart = clock();
-        for (unsigned int i=0; i<Nclock; i++)
-            atab->add(createLink(std::move(og[i]), ta[i]), false);
-        return clock() - tAddLinkStart;
-    }
     case BENCH_AS: {
         clock_t tAddLinkStart = clock();
         for (unsigned int i=0; i<Nclock; i++)
@@ -1016,13 +992,6 @@ timepair_t AtomSpaceBenchmark::bm_rmAtom()
         return timepair_t(time_taken,0);
     }
 #endif /* HAVE_GUILE */
-    case BENCH_TABLE: {
-        clock_t t_begin = clock();
-        for (unsigned int i=0; i<Nclock; i++)
-            atab->extract(hs[i]);
-        clock_t time_taken = clock() - t_begin;
-        return timepair_t(time_taken,0);
-    }
     case BENCH_AS: {
         clock_t t_begin = clock();
         for (unsigned int i=0; i<Nclock; i++)
@@ -1538,13 +1507,6 @@ timepair_t AtomSpaceBenchmark::bm_getHandlesByType()
         return timepair_t(0,0);
     }
 #endif /* HAVE_GUILE */
-    case BENCH_TABLE: {
-        clock_t t_begin = clock();
-        HandleSeq results;
-        atab->getHandlesByType(back_inserter(results), t, true);
-        clock_t time_taken = clock() - t_begin;
-        return timepair_t(Nclock*time_taken,0);
-    }
     case BENCH_AS: {
         HandleSeq results;
         clock_t t_begin = clock();
