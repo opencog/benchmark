@@ -28,6 +28,7 @@
 ; ------------------------------------------------------------------
 ; The various kinds of dot products to measure.
 
+; The simplest query, on which all the others are modeled.
 (define (qdot-simple WRD-A WRD-B)
 	(Query
 		; The search variable.
@@ -42,6 +43,29 @@
 		(Times
 			(CountOf (Section WRD-A (Variable "$conseq")))
 			(CountOf (Section WRD-B (Variable "$conseq"))))))
+
+; A more complicated kind of way of doing the above.
+(define (qdot-identical WRD-A WRD-B)
+	(Query
+		; The search variable.
+		(VariableList
+			(TypedVariable (Variable "$conseq") (Type 'ConnectorSeq))
+			(TypedVariable (Variable "$sect-a") (Type 'Section))
+			(TypedVariable (Variable "$sect-b") (Type 'Section))
+		)
+
+		; What to look for.
+		(And
+			(Identical (Variable "$sect-a")
+				(Section WRD-A (Variable "$conseq")))
+			(Identical (Variable "$sect-b")
+				(Section WRD-B (Variable "$conseq")))
+		)
+
+		; Multiply the counts on the search results.
+		(Times
+			(CountOf (Variable "$sect-a"))
+			(CountOf (Variable "$sect-b")))))
 
 ; ------------------------------------------------------------------
 ; Define the main benchmarking routine
@@ -99,6 +123,8 @@
 ; Run the benchmark
 (format #t "Will count ~D words " (psa 'left-basis-size))
 (define wrds (psa 'left-basis))
-(measure-dot-products wrds qdot-simple 3884127978)
+(define expected-count 3884127978)
+(measure-dot-products wrds qdot-simple expected-count)
+(measure-dot-products wrds qdot-identical expected-count)
 (exit)
 ; ------------------------------------------------------------------
