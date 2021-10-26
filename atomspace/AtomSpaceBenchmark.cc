@@ -498,7 +498,6 @@ void AtomSpaceBenchmark::startBenchmark(int numThreads)
 #if HAVE_CYTHON
         delete pyev;
 #endif
-        }
     }
 
     //cout << estimateOfAtomSize(Handle(2)) << endl;
@@ -586,7 +585,8 @@ Type AtomSpaceBenchmark::randomType(Type t)
         nameserver().isA(candidateType, FREE_LINK) or
         nameserver().isA(candidateType, TYPE_INPUT_LINK) or
         nameserver().isA(candidateType, TYPE_OUTPUT_LINK) or
-        nameserver().isA(candidateType, NUMERIC_LINK) or
+        nameserver().isA(candidateType, NUMERIC_INPUT_LINK) or
+        nameserver().isA(candidateType, NUMERIC_OUTPUT_LINK) or
         nameserver().isA(candidateType, SCOPE_LINK) or
         nameserver().isA(candidateType, UNIQUE_LINK) or
         nameserver().isA(candidateType, TYPED_VARIABLE_LINK) or
@@ -1509,7 +1509,7 @@ timepair_t AtomSpaceBenchmark::bm_getHandlesByType()
     case BENCH_AS: {
         HandleSeq results;
         clock_t t_begin = clock();
-        asp->get_handles_by_type(back_inserter(results), t, true);
+        asp->get_handles_by_type(results, t, true);
         clock_t time_taken = clock() - t_begin;
         return timepair_t(Nclock*time_taken,0);
     }}
