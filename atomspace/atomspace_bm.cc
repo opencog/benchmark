@@ -15,8 +15,6 @@ int main(int argc, char** argv)
      "Usage: atomspace_bm [-m <method>] [options]\n"
      "-t        \tPrint information on type sizes\n"
      "-A        \tBenchmark all methods\n"
-     "-X        \tTest the AtomTable API\n"
-     "          \t(by default the AtomSpace API is tested)\n"
      "-g        \tTest the Scheme API\n"
      "-M        \tMemoize Scheme expressions\n"
      "-C        \tCompile Scheme expressions\n"
@@ -56,7 +54,7 @@ int main(int argc, char** argv)
     opterr = 0;
     benchmarker.testKind = opencog::AtomSpaceBenchmark::BENCH_AS;
 
-    while ((c = getopt (argc, argv, "tAXgMCcm:ln:r:u:h:R:S:p:s:d:kfi:")) != -1) {
+    while ((c = getopt (argc, argv, "tAgMCcm:ln:r:u:h:R:S:p:s:d:kfi:")) != -1) {
        switch (c)
        {
            case 't':
@@ -65,9 +63,6 @@ int main(int argc, char** argv)
            case 'A':
              benchmarker.buildTestData = true;
              benchmarker.setTestAllMethods();
-             break;
-           case 'X':
-             benchmarker.testKind = opencog::AtomSpaceBenchmark::BENCH_TABLE;
              break;
            case 'g':
 #ifdef HAVE_GUILE

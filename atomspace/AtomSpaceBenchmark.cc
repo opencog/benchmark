@@ -365,7 +365,6 @@ void AtomSpaceBenchmark::doBenchmark(const std::string& methodName,
     cout << "Benchmarking ";
     switch (testKind) {
         case BENCH_AS:  cout << "AtomSpace's "; break;
-        case BENCH_TABLE:  cout << "AtomTable's "; break;
 #if HAVE_GUILE
         case BENCH_SCM:  cout << "Scheme's ";
         if (memoize) cout << "memoized ";
@@ -469,7 +468,7 @@ void AtomSpaceBenchmark::startBenchmark(int numThreads)
     for (unsigned int i = 0; i < methodNames.size(); i++) {
         UUID_begin = 1;
         UUID_end = tlbuf.size() + UUID_PAD;
-        asp = new AtomSpace();
+        asp = createAtomSpace();
 #if HAVE_CYTHON
         pyev = new PythonEval();
         // And now ... create a Python instance of the atomspace.
@@ -1078,7 +1077,7 @@ timepair_t AtomSpaceBenchmark::bm_getType()
 #endif /* HAVE_GUILE */
 
     case BENCH_AS:
-    case BENCH_TABLE: {
+    {
         clock_t t_begin = clock();
         // summing prevents the optimizer from optimizing away.
         int sum = 0;
@@ -1152,7 +1151,7 @@ timepair_t AtomSpaceBenchmark::bm_getTruthValue()
     }
 #endif /* HAVE_GUILE */
     case BENCH_AS:
-    case BENCH_TABLE: {
+    {
         clock_t t_begin = clock();
         for (unsigned int i=0; i<Nclock; i++)
             hs[i]->getTruthValue();
@@ -1248,7 +1247,7 @@ timepair_t AtomSpaceBenchmark::bm_setTruthValue()
     }
 #endif /* HAVE_GUILE */
     case BENCH_AS:
-    case BENCH_TABLE: {
+    {
         clock_t t_begin = clock();
         for (unsigned int i=0; i<Nclock; i++)
         {
@@ -1322,7 +1321,7 @@ timepair_t AtomSpaceBenchmark::bm_getIncomingSet()
     }
 #endif /* HAVE_GUILE */
     case BENCH_AS:
-    case BENCH_TABLE: {
+    {
         clock_t t_begin = clock();
         for (unsigned int i=0; i<Nclock; i++)
             hs[i]->getIncomingSet();
@@ -1351,7 +1350,7 @@ timepair_t AtomSpaceBenchmark::bm_getIncomingSetSize()
     }
 #endif /* HAVE_GUILE */
     case BENCH_AS:
-    case BENCH_TABLE: {
+    {
         clock_t t_begin = clock();
         for (unsigned int i=0; i<Nclock; i++)
             hs[i]->getIncomingSetSize();
@@ -1381,7 +1380,7 @@ timepair_t AtomSpaceBenchmark::bm_pointerCast()
     }
 #endif /* HAVE_GUILE */
     case BENCH_AS:
-    case BENCH_TABLE: {
+    {
         // Summing prevents the optimizer from optimizing away.
         // We want to measure how long it takes to perform a cast.
         // To avoid the optimizer from playing tricks, we hav to do
@@ -1471,7 +1470,7 @@ timepair_t AtomSpaceBenchmark::bm_getOutgoingSet()
     }
 #endif /* HAVE_GUILE */
     case BENCH_AS:
-    case BENCH_TABLE: {
+    {
         clock_t t_begin = clock();
         for (unsigned int i=0; i<Nclock; i++)
         {

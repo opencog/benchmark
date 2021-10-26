@@ -50,7 +50,7 @@ class AtomSpaceBenchmark
 
     float maxSize; //! never make the atomspace bigger than this while building it
 
-    AtomSpace* asp;
+    AtomSpacePtr asp;
 #if HAVE_GUILE
     SchemeEval* scm;
 #endif
@@ -101,7 +101,7 @@ public:
     bool buildTestData;
     unsigned long randomseed;
 
-    enum BenchType { BENCH_AS = 1, BENCH_TABLE,
+    enum BenchType { BENCH_AS = 1,
 #ifdef HAVE_GUILE
         BENCH_SCM,
 #endif 
