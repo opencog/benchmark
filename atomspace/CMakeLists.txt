@@ -7,6 +7,7 @@ ADD_EXECUTABLE (atomspace_bm
 
 TARGET_LINK_LIBRARIES (atomspace_bm
 	${ATOMSPACE_LIBRARIES}
+	tlb
 	${COGUTIL_LIBRARY}
 )
 
@@ -17,7 +18,6 @@ IF (HAVE_CYTHON)
 	TARGET_LINK_LIBRARIES (atomspace_bm
 		PythonEval
 		# ${ATOMSPACE_PythonEval_LIBRARY}
-		tlb
 		${PYTHON_LIBRARIES}
 	)
 ENDIF(HAVE_CYTHON)
