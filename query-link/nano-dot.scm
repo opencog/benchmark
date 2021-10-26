@@ -44,6 +44,7 @@
 			(CountOf (Section WRD-A (Variable "$conseq")))
 			(CountOf (Section WRD-B (Variable "$conseq"))))))
 
+; ------------
 ; A more complicated kind of way of doing the above.
 (define (qdot-identical WRD-A WRD-B)
 	(Query
@@ -60,6 +61,37 @@
 				(Section WRD-A (Variable "$conseq")))
 			(Identical (Variable "$sect-b")
 				(Section WRD-B (Variable "$conseq")))
+		)
+
+		; Multiply the counts on the search results.
+		(Times
+			(CountOf (Variable "$sect-a"))
+			(CountOf (Variable "$sect-b")))))
+
+; ------------
+; A version suitable for Shapes.
+(define (qdot-choice WRD-A WRD-B)
+	(Query
+		; The search variable.
+		(VariableList
+			(TypedVariable (Variable "$conseq")
+				(TypeChoice (Type 'ConnectorSeq) (Type 'Shape)))
+			(TypedVariable (Variable "$sect-a")
+				(TypeChoice (Type 'Section) (Type 'CrossSection)))
+			(TypedVariable (Variable "$sect-b")
+				(TypeChoice (Type 'Section) (Type 'CrossSection)))
+		)
+
+		; What to look for.
+		(And
+			(Identical (Variable "$sect-a")
+				(Choice
+					(Section WRD-A (Variable "$conseq"))
+					(CrossSection WRD-A (Variable "$conseq"))))
+			(Identical (Variable "$sect-b")
+				(Choice
+					(Section WRD-B (Variable "$conseq"))
+					(CrossSection WRD-B (Variable "$conseq"))))
 		)
 
 		; Multiply the counts on the search results.
@@ -126,5 +158,6 @@
 (define expected-count 3884127978)
 (measure-dot-products wrds qdot-simple expected-count)
 (measure-dot-products wrds qdot-identical expected-count)
+(measure-dot-products wrds qdot-choice expected-count)
 (exit)
 ; ------------------------------------------------------------------
