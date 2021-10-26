@@ -100,7 +100,7 @@ and/or glibc is making a huge difference.
 5 Jan 2020
 ----------
 After pull req opencog/atomspace#2464 which avoids some pointless
-IncomingSet wasteage, I now measure:
+IncomingSet wasteage, I now measure (with hugetlb)
 
 Elapsed: 60 secs Tot-cnt=152904 Avg=0.1042 secs/word Rate=2548.4 cnts/sec
 Elapsed: 59 secs Tot-cnt=152904 Avg=0.1024 secs/word Rate=2591.6 cnts/sec
@@ -119,3 +119,26 @@ second:
 
 Elapsed: 57 secs Tot-cnt=152904 Avg=0.0990 secs/word Rate=2682.5 cnts/sec
 
+26 Oct 2021
+-----------
+Sanity check the latest code.
+
+guile: guile (GNU Guile) 3.0.7.6-22120
+/sbin/ldconfig -V: ldconfig (Debian GLIBC 2.31-13+deb11u2) 2.31
+gcc (Debian 10.2.1-6) 10.2.1 20210110
+git log:
+commit b4502c84f516eb24f66d2848f4191cd24d47fb48
+Merge: 348722a1c d9cfa8e6d
+Author: Linas Vepštas <linasvepstas@gmail.com>
+Date:   Tue Oct 26 15:38:02 2021 -0500
+
+Without hugeTLB:
+Elapsed: 94 secs Tot-cnt=152904 Avg=0.1632 secs/word Rate=1626.6 cnts/sec
+Elapsed: 93 secs Tot-cnt=152904 Avg=0.1615 secs/word Rate=1644.1 cnts/sec
+
+with HugeTLB:
+Elapsed: 74 secs Tot-cnt=152904 Avg=0.1285 secs/word Rate=2066.3 cnts/sec
+Elapsed: 72 secs Tot-cnt=152904 Avg= 0.125 secs/word Rate=2123.7 cnts/sec
+
+Confusing. The scores are about where the Dec 2019 scores were.
+What happened to the improvements noted above?
