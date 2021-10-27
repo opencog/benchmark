@@ -57,17 +57,11 @@ it was derived from.  As a "real-world" benchmark, it should represent
 A diary of results can be found in `diary.txt`.
 
 ## Running the benchmark
+The benchmark loads a dataset with 43752 atoms in it.  This dataset
+consists of a matrix, of dimension 576 x 7660 with a total of 27463
+non-zero matrix entries.
 
-Do this (once, the first time only):
-```
-$ createdb en_nano
-$ cat en_nano.sql | psql en_nano
-```
-The above creates a database with 43752 atoms in it.
-This database consists of a matrix, of dimension 576 x 7660
-with a total of 27463 non-zero matrix entries.
-
-Then, to run each test:
+To run each test:
 ```
 $ guile -l nano-en.scm
 ```
@@ -95,4 +89,48 @@ in Atomese. It compares five diffferent search techniques, from the most
 direct to the most flexible (i.e. practical in real-world code).
 ```
 $ guile -l nano-dot.scm
+```
+
+## Database dump
+The `en_nano.sql` and the `en-nano.atomese` files contain exactly the
+same data. The former was created first, and is a historical legacy.
+The latter was created from the former as follows. First, and one time
+only, set up the postgres server, and do this:
+```
+$ createdb en_nano
+$ cat en_nano.sql | psql en_nano
+```
+Then the following was done:
+```
+(use-modules (opencog) (opencog matrix) (opencog exec))
+(use-modules (opencog persist) (opencog persist-sql))
+(use-modules (opencog persist-file))
+(use-modules (opencog nlp) (opencog nlp learn))
+
+(sql-open "postgres:///en_nano")
+(define pca (make-pseudo-cset-api))
+(define psa (add-pair-stars pca))
+(psa 'fetch-pairs)
+(sql-close)
+
+(define fsn (FileStorageNode "/tmp/en-nano.atomese"))
+(cog-open fsn)
+(store-atomspace fsn)
+(cog-close fsn)
+```
+
+Note that the `en-nano.atomese` file is larger than `en_nano.sql` (14
+MBytes instead of 8MBytes) both are plain-text and compress nicely.
+
+The `en-nano.atomese` is straight-up scheme. It can be loaded as such:
+```
+(primitive-load "/tmp/en-nano.atomese")
+```
+But this is painfully slow.  The fast way to load this is to use the
+fast file-reader:
+```
+(define fsn (FileStorageNode "/tmp/en-nano.atomese"))
+(cog-open fsn)
+(load-atomspace fsn)
+(cog-close fsn)
 ```
