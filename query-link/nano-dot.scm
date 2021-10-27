@@ -2,10 +2,10 @@
 ; nano-dot.scm
 ;
 (use-modules (srfi srfi-1))
-(use-modules (opencog) (opencog matrix) (opencog exec))
+(use-modules (opencog) (opencog exec))
 (use-modules (opencog persist) (opencog persist-file))
-(use-modules (opencog nlp) (opencog nlp learn))
-(use-modules (opencog cogserver))
+(use-modules (opencog nlp))
+; (use-modules (opencog cogserver))
 
 ; Start the cogserver on port 19405
 ; (start-cogserver "nano-en.conf")
@@ -17,11 +17,9 @@
 (cog-close fsn)
 
 (cog-report-counts)
-(define pca (make-pseudo-cset-api))
-(define psa (add-pair-stars pca))
 (format #t "Loaded ~D words, ~D disjuncts and ~D Sections\n"
-	(psa 'left-basis-size) (psa 'right-basis-size)
-	(length (psa 'get-all-elts)))
+	(cog-count-atoms 'Word) (cog-count-atoms 'ConnectorSeq)
+	(cog-count-atoms 'Section))
 
 ; ------------------------------------------------------------------
 ; The various kinds of dot products to measure.
@@ -266,8 +264,8 @@
 )
 
 ; Run the benchmark
-(format #t "Will take dot products of ~D words\n" (psa 'left-basis-size))
-(define wrds (psa 'left-basis))
+(format #t "Will take dot products of ~D words\n" (cog-count-atoms 'Word))
+(define wrds (cog-get-atoms 'Word))
 (define expected-count 3884127978)
 (measure-dot-products wrds dot-fake expected-count)
 (measure-dot-products wrds dot-simple expected-count)
@@ -276,7 +274,11 @@
 (measure-dot-products wrds dot-choice expected-count)
 (measure-dot-products wrds dot-mashup expected-count)
 
-; The olde-school mattrix code.
+; The olde-school matrix code.
+(use-modules (opencog matrix))
+(use-modules (opencog nlp learn))
+(define pca (make-pseudo-cset-api))
+(define psa (add-pair-stars pca))
 (define sim (add-similarity-compute psa))
 (define (dot-matrix WRD-A WRD-B) (sim 'right-product WRD-A WRD-B))
 
