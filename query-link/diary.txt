@@ -142,3 +142,41 @@ Elapsed: 72 secs Tot-cnt=152904 Avg= 0.125 secs/word Rate=2123.7 cnts/sec
 
 Confusing. The scores are about where the Dec 2019 scores were.
 What happened to the improvements noted above?
+
+26 Oct 2021
+-----------
+Some nano-dot results (without HugeTLB):
+
+dot-simple: Elapsed: 4.71 secs Avg=0.0082 secs/word Rate=122.35 words/sec
+dot-identical: Elapsed: 5.15 secs Avg=0.0089 secs/word Rate=111.84 words/sec
+dot-lambda: Elapsed: 5.43 secs Avg=0.0094 secs/word Rate=106.01 words/sec
+dot-choice: Elapsed: 7.91 secs Avg=0.0137 secs/word Rate=72.849 words/sec
+dot-mashup: Elapsed: 8.35 secs Avg=0.0145 secs/word Rate=68.951 words/sec
+dot-matrix: Elapsed: 4.32 secs Avg=0.0075 secs/word Rate=133.41 words/sec
+
+And again, with HugeTLB:
+dot-simple: Elapsed: 4.97 secs Avg=0.0086 secs/word Rate=115.85 words/sec
+dot-identical: Elapsed: 5.33 secs Avg=0.0093 secs/word Rate=108.05 words/sec
+dot-lambda: Elapsed: 5.50 secs Avg=0.0095 secs/word Rate=104.74 words/sec
+dot-choice: Elapsed: 7.74 secs Avg=0.0134 secs/word Rate=74.371 words/sec
+dot-mashup: Elapsed: 8.15 secs Avg=0.0141 secs/word Rate=70.689 words/sec
+dot-matrix: Elapsed: 4.85 secs Avg=0.0084 secs/word Rate=118.85 words/sec
+
+Wow. So that's actually slower. And it's best out of three, and HugeTLB
+is consistently slower. How is that possible? Well, apparently, we're
+not missing anything here. Curious.
+
+Also curious: The use of the AtomSpace AccumulateLink machinery is
+actually slower than letting guile do all the work. Surprising, but
+maybe not that surprising, for two reasons:
+1) We use the pattern matcher to find the basis elements to feed
+   to the matrix routines that guile runs; so there is a common cost
+   that both styles share: the overhead of the patten matcher itself.
+2) guile code is byte-compiled. Thus, although we splurge with scheme
+   lists in the matrix code, causing a lot of malloc/free under the
+   covers, we also splurge with FloatValues in the AtomSpace
+   Instantiator code, which, although small, do have to be malloced,
+   reference-counted and freed. So, not unlike splurging the scheme
+   lists.
+
+So ... that's interesting.

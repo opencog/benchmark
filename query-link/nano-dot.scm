@@ -219,6 +219,7 @@
 			(lambda (WRD CNT) (+ CNT (dot-prod WRD)))
 			0 WORD-LST))
 
+	; (gc)
 	(report tot-cnt)
 )
 
