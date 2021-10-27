@@ -8,7 +8,7 @@
 ; (use-modules (opencog cogserver))
 
 ; Start the cogserver on port 19405
-; (start-cogserver "nano-en.conf")
+; (start-cogserver #:port 19405)
 
 ; Open the database and load the data.
 (define fsn (FileStorageNode "en-nano.atomese"))

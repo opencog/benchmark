@@ -1,29 +1,28 @@
 ;
-; nano-en.scm
+; nano-en.scm -- Benchmark for running a "typical" parsing task on
+; a "real world" dataset.
+;
+; Run this by saying `guile -l nano-en.scm`
 ;
 (use-modules (srfi srfi-1))
-(use-modules (opencog) (opencog matrix) (opencog exec))
-(use-modules (opencog persist) (opencog persist-sql))
-(use-modules (opencog nlp) (opencog nlp learn))
-(use-modules (opencog cogserver))
+(use-modules (opencog) (opencog exec))
+(use-modules (opencog persist) (opencog persist-file))
+(use-modules (opencog nlp))
+; (use-modules (opencog cogserver))
 
 ; Start the cogserver on port 19405
-; (start-cogserver "nano-en.conf")
+; (start-cogserver #:port 19405)
 
-; Open the database.
-(sql-open "postgres:///en_nano")
-
-(define pca (make-pseudo-cset-api))
-(define psa (add-pair-stars pca))
-
-; Load the atomspace from the database and then close it.
-(psa 'fetch-pairs)
-(sql-close)
+; Open the database and load the data.
+(define fsn (FileStorageNode "en-nano.atomese"))
+(cog-open fsn)
+(load-atomspace fsn)
+(cog-close fsn)
 
 (cog-report-counts)
 (format #t "Loaded ~D words, ~D disjuncts and ~D Sections\n"
-	(psa 'left-basis-size) (psa 'right-basis-size)
-	(length (psa 'get-all-elts)))
+	(cog-count-atoms 'Word) (cog-count-atoms 'ConnectorSeq)
+	(cog-count-atoms 'Section))
 
 ; ------------------------------------------------------------------
 ; Define the main benchmarking routine
@@ -127,7 +126,7 @@
 )
 
 ; Run the benchmark
-(format #t "Will count ~D words " (psa 'left-basis-size))
-(count-full-links (psa 'left-basis))
+(format #t "Will count ~D words " (cog-count-atoms 'Word))
+(count-full-links (cog-get-atoms 'Word))
 (exit)
 ; ------------------------------------------------------------------
