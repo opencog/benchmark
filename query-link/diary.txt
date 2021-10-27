@@ -147,6 +147,7 @@ What happened to the improvements noted above?
 -----------
 Some nano-dot results (without HugeTLB):
 
+dot-fake: Elapsed: 4.52 secs Avg=0.0078 secs/word Rate=127.48 words/sec
 dot-simple: Elapsed: 4.71 secs Avg=0.0082 secs/word Rate=122.35 words/sec
 dot-identical: Elapsed: 5.15 secs Avg=0.0089 secs/word Rate=111.84 words/sec
 dot-lambda: Elapsed: 5.43 secs Avg=0.0094 secs/word Rate=106.01 words/sec
@@ -180,3 +181,26 @@ maybe not that surprising, for two reasons:
    lists.
 
 So ... that's interesting.
+
+Here is the performance, using `add-tuple-math` instead of `add-fast-math`
+in `cosine.scm` circa line 155 (i.e. the old style). Three runs:
+
+dot-matrix: Elapsed: 12.55 secs Avg=0.0218 secs/word Rate=45.892 words/sec
+dot-matrix: Elapsed: 12.29 secs Avg=0.0213 secs/word Rate=46.882 words/sec
+dot-matrix: Elapsed: 12.62 secs Avg=0.0219 secs/word Rate=45.628 words/sec
+
+So, less than half the speed. Converting to use the pattern matcher does
+make a big difference. I wonder what would happen if, instead of using
+QueueValue to accumulate results, we used AccumulateValue instead...
+This would still pay the overhead of having (CountOf) allocate a new
+FloatValue. ... Hmm. Passing around std::vector<double> would not
+improve anything.
+
+Added dot-fake to measure the query-only performance, discarding all of
+the results (i.e. not doing any math.) Clearly, most of the CPU time is
+spent in the pattern engine. Although the time lost in the Implicator,
+and in the more complex patterns is significant, its not enough to focus
+any further efforts on. So the concerns about `CountOf` and malloc of
+`FloatValue` are minor: they add about 5% to the overall performance
+(comparing `dot-fake` and `dot-simple`.) So.. that is also interesting
+and useful to know.

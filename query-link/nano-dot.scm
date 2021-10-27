@@ -175,6 +175,50 @@
 (define (dot-choice WRD-A WRD-B) (dot-wrap qdot-choice WRD-A WRD-B))
 (define (dot-mashup WRD-A WRD-B) (dot-wrap qdot-mashup WRD-A WRD-B))
 
+; --------
+#! =========
+; A version that uses MeetLink instead of QueryLink
+; Well, GetLink, so that it returns a Set, so that Put is happy.
+; But of course, this won't actually work. So this is a dead end
+; that we record for posterity.
+(define (mdot-meet WRD-A WRD-B)
+	(Get
+		; The search variable.
+		(TypedVariable (Variable "$conseq") (Type 'ConnectorSeq))
+
+		; What to look for.
+		(Present
+			(Section WRD-A (Variable "$conseq"))
+			(Section WRD-B (Variable "$conseq")))))
+
+(define (dot-meet WRD-A WRD-B)
+	(define fv (cog-execute! (Accumulate
+		(Put
+			(Lambda (Variable "$cseq")
+			(Times
+				(CountOf (Section WRD-A (Variable "$cseq")))
+				(CountOf (Section WRD-B (Variable "$cseq")))))
+		 (mdot-meet WRD-A WRD-B)))))
+	(define dot (cog-value->list fv))
+	(if (< 0 (length dot)) (car dot) 0))
+
+======== !#
+
+; --------
+; A baseline that just performs the pattern matching, and nothing else.
+(define (mdot-fake WRD-A WRD-B)
+	(Meet
+		; The search variable.
+		(TypedVariable (Variable "$conseq") (Type 'ConnectorSeq))
+
+		; What to look for.
+		(Present
+			(Section WRD-A (Variable "$conseq"))
+			(Section WRD-B (Variable "$conseq")))))
+
+(define (dot-fake WRD-A WRD-B)
+	(cog-execute! (mdot-fake WRD-A WRD-B)) -42)
+
 ; ==================================================================
 ; ------------------------------------------------------------------
 ; Define the main benchmarking routine
@@ -206,7 +250,7 @@
 	(define (report TOT-CNT)
 		(define ti (elapsed-secs))
 		(define nwrds (length WORD-LST))
-		(if (not (= EXPECTED-CNT TOT-CNT))
+		(if (and (not (= EXPECTED-CNT TOT-CNT)) (not (= (* nwrds -42) TOT-CNT)))
 			(format #t "Measurement failure: incorrect number of links found: ~D\n"
 				TOT-CNT)
 			(format #t "~A: Elapsed: ~4,2F secs Avg=~6F secs/word Rate=~6F words/sec\n"
@@ -227,6 +271,7 @@
 (format #t "Will take dot products of ~D words\n" (psa 'left-basis-size))
 (define wrds (psa 'left-basis))
 (define expected-count 3884127978)
+(measure-dot-products wrds dot-fake expected-count)
 (measure-dot-products wrds dot-simple expected-count)
 (measure-dot-products wrds dot-identical expected-count)
 (measure-dot-products wrds dot-lambda expected-count)
