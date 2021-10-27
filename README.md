@@ -28,12 +28,18 @@ history, despite being deeply flawed).
 * __query-trite__ -- A synthetic benchmark containing some trivial
   pattern matcher queries.
 
-* __query-links__ -- A real-world benchmark for performing a complex
-  pattern match on a real-world natural-language dataset. Creates 576
-  BindLink's with four GlobNodes and a Variable, each. The Globs are
-  used to search for connectable connectors, similar to parsing tasks.
-  That is, a search over "jigsaw puzzle pieces", looking for pairs
-  of jigsaw pieces that can connect.
+* __query-links__ -- Several real-world benchmarks for performing
+  complex pattern matchs on a real-world natural-language dataset.
+  One models an activity one might need in a parser, that of joining
+  together connectors. It creates 576 BindLink's with four GlobNodes
+  and a Variable, each.  The Globs are used to search for connectable
+  connectors, similar to what parser would need to do.  That is, this
+  is a search over "jigsaw puzzle pieces", looking for pairs of jigsaw
+  pieces that can connect.
+
+  A second benchmark in this directory computes dot products of vectors
+  in six different ways, each using an increasingly complex query
+  pattern. Uses the same base dataset.
 
 * __query-loop__ -- A real-world benchmark for performing a complex
   pattern match on a real-world genome dataset. Uses EvaluationLink
