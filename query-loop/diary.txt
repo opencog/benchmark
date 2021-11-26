@@ -56,6 +56,7 @@ gcc version 10.2.1 20210110 (Debian 10.2.1-6)
 ldd (Debian GLIBC 2.31-13+deb11u2) 2.31
 guile (GNU Guile) 3.0.7.6-22120
 
+--------
 Repeat with
 HUGETLB_MORECORE=yes LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libhugetlbfs.so.0 guile -l bio-loop.scm
 is faster, but not hitting the previous scores.
@@ -80,6 +81,7 @@ Threads: 16  speedup vs 1x = 2.8052 ... 2.9195
 
 So above is two runs with the #2907 pull req.
 
+----------
 Below takes this, and tightens the locks slightly in TypeIndex.h
 Triangle relations for 1 threads in 190.55 seconds
 Rate 3.5739 genes/sec Rate per thread: 3.5739 genes/sec
@@ -94,6 +96,7 @@ Threads: 16  speedup vs 1x = 2.8963
 Hmm. No noticable difference. So, whatever the bottlenecks are,
 It doesn't seem to be in the atomspace typeindex locking.
 
+---------
 Travelling back 3 days earlier, before the sequence of pull reqs
 reorganizing the locks, I get this:
 
@@ -111,5 +114,20 @@ Well, crap. That's margially better than the new code. This may be
 explainable by the fact that the new code is grabbing and releasing
 locks more frequently.  If so, then the good news is that a lockless
 design really should make things better. Hmmm...
+
+---------
+Try again, using facebook folly F14ValueSet in TypeIndex.
+
+Triangle relations for 1 threads in 192.40 seconds
+Rate 3.5395 genes/sec Rate per thread: 3.5395 genes/sec
+Threads: 2  speedup vs 1x = 1.4063
+Threads: 3  speedup vs 1x = 1.8001
+Threads: 4  speedup vs 1x = 2.1576
+Threads: 6  speedup vs 1x = 2.6433
+Threads: 8  speedup vs 1x = 3.0247
+Threads: 12  speedup vs 1x = 3.2299
+Threads: 16  speedup vs 1x = 3.3724
+
+Maybe a hair faster, but the speedup is mostly lost in the noise.
 
 ---------
