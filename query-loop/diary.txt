@@ -131,3 +131,36 @@ Threads: 16  speedup vs 1x = 3.3724
 Maybe a hair faster, but the speedup is mostly lost in the noise.
 
 ---------
+Try again, with no lock at all for the type index. This won't pass unit
+tests but it tells us about the parallelism bottleneck.
+
+Triangle relations for 1 threads in 185.30 seconds
+Rate 3.6752 genes/sec Rate per thread: 3.6752 genes/sec
+Threads: 2  speedup vs 1x = 1.3970
+Threads: 3  speedup vs 1x = 1.7669
+Threads: 4  speedup vs 1x = 2.1386
+Threads: 6  speedup vs 1x = 2.6839
+Threads: 8  speedup vs 1x = 3.0602
+Threads: 12  speedup vs 1x = 3.5631
+Threads: 16  speedup vs 1x = 3.6043
+
+OK, well, that's interesting. Seems that the TypeIndex lock has more
+or less no effect at all on the parallelism.
+
+---------
+Try again, but with no lock on the incoming set.
+
+Triangle relations for 1 threads in 185.99 seconds
+Rate 3.6615 genes/sec Rate per thread: 3.6615 genes/sec
+Threads: 2  speedup vs 1x = 1.4067
+Threads: 3  speedup vs 1x = 1.7198
+Threads: 4  speedup vs 1x = 2.0300
+Threads: 6  speedup vs 1x = 2.5332
+Threads: 8  speedup vs 1x = 2.7638
+Threads: 12  speedup vs 1x = 2.9036
+Threads: 16  speedup vs 1x = 2.9048
+
+Holy cow! No effect at all on the parallelism. So ... where is the
+bottleneck, then?
+
+---------
