@@ -103,7 +103,8 @@
 				(/ rlen run-time) (/ rlen (* run-time nthreads)))
 		(if (= 1 nthreads)
 			(set! base-time run-time)
-			(format #t "Speedup vs 1x = ~6f\n" (/ base-time run-time)))
+			(format #t "Threads: ~D  speedup vs 1x = ~6f\n"
+				nthreads (/ base-time run-time)))
 		(sleep 1)
 	)
 

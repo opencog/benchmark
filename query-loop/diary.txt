@@ -39,3 +39,77 @@ This holds more-or-less steady for all of the benchmarks.
 2013500 1706312
 
 i.e. 2GB virtual size, 1.6GB working-set size.
+
+25 November 2021
+----------------
+Hmm. Things slowed down... No hugetlb, and combined dataset:
+
+Triangle relations for 681 genes in 211.70 seconds
+Triangle relations for 681 genes in 204.04 seconds
+Triangle relations for 681 genes in 204.16 seconds
+Protein expression for 12 pathways in 136.37 seconds
+Protein expression for 12 pathways in 136.18 seconds
+Protein expression for 12 pathways in 138.09 seconds
+
+This is with
+gcc version 10.2.1 20210110 (Debian 10.2.1-6)
+ldd (Debian GLIBC 2.31-13+deb11u2) 2.31
+guile (GNU Guile) 3.0.7.6-22120
+
+Repeat with
+HUGETLB_MORECORE=yes LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libhugetlbfs.so.0 guile -l bio-loop.scm
+is faster, but not hitting the previous scores.
+
+Triangle relations for 681 genes in 155.17 seconds
+Triangle relations for 681 genes in 154.98 seconds
+Triangle relations for 681 genes in 157.30 seconds
+Protein expression for 12 pathways in 110.82 seconds
+Protein expression for 12 pathways in 112.45 seconds
+Protein expression for 12 pathways in 111.80 seconds
+
+And now for loop3 ... see if anything seems changed.
+Triangle relations for 1 threads in 188.01 seconds
+Rate 3.6222 genes/sec Rate per thread: 3.6222 genes/sec ... 3.4676 genes/sec
+Threads: 2  speedup vs 1x = 1.4336 ... 1.4128
+Threads: 3  speedup vs 1x = 1.7775 ... 1.7056
+Threads: 4  speedup vs 1x = 2.0705 ... 2.0470
+Threads: 6  speedup vs 1x = 2.5702 ... 2.5773
+Threads: 8  speedup vs 1x = 2.7884 ... 2.8340
+Threads: 12  speedup vs 1x = 2.7377 ... 2.9228
+Threads: 16  speedup vs 1x = 2.8052 ... 2.9195
+
+So above is two runs with the #2907 pull req.
+
+Below takes this, and tightens the locks slightly in TypeIndex.h
+Triangle relations for 1 threads in 190.55 seconds
+Rate 3.5739 genes/sec Rate per thread: 3.5739 genes/sec
+Threads: 2  speedup vs 1x = 1.3757
+Threads: 3  speedup vs 1x = 1.7257
+Threads: 4  speedup vs 1x = 2.0463
+Threads: 6  speedup vs 1x = 2.5495
+Threads: 8  speedup vs 1x = 2.8462
+Threads: 12  speedup vs 1x = 2.9247
+Threads: 16  speedup vs 1x = 2.8963
+
+Hmm. No noticable difference. So, whatever the bottlenecks are,
+It doesn't seem to be in the atomspace typeindex locking.
+
+Travelling back 3 days earlier, before the sequence of pull reqs
+reorganizing the locks, I get this:
+
+Triangle relations for 1 threads in 184.39 seconds
+Rate 3.6932 genes/sec Rate per thread: 3.6932 genes/sec
+Threads: 2  speedup vs 1x = 1.3905
+Threads: 3  speedup vs 1x = 1.7089
+Threads: 4  speedup vs 1x = 2.0388
+Threads: 6  speedup vs 1x = 2.6780
+Threads: 8  speedup vs 1x = 2.9725
+Threads: 12  speedup vs 1x = 3.3356
+Threads: 16  speedup vs 1x = 3.3057
+
+Well, crap. That's margially better than the new code. This may be
+explainable by the fact that the new code is grabbing and releasing
+locks more frequently.  If so, then the good news is that a lockless
+design really should make things better. Hmmm...
+
+---------
