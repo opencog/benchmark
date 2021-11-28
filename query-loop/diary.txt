@@ -164,3 +164,98 @@ Holy cow! No effect at all on the parallelism. So ... where is the
 bottleneck, then?
 
 ---------
+Try again, with two differences:
+1) data loaded from rocksdb
+2) Both atom and type index running on f14:F14ValueNode
+
+Triangle relations for 1 threads in 204.67 seconds  ... 200.54
+Rate 3.3273 genes/sec Rate per thread: 3.3273 genes/sec  ... 3.3957 genes/sec
+Threads: 2  speedup vs 1x = 1.5502 ... 1.5636
+Threads: 3  speedup vs 1x = 1.9024 ... 1.8774
+Threads: 4  speedup vs 1x = 2.2616 ... 2.1812
+Threads: 6  speedup vs 1x = 2.9206 ... 2.8736
+Threads: 8  speedup vs 1x = 3.3731 ... 3.3156
+Threads: 12  speedup vs 1x = 3.8862 ... 3.7239
+Threads: 16  speedup vs 1x = 3.7935 ... 3.7622
+
+So .. speedups are quite significant... underwhelming, but significant.
+
+---------
+Try again, with three differences:
+1) data loaded from rocksdb
+2) Type index running on f14:F14ValueNode
+3) Incoming index running on std::unordered_set
+
+
+Triangle relations for 1 threads in 200.97 seconds
+Rate 3.3885 genes/sec Rate per thread: 3.3885 genes/sec
+Threads: 2  speedup vs 1x = 1.5644
+Threads: 3  speedup vs 1x = 1.8654
+Threads: 4  speedup vs 1x = 2.2194
+Threads: 6  speedup vs 1x = 2.9437
+Threads: 8  speedup vs 1x = 3.3309
+Threads: 12  speedup vs 1x = 3.7352
+Threads: 16  speedup vs 1x = 3.7741
+
+conclude: incoming index on unordered_set is same as f14
+We cannot use the F14 on the type index due to some bug.
+
+---------
+Try again, with three differences:
+1) data loaded from rocksdb
+2) f14 disabled entirely.
+
+Triangle relations for 1 threads in 219.24 seconds ... 216.71 seconds
+Rate 3.1062 genes/sec Rate per thread: 3.1062 genes/sec ... 3.1424 genes/sec
+Threads: 2  speedup vs 1x = 1.5547 ... 1.5845
+Threads: 3  speedup vs 1x = 1.8071 ... 1.8550
+Threads: 4  speedup vs 1x = 2.1617 ... 2.2281
+Threads: 6  speedup vs 1x = 2.8369 ... 2.9055
+Threads: 8  speedup vs 1x = 3.3070 ... 3.4421
+Threads: 12  speedup vs 1x = 3.8141 ... 3.8943
+Threads: 16  speedup vs 1x = 3.9205 ... 3.9716
+
+I'm confused. The speedups are bettter than before. But the baseline
+is a lot lower, so ... ??
+
+---------
+Try again, with three differences:
+1) data loaded from rocksdb
+2) f14 only in incoming, where it's allowable
+   (cannot use it on type index due to bug.)
+
+Triangle relations for 1 threads in 208.79 seconds
+Rate 3.2617 genes/sec Rate per thread: 3.2617 genes/sec
+Threads: 2  speedup vs 1x = 1.5522
+Threads: 3  speedup vs 1x = 1.9315
+Threads: 4  speedup vs 1x = 2.2490
+Threads: 6  speedup vs 1x = 3.0139
+Threads: 8  speedup vs 1x = 3.5071
+Threads: 12  speedup vs 1x = 3.9536
+Threads: 16  speedup vs 1x = 3.9083
+
+Conclude, comparing to earlier: guile gc interferes with
+parallelizability; loading from rocksdb shrinks the hit
+on guile.
+
+---------
+Lets check above conclusion: try again
+1) data loaded from rocksdb
+2) locks removed from TypeIndex.
+
+Triangle relations for 1 threads in 211.25 seconds
+Rate 3.2237 genes/sec Rate per thread: 3.2237 genes/sec
+Threads: 2  speedup vs 1x = 1.4585
+Threads: 3  speedup vs 1x = 1.6676
+Threads: 4  speedup vs 1x = 2.0075
+Threads: 6  speedup vs 1x = 2.5982
+Threads: 8  speedup vs 1x = 3.0789
+Threads: 12  speedup vs 1x = 3.3719
+Threads: 16  speedup vs 1x = 3.3396
+
+I'm confused: how is it that the code without locks is slower
+than the code with locks? Is this a cache-line issue?
+
+mutrace is not providing adequate insight.
+
+---------
