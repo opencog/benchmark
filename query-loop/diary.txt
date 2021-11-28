@@ -68,6 +68,14 @@ Protein expression for 12 pathways in 110.82 seconds
 Protein expression for 12 pathways in 112.45 seconds
 Protein expression for 12 pathways in 111.80 seconds
 
+================================================================
+OK. Here's the deal. The bio-loop3.scm benchmark measures parallelism.
+It appears that parallelism results are highly dependent on the CPU
+atomics implementation. The AtomSpace uses std::shared_ptr very heavily
+for refernce counting, and this appears to use CPU atomics to maintain
+the use counts. This results in very heavy contention for the atomics
+implemented in the CPU. Older CPU's fare poorly on this benchmark!
+
 And now for loop3 ... see if anything seems changed.
 Triangle relations for 1 threads in 188.01 seconds
 Rate 3.6222 genes/sec Rate per thread: 3.6222 genes/sec ... 3.4676 genes/sec
@@ -259,3 +267,30 @@ than the code with locks? Is this a cache-line issue?
 mutrace is not providing adequate insight.
 
 ---------
+Check standard AtomSpace on aimdee. Wow!
+
+Triangle relations for 1 threads in 63.278 seconds
+Rate 10.762 genes/sec Rate per thread: 10.762 genes/sec
+Threads: 2  speedup vs 1x = 1.8702
+Threads: 3  speedup vs 1x = 2.6588
+Threads: 4  speedup vs 1x = 3.3858
+Threads: 6  speedup vs 1x = 3.9591
+Threads: 8  speedup vs 1x = 4.4759
+Threads: 12  speedup vs 1x = 4.4349
+Threads: 16  speedup vs 1x = 4.4185
+
+This is an 4-core AMD Ryzen 5 3400G with 8 hypercores, I guess
+
+Same benchmark, under load from other computes is even more revealing:
+
+Triangle relations for 1 threads in 116.41 seconds
+Rate 5.8500 genes/sec Rate per thread: 5.8500 genes/sec
+Threads: 2  speedup vs 1x = 1.9469
+Threads: 3  speedup vs 1x = 2.9243
+Threads: 4  speedup vs 1x = 3.6402
+Threads: 6  speedup vs 1x = 5.7024
+Threads: 8  speedup vs 1x = 7.2898
+Threads: 12  speedup vs 1x = 7.3245
+Threads: 16  speedup vs 1x = 7.2369
+
+So, under load this scales nicely all the way to 8 threads! Wow!

@@ -83,5 +83,12 @@ There are several variants here, for exploration.
 * `bio-loop3.scm` -- same as `bio-loop.scm` above, except it runs
   a threaded version of the query, in varying numbers of threads.
   Useful for quantifying the parallelizability of the pattern matcher.
-  See https://github.com/opencog/atomspace/issues/2758 for current
-  problem with parallelizability.
+  Attention: Actual amount of parallelizability depends very strongly
+  on the CPU implementation of atomic increment. This is because the
+  AtomSpace uses `std::shared_ptr` for everything, which uses atomic
+  increment for maintaining use counts. The code in the AtomSpace has
+  a vast amount of contention for this increment (even if the increment
+  is occurring on unrelated items: they still contend for the CPU
+  atomics.) Modern CPU's handle this nicely; old CPU's do not!
+
+--------
