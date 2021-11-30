@@ -12,6 +12,8 @@ The most interesting benchmarks are probably the **query-links** and
 and the **atomspace** benchmark (because it has a very long measurement
 history, despite being deeply flawed).
 
+* __assembly__ -- examination of assembly code of some simple programs.
+
 * __atomspace__ -- A synthetic benchmark for measuring core AtomSpace
   functions, such as rates for creating `Node`s and `Link`s, rates for
   deleting them, and rates for setting and getting `TruthValue`s and

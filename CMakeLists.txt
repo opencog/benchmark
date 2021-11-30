@@ -51,7 +51,7 @@ ELSE (ATOMSPACE_FOUND)
 	MESSAGE(FATAL_ERROR "AtomSpace missing: it is needed for everything!")
 ENDIF (ATOMSPACE_FOUND)
 
-# URE
+# URE (optional)
 FIND_PACKAGE(URE 1.0.0 CONFIG)
 IF (URE_FOUND)
 	MESSAGE(STATUS "URE found.")
