@@ -119,6 +119,7 @@
 	(run-bench 8)
 	(run-bench 12)
 	(run-bench 16)
+	(run-bench 24)
 	*unspecified*
 )
 

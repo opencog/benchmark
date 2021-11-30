@@ -294,3 +294,38 @@ Threads: 12  speedup vs 1x = 7.3245
 Threads: 16  speedup vs 1x = 7.2369
 
 So, under load this scales nicely all the way to 8 threads! Wow!
+
+---------
+But we cannot always be this lucky.
+On a different machine:
+AMD Ryzen 9 3900X 12-Core Processor
+24 hyperthreads the gain is more modest:
+
+Under load:
+Triangle relations for 1 threads in 92.526 seconds
+Rate 7.3601 genes/sec Rate per thread: 7.3601 genes/sec
+Threads: 2  speedup vs 1x = 1.5080
+Threads: 3  speedup vs 1x = 1.9066
+Threads: 4  speedup vs 1x = 2.2924
+Threads: 6  speedup vs 1x = 3.0969
+Threads: 8  speedup vs 1x = 3.7011
+Threads: 12  speedup vs 1x = 4.6900
+Threads: 16  speedup vs 1x = 5.6154
+Threads: 24  speedup vs 1x = 6.9823
+
+so that is underwhelming; not as good as above.
+Even more so without a load:
+
+Triangle relations for 1 threads in 47.933 seconds
+Rate 14.207 genes/sec Rate per thread: 14.207 genes/sec
+Threads: 2  speedup vs 1x = 1.2938
+Threads: 3  speedup vs 1x = 1.5265
+Threads: 4  speedup vs 1x = 1.7072
+Threads: 6  speedup vs 1x = 2.1583
+Threads: 8  speedup vs 1x = 2.4231
+Threads: 12  speedup vs 1x = 2.8141
+Threads: 16  speedup vs 1x = 3.1561
+Threads: 24  speedup vs 1x = 3.7539
+
+so single-thread serial is much better; but even with two threads,
+the speedup is terrible.
