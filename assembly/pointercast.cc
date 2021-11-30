@@ -13,6 +13,20 @@ int main()
 	asm("int $3");
 	ValuePtr vp = h; // ValueCast(h);
 	asm("int $3");
+	asm("int $3");
 
+	ValuePtr fvp = createFloatValue(3.0);
+	asm("int $3");
+	asm("int $3");
+	asm("int $3");
+	vp = fvp;
+
+	asm("int $3");
+	asm("int $3");
+	asm("int $3");
+	asm("int $3");
+
+	h = HandleCast(vp);
+	asm("int $3");
 	exit(1);
 }
