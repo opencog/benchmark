@@ -329,3 +329,27 @@ Threads: 24  speedup vs 1x = 3.7539
 
 so single-thread serial is much better; but even with two threads,
 the speedup is terrible.
+
+====================================================================
+
+7 March 2022
+------------
+Journal of unreproducible results.
+
+Measure, on idle system, with folly::f14 on the incoming set.
+This should be comparable to results circa line 232
+... and it is.
+
+Get:
+Triangle relations for 1 threads in 197.11 seconds ... 192.79
+Rate 3.4549 genes/sec Rate per thread: 3.4549 genes/sec ... 3.5323
+Threads: 2  speedup vs 1x = 1.5254 ... 1.6268
+Threads: 3  speedup vs 1x = 1.9677 ... 1.9960
+Threads: 4  speedup vs 1x = 2.3023 ... 2.4006
+Threads: 6  speedup vs 1x = 2.9911 ... 2.9598
+Threads: 8  speedup vs 1x = 3.3716 ... 3.3521
+Threads: 12  speedup vs 1x = 3.8588 ... 3.8260
+Threads: 16  speedup vs 1x = 3.9424 ... 3.9028
+Threads: 24  speedup vs 1x = 3.9508 ... 3.8655
+
+
