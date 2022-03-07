@@ -352,4 +352,18 @@ Threads: 12  speedup vs 1x = 3.8588 ... 3.8260
 Threads: 16  speedup vs 1x = 3.9424 ... 3.9028
 Threads: 24  speedup vs 1x = 3.9508 ... 3.8655
 
+Again, with plain incoming set, no folly at all.
+
+Triangle relations for 1 threads in 196.98 seconds ... 201.34
+Rate 3.4573 genes/sec Rate per thread: 3.4573 genes/sec ... 3.3823
+Threads: 2  speedup vs 1x = 1.5895 ... 1.7299
+Threads: 3  speedup vs 1x = 2.0656 ... 1.9955
+Threads: 4  speedup vs 1x = 2.4520 ... 2.5332
+Threads: 6  speedup vs 1x = 3.1063 ... 3.1841
+Threads: 8  speedup vs 1x = 3.5496 ... 3.6384
+Threads: 12  speedup vs 1x = 4.0472 ... 4.1234
+Threads: 16  speedup vs 1x = 4.0785 ... 4.1596
+Threads: 24  speedup vs 1x = 3.9279 ... 4.0170
+
+Conclusion: it makes no difference at all.
 
