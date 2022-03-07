@@ -367,3 +367,22 @@ Threads: 24  speedup vs 1x = 3.9279 ... 4.0170
 
 Conclusion: it makes no difference at all.
 
+--------------------------
+What about bare incoming-set pointers? lets try that...
+This is pull-req #2920
+
+Triangle relations for 1 threads in 202.93 seconds ... 203.57
+Rate 3.3558 genes/sec Rate per thread: 3.3558 genes/sec ... 3.3452
+Threads: 2  speedup vs 1x = 1.6500 ... 1.6877
+Threads: 3  speedup vs 1x = 1.9948 ... 2.0584
+Threads: 4  speedup vs 1x = 2.4073 ... 2.4808
+Threads: 6  speedup vs 1x = 3.0849 ... 3.0947
+Threads: 8  speedup vs 1x = 3.5881 ... 3.5483
+Threads: 12  speedup vs 1x = 4.0420 ... 4.0933
+Threads: 16  speedup vs 1x = 3.9790 ... 3.9960
+Threads: 24  speedup vs 1x = 3.7931 ... 3.8176
+
+Conclusion: bare pointers for the incoming set might actually be
+a bit slower, maybe.  Due to need to cast to handle.
+
+--------------------------
