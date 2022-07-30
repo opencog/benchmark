@@ -161,8 +161,6 @@ void AtomSpaceBenchmark::printTypeSizes()
     cout << "CountTruthValue = " << sizeof(CountTruthValue) << endl;
     cout << "IndefiniteTruthValue = " << sizeof(IndefiniteTruthValue) << endl;
     cout << "IncomingSet = " << sizeof(IncomingSet) << endl;
-    cout << "AtomSignal = " << sizeof(AtomSignal) << endl;
-    cout << "AtomPairSignal = " << sizeof(AtomPairSignal) << endl;
     cout << DIVIDER_LINE << endl;
 
 #define ND(T,S) ({Handle n(createNode(T,S)); n;})
@@ -581,13 +579,16 @@ Type AtomSpaceBenchmark::randomType(Type t)
     do {
         candidateType = ATOM + randomGenerator->randint(numberOfTypes - ATOM - 1);
     } while (!nameserver().isA(candidateType, t) or
-        nameserver().isA(candidateType, BOOLEAN_LINK) or
-        nameserver().isA(candidateType, EXECUTE_THREADED_LINK) or
-        nameserver().isA(candidateType, FREE_LINK) or
-        nameserver().isA(candidateType, TYPE_INPUT_LINK) or
-        nameserver().isA(candidateType, TYPE_OUTPUT_LINK) or
+        nameserver().isA(candidateType, BOOLEAN_INPUT_LINK) or
+        nameserver().isA(candidateType, BOOLEAN_OUTPUT_LINK) or
+        nameserver().isA(candidateType, CRISP_INPUT_LINK) or
+        nameserver().isA(candidateType, CRISP_OUTPUT_LINK) or
         nameserver().isA(candidateType, NUMERIC_INPUT_LINK) or
         nameserver().isA(candidateType, NUMERIC_OUTPUT_LINK) or
+        nameserver().isA(candidateType, TYPE_INPUT_LINK) or
+        nameserver().isA(candidateType, TYPE_OUTPUT_LINK) or
+        nameserver().isA(candidateType, EXECUTE_THREADED_LINK) or
+        nameserver().isA(candidateType, FREE_LINK) or
         nameserver().isA(candidateType, SCOPE_LINK) or
         nameserver().isA(candidateType, UNIQUE_LINK) or
         nameserver().isA(candidateType, TYPED_VARIABLE_LINK) or
