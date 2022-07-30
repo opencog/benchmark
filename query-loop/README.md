@@ -45,6 +45,12 @@ A historical diary of performance measurement results can be found in
 `diary.txt`.
 
 ## Running the benchmark
+Pre-requisite:
+```
+git clone https://github.com/opencog/agi-bio
+cd agi-bio; mkdir build; cd build; cmake ..; make
+sudo make install
+```
 
 To run each test:
 ```

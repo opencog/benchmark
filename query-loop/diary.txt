@@ -385,4 +385,19 @@ Threads: 24  speedup vs 1x = 3.7931 ... 3.8176
 Conclusion: bare pointers for the incoming set might actually be
 a bit slower, maybe.  Due to need to cast to handle.
 
+====================================================================
+30 July 2022
+
+On Yippie laptop:
+Intel celeron J4125 CPU @ 2.00GHz  4 core 4MB cache
+12GB RAM
+
+Triangle relations for 1 threads in 161.72 seconds
+Rate 4.2110 genes/sec Rate per thread: 4.2110 genes/sec
+Threads: 2  speedup vs 1x = 1.6621
+Threads: 3  speedup vs 1x = 2.0724
+Threads: 4  speedup vs 1x = 2.3941
+Threads: 6  speedup vs 1x = 2.3814
+Threads: 8  speedup vs 1x = 2.3802
+
 --------------------------
