@@ -403,7 +403,7 @@ Threads: 8  speedup vs 1x = 2.3802
 ====================================================================
 11 Sept 2022
 
-Amazon AWS EC2 c5a.8xlarge $1.23/hour
+Amazon AWS EC2 c5a.8xlarge $1.23/hour   On Demand Instance
 16 cores, 32 hyperthreads AMD EPYC Rome (2nd Gen, circa 2019)
 
 model name	: AMD EPYC 7R32
@@ -454,7 +454,7 @@ This is virtualized, so maybe something funny due to that??
 ====================================================================
 11 Sept 2022
 
-Amazon AWS EC2 m6l.8xlarge $1.54/hour
+Amazon AWS EC2 m6l.8xlarge $1.54/hour On Demand Instance
 16 cores 32 hyperthreads
 
 model name      : Intel(R) Xeon(R) Platinum 8375C CPU @ 2.90GHz
@@ -488,7 +488,7 @@ Threads: 32  speedup vs 1x = 3.8220 ... 3.9173
 ====================================================================
 11 Sept 2022
 
-Amazon AWS EC2 m6a.8xlarge $1.38/hour
+Amazon AWS EC2 m6a.8xlarge $1.38/hour On Demand Instance
 
 16 cpus, 32 cores, this should be 3rd gen "Milan" Epyc
 
@@ -499,6 +499,8 @@ cpu MHz         : 2649.992
 cache size      : 512 KB
 cpu cores       : 16
 bugs            : sysret_ss_attrs null_seg spectre_v1 spectre_v2 spec_store_bypass
+TLB size        : 2560 4K pages
+
 
 MemTotal:       129221008 kB
 
@@ -520,11 +522,38 @@ Threads: 12  speedup vs 1x = 4.1625 ... 5.3211
 Threads: 16  speedup vs 1x = 4.6568 ... 5.9770
 Threads: 24  speedup vs 1x = 5.5649 ... 6.8186
 
+Again, a different instance.
+Triangle relations for 1 threads in 67.110 seconds
+Rate 10.147 genes/sec Rate per thread: 10.147 genes/sec
+Threads: 2  speedup vs 1x = 1.8333
+Threads: 3  speedup vs 1x = 2.6088
+Threads: 4  speedup vs 1x = 3.3166
+Threads: 6  speedup vs 1x = 2.9872
+Threads: 8  speedup vs 1x = 3.2127
+Threads: 12  speedup vs 1x = 3.6668
+
 
 ====================================================================
 11 Sept 2022
 
-Amazon AWS EC2 c6g.8xlarge
+Amazon AWS EC2
+Dedicated instance c6a $8.078/hour
+2 sockets, 96 cores (so c6a.48xlarge to get all of them)
+
+Again, with hugepages
+
+sudo echo 1536 > /proc/sys/vm/nr_hugepages
+HUGETLB_MORECORE=yes LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libhugetlbfs.so.0 guile -l bio-loop3.scm
+
+====================================================================
+11 Sept 2022
+
+Amazon AWS EC2 m6a.12xlarge $1.84/hour On Demand Instance
+
+====================================================================
+11 Sept 2022
+
+Amazon AWS EC2 c6g.8xlarge  On Demand Instance
 arm64 Graviton2
 
 BogoMIPS        : 243.75
@@ -559,7 +588,7 @@ Threads: 32  speedup vs 1x = 6.7004
 ====================================================================
 11 Sept 2022
 
-Amazon AWS EC2 c7g.x8large $1.16/hour
+Amazon AWS EC2 c7g.x8large $1.16/hour On Demand Instance
 arm64 Graviton3
 
 BogoMIPS        : 2100.00
