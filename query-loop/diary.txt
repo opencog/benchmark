@@ -541,13 +541,48 @@ MemTotal:       64656148 kB
 [    0.000000] Linux version 5.15.0-1009-aws
 [    0.032154] CPU: All CPU(s) started at EL1
 
+Triangle relations for 1 threads in 104.01 seconds
+Rate 6.5477 genes/sec Rate per thread: 6.5477 genes/sec
+Threads: 2  speedup vs 1x = 1.6260 ... 1.6070
+Threads: 3  speedup vs 1x = 2.2536 ... 2.2249
+Threads: 4  speedup vs 1x = 2.8543 ... 2.8123
+Threads: 6  speedup vs 1x = 3.9244 ... 3.8024
+Threads: 8  speedup vs 1x = 4.6499 ... 4.6243
+Threads: 12  speedup vs 1x = 5.7179 ... 5.6701
+Threads: 16  speedup vs 1x = 5.8009 ... 6.0555
+Threads: 24  speedup vs 1x = 6.2407 ... 6.5405
+Threads: 32  speedup vs 1x = 6.7004
+
 
 
 
 ====================================================================
 11 Sept 2022
 
-Amazon AWS EC2 c7g
+Amazon AWS EC2 c7g.x8large $1.16/hour
 arm64 Graviton3
+
+BogoMIPS        : 2100.00
+Features        : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm jscvt fcma lrcpc dcpop sha3 sm3 sm4 asimddp sha512 sve asimdfhm dit uscat ilrcpc flagm ssbs paca pacg dcpodp svei8mm svebf16 i8mm bf16 dgh rng
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant     : 0x1
+CPU part        : 0xd40
+CPU revision    : 1
+
+MemTotal:       64656148 kB
+
+Triangle relations for 1 threads in 82.384 seconds
+Rate 8.2662 genes/sec Rate per thread: 8.2662 genes/sec
+Threads: 2  speedup vs 1x = 1.5674 ... 1.6096
+Threads: 3  speedup vs 1x = 2.1055 ... 2.2068
+Threads: 4  speedup vs 1x = 2.6202 ... 2.7185
+Threads: 6  speedup vs 1x = 3.4087 ... 3.4742
+Threads: 8  speedup vs 1x = 4.0460 ... 4.1769
+Threads: 12  speedup vs 1x = 4.7508 ... 4.9655
+Threads: 16  speedup vs 1x = 5.1419 ... 5.4379
+Threads: 24  speedup vs 1x = 5.4990 ... 5.8274
+Threads: 32  speedup vs 1x = 5.8125
+
 
 --------------------------
