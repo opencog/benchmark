@@ -400,4 +400,54 @@ Threads: 4  speedup vs 1x = 2.3941
 Threads: 6  speedup vs 1x = 2.3814
 Threads: 8  speedup vs 1x = 2.3802
 
+====================================================================
+11 Sept 2022
+
+Amzon AWS c5a.8xlarge $1.23/hour
+model name	: AMD EPYC 7R32
+cpu MHz		: 2800.000
+cache size	: 512 KB
+cpu cores	: 16
+TLB size	: 3072 4K pages
+
+MemTotal:       65145424 kB
+
+[    1.242854] Last level iTLB entries: 4KB 1024, 2MB 1024, 4MB 512
+[    1.246257] Last level dTLB entries: 4KB 2048, 2MB 2048, 4MB 1024, 1GB 0
+[    1.394812] smpboot: CPU0: AMD EPYC 7R32 (family: 0x17, model: 0x31, stepping: 0x0)
+[    1.798426] smp: Brought up 1 node, 32 CPUs
+
+Per interwebs:
+L3 cache:192MB
+This is supposed to be a 48-core CPU, so why is amazon report 32?
+
+Unloaded:
+Triangle relations for 1 threads in 72.559 seconds
+Rate 9.3855 genes/sec Rate per thread: 9.3855 genes/sec
+Threads: 2  speedup vs 1x = 1.3057 ... 1.3897
+Threads: 3  speedup vs 1x = 1.5819 ... 1.7270
+Threads: 4  speedup vs 1x = 1.8101 ... 2.0023
+Threads: 6  speedup vs 1x = 2.3583 ... 2.6869
+Threads: 8  speedup vs 1x = 2.7198 ... 3.1757
+Threads: 12  speedup vs 1x = 3.3655 ... 4.0215
+Threads: 16  speedup vs 1x = 3.8791 ... 4.7175
+Threads: 24  speedup vs 1x = 4.6457 ...  5.6166
+Threads: 32  speedup vs 1x = 6.3661
+
+
+Loaded: (run the 32-thread benchmark continuously in other process)
+Triangle relations for 1 threads in 92.725 seconds
+Rate 7.3443 genes/sec Rate per thread: 7.3443 genes/sec
+Threads: 2  speedup vs 1x = 1.3411
+Threads: 3  speedup vs 1x = 1.6349
+Threads: 4  speedup vs 1x = 1.9566
+Threads: 6  speedup vs 1x = 2.5010
+Threads: 8  speedup vs 1x = 3.0488
+
+Conclusion: Well, that's pretty underwhelming, compared to the Ryzen 5
+
+
+
+
+
 --------------------------
