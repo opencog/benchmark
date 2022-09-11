@@ -403,11 +403,15 @@ Threads: 8  speedup vs 1x = 2.3802
 ====================================================================
 11 Sept 2022
 
-Amzon AWS c5a.8xlarge $1.23/hour
+Amazon AWS EC2 c5a.8xlarge $1.23/hour
+16 cores, 32 hyperthreads AMD EPYC Rome (2nd Gen, circa 2019)
+
 model name	: AMD EPYC 7R32
+microcode	: 0x8301055
 cpu MHz		: 2800.000
 cache size	: 512 KB
 cpu cores	: 16
+bugs		: sysret_ss_attrs null_seg spectre_v1 spectre_v2 spec_store_bypass
 TLB size	: 3072 4K pages
 
 MemTotal:       65145424 kB
@@ -445,9 +449,105 @@ Threads: 6  speedup vs 1x = 2.5010
 Threads: 8  speedup vs 1x = 3.0488
 
 Conclusion: Well, that's pretty underwhelming, compared to the Ryzen 5
+This is virtualized, so maybe something funny due to that??
+
+====================================================================
+11 Sept 2022
+
+Amazon AWS EC2 m6l.8xlarge $1.54/hour
+16 cores 32 hyperthreads
+
+model name      : Intel(R) Xeon(R) Platinum 8375C CPU @ 2.90GHz
+stepping        : 6
+microcode       : 0xd000331
+cpu MHz         : 2899.986
+cache size      : 55296 KB
+cpu cores       : 16
+bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs
+
+MemTotal:       129831476 kB
+
+[    0.000000] Linux version 5.15.0-1011-aws
+[    1.414854] Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
+[    1.414854] Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+[    1.414854] smpboot: CPU0: Intel(R) Xeon(R) Platinum 8375C CPU @ 2.90GHz (family: 0x6, model: 0x6a, stepping: 0x6)
+[    1.710915] smp: Brought up 1 node, 32 CPUs
+
+Triangle relations for 1 threads in 66.187 seconds
+Rate 10.289 genes/sec Rate per thread: 10.289 genes/sec
+Threads: 2  speedup vs 1x = 1.5862 ... 1.6152
+Threads: 3  speedup vs 1x = 2.0658 ... 2.0667
+Threads: 4  speedup vs 1x = 2.4009 ... 2.4241
+Threads: 6  speedup vs 1x = 2.8334 ... 2.8710
+Threads: 8  speedup vs 1x = 3.0821 ... 3.0527
+Threads: 12  speedup vs 1x = 3.2982 ... 3.3013
+Threads: 16  speedup vs 1x = 3.3852 ... 3.4080
+Threads: 24  speedup vs 1x = 3.6343 ... 3.6838
+Threads: 32  speedup vs 1x = 3.8220 ... 3.9173
+
+====================================================================
+11 Sept 2022
+
+Amazon AWS EC2 m6a.8xlarge $1.38/hour
+
+16 cpus, 32 cores, this should be 3rd gen "Milan" Epyc
+
+model name      : AMD EPYC 7R13 Processor
+stepping        : 1
+microcode       : 0xa001173
+cpu MHz         : 2649.992
+cache size      : 512 KB
+cpu cores       : 16
+bugs            : sysret_ss_attrs null_seg spectre_v1 spectre_v2 spec_store_bypass
+
+MemTotal:       129221008 kB
+
+[    0.000000] Linux version 5.15.0-1011-aws
+[    0.000000] DMI: Amazon EC2 m6a.8xlarge/, BIOS 1.0 10/16/2017
+[    1.251353] Last level iTLB entries: 4KB 512, 2MB 512, 4MB 256
+[    1.255134] Last level dTLB entries: 4KB 2048, 2MB 2048, 4MB 1024, 1GB 0
+[    1.405304] smpboot: CPU0: AMD EPYC 7R13 Processor (family: 0x19, model: 0x1, stepping: 0x1)
+[    1.787361] smp: Brought up 2 nodes, 32 CPUs
+
+Triangle relations for 1 threads in 77.377 seconds
+Rate 8.8010 genes/sec Rate per thread: 8.8010 genes/sec
+Threads: 2  speedup vs 1x = 1.8365 ... 2.0280
+Threads: 3  speedup vs 1x = 2.7406 ... 2.6298
+Threads: 4  speedup vs 1x = 3.7080 ... 3.7149
+Threads: 6  speedup vs 1x = 3.3628 ... 3.6945
+Threads: 8  speedup vs 1x = 3.4183 ... 4.2943
+Threads: 12  speedup vs 1x = 4.1625 ... 5.3211
+Threads: 16  speedup vs 1x = 4.6568 ... 5.9770
+Threads: 24  speedup vs 1x = 5.5649 ... 6.8186
+
+
+====================================================================
+11 Sept 2022
+
+Amazon AWS EC2 c6g.8xlarge
+arm64 Graviton2
+
+BogoMIPS        : 243.75
+Features        : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp ssbs
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant     : 0x3
+CPU part        : 0xd0c
+CPU revision    : 1
+
+MemTotal:       64656148 kB
+
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x413fd0c1]
+[    0.000000] Linux version 5.15.0-1009-aws
+[    0.032154] CPU: All CPU(s) started at EL1
 
 
 
 
+====================================================================
+11 Sept 2022
+
+Amazon AWS EC2 c7g
+arm64 Graviton3
 
 --------------------------
