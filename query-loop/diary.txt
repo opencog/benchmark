@@ -548,11 +548,6 @@ HUGETLB_MORECORE=yes LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libhugetlbfs.so.0 guil
 ====================================================================
 11 Sept 2022
 
-Amazon AWS EC2 m6a.12xlarge $1.84/hour On Demand Instance
-
-====================================================================
-11 Sept 2022
-
 Amazon AWS EC2 c6g.8xlarge  On Demand Instance
 arm64 Graviton2
 
@@ -583,8 +578,6 @@ Threads: 24  speedup vs 1x = 6.2407 ... 6.5405
 Threads: 32  speedup vs 1x = 6.7004
 
 
-
-
 ====================================================================
 11 Sept 2022
 
@@ -613,5 +606,35 @@ Threads: 16  speedup vs 1x = 5.1419 ... 5.4379
 Threads: 24  speedup vs 1x = 5.4990 ... 5.8274
 Threads: 32  speedup vs 1x = 5.8125
 
+====================================================================
+11 Sept 2022
 
+Summary, including Amazon AWS EC2 Summary
+
+Single Thread total time, seconds:
+circa-2015 AMD Opteron 6344 (Abu Dhabi) (fanny) : 190.55 seconds
+                     AMD Ryzen 5 3400G (aimdee) : 63.278 seconds
+                     AMD Ryzen 9 3900X (major)  : 47.933 seconds
+            Celeron J4125 CPU @ 2.00GHz (yippe) : 161.72
+circa-2019        AMD EPYC 7R32 Rome  @ 2.80GHz : 72.559 seconds
+circa-2021        AMD EPYC 7R13 Milan @ 2.65GHz : 67.110
+                  Xeon Platinum 8375C @ 2.90GHz : 66.187
+                                arm64 Graviton2 : 104.01
+                                arm64 Graviton3 : 82.384
+
+4-thread speedup (multiplier):
+circa-2015 AMD Opteron 6344 (Abu Dhabi) (fanny) : 2.0470
+                     AMD Ryzen 5 3400G (aimdee) : 3.3858
+                     AMD Ryzen 9 3900X (major)  : 1.7072
+            Celeron J4125 CPU @ 2.00GHz (yippe) : 2.3941
+circa-2019        AMD EPYC 7R32 Rome  @ 2.80GHz : 2.0023
+circa-2021        AMD EPYC 7R13 Milan @ 2.65GHz : 3.3166
+                  Xeon Platinum 8375C @ 2.90GHz : 2.4241
+                                arm64 Graviton2 : 2.8123
+                                arm64 Graviton3 : 2.7185
+
+The problem is the above is measuring single-process AtomSpace threaded
+performance; it is not comparing multi-process dispatching. Also, its
+not stressing the RAM/memory bandwidth all that much... That would be
+a more interesting evaluation.
 --------------------------
