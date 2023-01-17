@@ -1,9 +1,8 @@
 #
 # Master Opencog CMake file.
 #
-# Need to have cmake-2.8.8 in order to be able to check the compiler
-# version.
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
+CMAKE_POLICY(SET CMP0028 NEW)
 
 PROJECT(benchmark)
 
@@ -78,6 +77,12 @@ SET(Boost_USE_MULTITHREADED ON)
 
 # Only basic boost (for tuple) is required
 FIND_PACKAGE(Boost 1.46 REQUIRED)
+
+# *We* don't actually need Boost::system but some build fail with
+# hard-to-debug errors: `/usr/bin/ld: cannot find -lBoost::system`
+# because I guess the AtomSpace does need this!? So cave on the issue
+# and just engage the foolishness.
+FIND_PACKAGE(Boost ${MIN_BOOST} REQUIRED COMPONENTS system)
 
 IF(NOT Boost_FOUND)
 	MESSAGE(FATAL_ERROR "Boost 1.46 or newer is needed to build benchmarks!")
