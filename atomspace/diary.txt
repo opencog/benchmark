@@ -2033,3 +2033,51 @@ Expecting no change.
   removeAtom         1233          1708              "
 
 Curious. Some things got better. A few things got worse. No clue why.
+
+19 Jan 2025
+-----------
+Measurements. Comparative for different CPUs.
+
+./atomspace_bm -A -n 8000000
+
+                     -A          -A            -A
+   test            fanny       tripper       hetzner
+   name            K-ops/sec   K-ops/sec     K-ops/sec
+   ----            ---------   ---------     ---------
+  noop           1.68e6        3.43e6        7.89e6
+  getType           70K          262K          227K
+  getTV              4639         13.7K         24.9K
+  setTV              1106          2407          3105
+  pointerCast       11.3K         20.1K         31.4K
+  getIncomingSet     3892          7787         15.0K
+  getOutgoingSet    45.4K         81.7K        115.5K
+  addNode             680          1462          1868
+  addLink -A          127           262           365
+  addLink -m          175           331           516
+  removeAtom         1708          2747          4949
+
+Wow. Tripper is 10 years younger than fanny, circa 2022-ish but
+is barely 2x faster.  And the cache size as reported by kernel is
+smaller.  Hetzner is new, I guess. About 1.5x faster despite having
+a huge cache.  This is not Moore's law scaling, given that fanny
+is circa 2012-ish technology.
+
+Fanny:
+AMD Opteron(tm) Processor 6344  2.6 GHz
+cache size      : 2048 KB
+TLB size        : 1536 4K pages
+gcc (Debian 12.2.0-14) 12.2.0
+ldd (Debian GLIBC 2.36-9+deb12u9) 2.36
+
+Tripper:
+AMD Ryzen Threadripper PRO 5975WX 32-Cores
+cache size      : 512 KB
+TLB size        : 2560 4K pages
+gcc (Debian 12.2.0-14) 12.2.0
+ldd (Debian GLIBC 2.36-9+deb12u9) 2.36
+
+Hetzner:
+13th Gen Intel(R) Core(TM) i5-13500
+cache size      : 24576 KB
+gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
+ldd (Ubuntu GLIBC 2.35-0ubuntu3.8) 2.35
