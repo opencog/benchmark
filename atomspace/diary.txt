@@ -1734,10 +1734,10 @@ Dec 2019 compiler: gcc (Debian 8.3.0-6) 8.3.0
   addLink -m         184          165           176            "
   removeAtom         924         1141          1122            "
 
-Notes: addNode and addLink improved signficantly, because the AtomTable
+Notes: addNode and addLink improved significantly, because the AtomTable
 insertion process was revised, including avoiding un-needed work, and
 also taking over memory management of un-owned atoms.  The take-over is
-particularly noticable for links, which avoided a copy.
+particularly noticeable for links, which avoided a copy.
 
 Conclude: Reorganizing the AtomTable insertion process, and taking over
 memory management of un-owned atoms provides a decent win.
@@ -1781,7 +1781,7 @@ Remarks:
     ldconfig (Debian GLIBC 2.28-10) 2.28
 * Column labelled 2.9.7 - as above, but tagged Dec 13 13:57:04 2019
 * Comparing 2.9.1 to 2.9.2: pleasantly improved.
-* Comparing 2.9.2 to 2.9.7: no discernable change.
+* Comparing 2.9.2 to 2.9.7: no discernible change.
 
 --------------------------------
 
@@ -1815,7 +1815,7 @@ Remarks:
 * Compare 2.9.1 vs. 2.9.2 -- why the backslide?
     Except for addNode and addLink, which match the native c++
     performance!?
-* Comparing 2.9.2 to 2.9.7: no discernable change.
+* Comparing 2.9.2 to 2.9.7: no discernible change.
 
 * The removeAtom benchmark is broken, because the lump of cog-delete
     calls are deleting non-existent atoms, causing exceptions to be
@@ -1853,7 +1853,7 @@ Dec 2019 compiler: gcc (Debian 8.3.0-6) 8.3.0
 
 Notes: Pull req #2466 results in large improvements to addNode and
 addLink, due to removal of the `_atom_store` index from the AtomTable.
-Percentage-wise, this is particularly noticable for nodes, having made
+Percentage-wise, this is particularly noticeable for nodes, having made
 up a large fraction of that process. Conclude: #2466 is a big win.
 
 7 Jan 2020
@@ -1920,7 +1920,7 @@ Feb 2020 compiler: gcc (Debian 8.3.0-6) 8.3.0
   removeAtom         1384          1213        1225     no change expected
 
 Notes: Expected to maybe see some kind of change in performance.
-It seems to be miniscule, lost in the noise.
+It seems to be minuscule, lost in the noise.
 
 4 Aug 2020
 -----------

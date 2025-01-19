@@ -7,7 +7,7 @@ and deletion of Nodes and Links, as well as the setting and getting
 of TruthValues, as well as other operations (fetch of Incoming Set,
 etc.)
 
-This tool measures C++, guile and python peformance.
+This tool measures C++, guile and python performance.
 
 A simple example:
 
@@ -36,7 +36,7 @@ OpenCog Atomspace Benchmark - Version 1.0.1
 Random generator: MT19937
 Random seed: 1454704931
 
-Ingnore this: 32619
+Ignore this: 32619
 Benchmarking AtomSpace's addLink method 10000 times .....
 0.226272 seconds elapsed (110486.44 per second)
 Sum clock() time for all requests: 184614 (0.184614 seconds, 135418 requests per second)

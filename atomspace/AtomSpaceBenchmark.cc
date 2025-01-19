@@ -448,7 +448,7 @@ void AtomSpaceBenchmark::startBenchmark(int numThreads)
     cout << "\nRandom generator: MT19937\n";
     cout << "Random seed: " << randomseed << "\n\n";
 
-    if (saveToFile) cout << "Ingnore this: " << global << std::endl;
+    if (saveToFile) cout << "Ignore this: " << global << std::endl;
 
     // Initialize the random number generator with the seed which might
     // have been passed in on the command line.
@@ -1389,7 +1389,7 @@ timepair_t AtomSpaceBenchmark::bm_pointerCast()
     {
         // Summing prevents the optimizer from optimizing away.
         // We want to measure how long it takes to perform a cast.
-        // To avoid the optimizer from playing tricks, we hav to do
+        // To avoid the optimizer from playing tricks, we have to do
         // something with the resulting pointer.  We already know that
         // get_type() is very fast -- a method call, so we treat that as
         // a kind-of no-op.
