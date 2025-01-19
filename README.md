@@ -31,7 +31,7 @@ history, despite being deeply flawed).
   pattern matcher queries.
 
 * __query-links__ -- Several real-world benchmarks for performing
-  complex pattern matchs on a real-world natural-language dataset.
+  complex pattern matches on a real-world natural-language dataset.
   One models an activity one might need in a parser, that of joining
   together connectors. It creates 576 `BindLink`'s with four `GlobNodes`
   and a `Variable`, each.  The `Glob`s are used to search for connectable
@@ -45,7 +45,7 @@ history, despite being deeply flawed).
 
 * __query-loop__ -- A real-world benchmark for performing a complex
   pattern match on a real-world genome dataset. Uses EvaluationLink
-  in a simple/straight-forward way to represent the edges and vertexes
+  in a simple/straight-forward way to represent the edges and vertices
   of a large graph (for gene/protein interactions), and then hunts
   for triangles and pentagons in that graph.
 

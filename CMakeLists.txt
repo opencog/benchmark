@@ -28,13 +28,13 @@ ELSE (COGUTIL_FOUND)
         MESSAGE(FATAL_ERROR "CogUtil missing: it is needed for everything!")
 ENDIF (COGUTIL_FOUND)
 
-# add the 'cmake' directory from cogutil to search path
+# Add the 'cmake' directory from cogutil to search path
 list(APPEND CMAKE_MODULE_PATH  ${COGUTIL_DATA_DIR}/cmake)
 
-include(${COGUTIL_DATA_DIR}/cmake/OpenCogGccOptions.cmake)
-include(${COGUTIL_DATA_DIR}/cmake/OpenCogLibOptions.cmake)
-include(${COGUTIL_DATA_DIR}/cmake/OpenCogInstallOptions.cmake)
-include(${COGUTIL_DATA_DIR}/cmake/Summary.cmake)
+include(OpenCogGccOptions)
+include(OpenCogLibOptions)
+include(OpenCogInstallOptions)
+include(Summary)
 
 # ===================================================================
 # Check for existance of various required, optional packages.
@@ -50,24 +50,24 @@ ELSE (ATOMSPACE_FOUND)
 	MESSAGE(FATAL_ERROR "AtomSpace missing: it is needed for everything!")
 ENDIF (ATOMSPACE_FOUND)
 
-# URE (optional)
-FIND_PACKAGE(URE 1.0.0 CONFIG)
-IF (URE_FOUND)
-	MESSAGE(STATUS "URE found.")
-	SET(HAVE_URE 1)
-ELSE (URE_FOUND)
-	MESSAGE(STATUS "URE was not found. URE micro benchmarks will not be built.")
-ENDIF (URE_FOUND)
-
+## URE (optional)
+#FIND_PACKAGE(URE 1.0.0 CONFIG)
+#IF (URE_FOUND)
+#	MESSAGE(STATUS "URE found.")
+#	SET(HAVE_URE 1)
+#ELSE (URE_FOUND)
+#	MESSAGE(STATUS "URE was not found. URE micro benchmarks will not be built.")
+#ENDIF (URE_FOUND)
+#
 # ----------------------------------------------------------
-# Google benchmark package (optional)
-FIND_PACKAGE(benchmark 1.3.0)
-IF (benchmark_FOUND)
-	SET(BUILD_MICRO 1)
-	MESSAGE(STATUS "Google Benchmark ${benchmark_VERSION} found.")
-ELSE (benchmark_FOUND)
-	MESSAGE(STATUS "Google Benchmark not found. Micro benchmarks will not be built.")
-ENDIF(benchmark_FOUND)
+## Google benchmark package (optional)
+#FIND_PACKAGE(benchmark 1.3.0)
+#IF (benchmark_FOUND)
+#	SET(BUILD_MICRO 1)
+#	MESSAGE(STATUS "Google Benchmark ${benchmark_VERSION} found.")
+#ELSE (benchmark_FOUND)
+#	MESSAGE(STATUS "Google Benchmark not found. Micro benchmarks will not be built.")
+#ENDIF(benchmark_FOUND)
 
 # ----------------------------------------------------------
 # Check for boost.
@@ -99,7 +99,7 @@ include(OpenCogFindPython)
 
 ADD_SUBDIRECTORY(atomspace)
 IF (BUILD_MICRO)
-	ADD_SUBDIRECTORY(micro)
+#	ADD_SUBDIRECTORY(micro)
 ENDIF(BUILD_MICRO)
 ADD_SUBDIRECTORY(query-trite)
 
