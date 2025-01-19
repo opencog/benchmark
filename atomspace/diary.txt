@@ -1985,7 +1985,7 @@ glibc: ldconfig -V: (Debian GLIBC 2.31-13+deb11u2) 2.31
 Measurements. Fanny. Post lock restructuring. Pull req #2907
 (This measurement at this date, i.e. after pull req #2907)
 This makes the atomspace locks much more fine grained, and
-the ciritcal sections much much shorter.
+the critical sections are much much shorter.
 
 ./atomspace_bm -A -n 4000000
 
@@ -2002,9 +2002,34 @@ the ciritcal sections much much shorter.
   getOutgoingSet    44.8K         46.2K              "
   addNode             670           599              "
   addLink -A          175           167              "
-  addLink -m          197           x06              "
+  addLink -m          197           206              "
   removeAtom         1375          1233              "
 
 
-Hmm. general statsis. I expected some changes from the code
+Hmm. general stasis. I expected some changes from the code
 resturucturing, but nothing is showing up.
+
+19 Jan 2025
+-----------
+Measurements. Fanny. Accumulation of changes over the last three years.
+Expecting no change.
+
+./atomspace_bm -A -n 4000000
+
+                     -A          -A
+   test            Nov 2021    Jan 2025
+   name            K-ops/sec   K-ops/sec         Comments
+   ----            ---------   ---------      -----------------
+  noop           1.55e6        1.68e6         no change expected
+  getType           92K           70K                "
+  getTV              4505          4639              "
+  setTV              1028          1106              "
+  pointerCast       11.0K         11.3K              "
+  getIncomingSet     3206          3892              "
+  getOutgoingSet    46.2K         45.4K              "
+  addNode             599           680              "
+  addLink -A          167           127              "
+  addLink -m          206           175              "
+  removeAtom         1233          1708              "
+
+Curious. Some things got better. A few things got worse. No clue why.

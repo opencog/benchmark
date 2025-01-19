@@ -583,19 +583,23 @@ Type AtomSpaceBenchmark::randomType(Type t)
         nameserver().isA(candidateType, BOOLEAN_OUTPUT_LINK) or
         nameserver().isA(candidateType, CRISP_INPUT_LINK) or
         nameserver().isA(candidateType, CRISP_OUTPUT_LINK) or
+        nameserver().isA(candidateType, DEFINE_LINK) or
+        nameserver().isA(candidateType, EXECUTABLE_LINK) or
+        nameserver().isA(candidateType, FOREIGN_AST) or
+        nameserver().isA(candidateType, FREE_LINK) or
         nameserver().isA(candidateType, NUMERIC_INPUT_LINK) or
         nameserver().isA(candidateType, NUMERIC_OUTPUT_LINK) or
-        nameserver().isA(candidateType, TYPE_INPUT_LINK) or
-        nameserver().isA(candidateType, TYPE_OUTPUT_LINK) or
-        nameserver().isA(candidateType, EXECUTE_THREADED_LINK) or
-        nameserver().isA(candidateType, FREE_LINK) or
+        nameserver().isA(candidateType, PROMISE_LINK) or
         nameserver().isA(candidateType, SCOPE_LINK) or
         nameserver().isA(candidateType, UNIQUE_LINK) or
+        nameserver().isA(candidateType, TYPE_INPUT_LINK) or
+        nameserver().isA(candidateType, TYPE_OUTPUT_LINK) or
         nameserver().isA(candidateType, TYPED_VARIABLE_LINK) or
+        nameserver().isA(candidateType, VALUE_OF_LINK) or
+        candidateType == NUMBER_NODE or
         candidateType == VARIABLE_LIST or
         candidateType == VARIABLE_SET or
-        candidateType == DEFINE_LINK or
-        candidateType == NUMBER_NODE or
+        nameserver().isA(candidateType, TAG_NODE) or
         nameserver().isA(candidateType, TYPE_NODE));
 
     return candidateType;
