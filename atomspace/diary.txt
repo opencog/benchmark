@@ -2081,3 +2081,74 @@ Hetzner:
 cache size      : 24576 KB
 gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
 ldd (Ubuntu GLIBC 2.35-0ubuntu3.8) 2.35
+
+25 August 2025
+--------------
+Incoming set size bake-off. Compare std::set, std::unordered_set and
+google::sparse_hash_set<WinkPtr> with and without bare pointers.
+
+SparseHash: sudo apt install libsparsehash-dev
+
+Benchmark: sfia learn-pairs w/mi calcs.
+Baselines w/o MI:
+time to create: cpu: 93861.718 secs  user: 92976.280  sys: 885.437
+(ListLink . 2692030) (EdgeLink . 2692029) (WordNode . 32344)
+      VSZ     RSS TIME    COMMAND
+ 14431032 6181324 1565:11 guile -l cogserver-pair.scm
+
+Baselines w/MI
+time to create: cpu: 94823.997 secs  user: 93906.724  sys: 917.272
+(ListLink . 2756718) (EdgeLink . 2756717) (WordNode . 32344)
+      VSZ      RSS TIME    COMMAND
+ 19905056 11623748 1580:41 guile -l cogserver-pair.scm
+
+(cog-report-counts)
+((NumberNode . 4) (PredicateNode . 20) (ListLink . 2756718) (EdgeLink . 2756717) (AnyNode . 2) (BondNode . 1) (VariableNode . 3) (RuleLink . 2) (TypeNode . 4) (LinkSignatureLink . 1) (AnchorNode . 4) (PlusLink . 2) (ValueOfLink . 1) (FloatValueOfLink . 3) (SetValueLink . 2) (FilterLink . 3) (ReadWriteProxyNode . 1) (WriteBufferProxyNode . 1) (FetchValueOfLink . 2) (StoreValueOfLink . 2) (WordNode . 32344) (SentenceNode . 1) (ParseNode . 1) (LgDictNode . 1) (LgParseBonds . 1) (MonoStorageNode . 1))
+
+(display (monitor-storage))
+ReadWriteProxy "buffered writer" reader stats:
+Connected to `monospace:///home/opencog/data/word-pairs.rdb`
+Database contents:
+  Next aid: 5080302
+  Atoms/Links/Nodes a@: 5080301 l@: 5047936 n@: 32365
+  Keys/Incoming/Hash k@: 5816567 i@: 10094070 h@: 0
+Unix max open files rlimit= 1048576 1048576
+
+ReadWriteProxy "buffered writer" writer stats:
+WriteBufferProxy "write buffer" stats:
+writes: 286   barriers: 0   stalls: 0   overtime: 0
+Avg. Atoms  inflow: 1188    bufsize: 1339747    outflow: 22329
+Avg. Values inflow: 5    bufsize: 243140    outflow: 4053
+Timescale (secs): 600   Ticker (secs): 10   Duty cycle (load avg): 0.164681
+----------------
+OK, Above are the create logs. Now for the sizes:
+
+Baseline: aka typedef std::set<WinkPtr> WincomingSet;
+(load-atoms-of-type 'Edge)
+(count-all) 5545812
+So: RSS/#atoms = 4616828 / 5545812 = 0.83249
+RSS is 1024, so avg atom size is 852.47 Bytes
+
+     VSZ     RSS TIME   RSS/#atoms Size  what
+ 7312196 4616828 1:52   0.83249  852.47 std::set<WinkPtr>
+ 7300156 4593864 1:38   0.82835  848.23 std::set<WinkPtr>
+ 7300156 4595176 1:36   0.82858  848.47 std::set<WinkPtr>
+ 7497968 4856404 1:39   0.87569  896.71 std::unordered_set<WinkPtr>
+ 7563488 4864208 1:37   0.87710  898.15 std::unordered_set<WinkPtr>
+ 7096608 4456192 1:47   0.80352  822.80 sparse_hash_set<WinkPtr>
+ 7162144 4457288 1:46   0.80372  823.01 sparse_hash_set<WinkPtr>
+
+Bare pointers:
+ 7131500 4424052 1:40   0.79773  816.88 std::set<Atom*>
+ 7131504 4424264 1:36   0.79777  816.92 std::set<Atom*>
+ 7000428 4425868 1:38   0.79806  817.21 std::set<Atom*>
+ 7162172 4454812 1:46   0.80327  822.55 sparse_hash_set<Atom*>
+ 7162152 4457068 1:47   0.80368  822.97 sparse_hash_set<Atom*>
+ 7162152 4456172 1:46   0.80352  822.80 sparse_hash_set<Atom*>
+
+The situation is curious:
+-- Using sparse_hash_set instead of std::set saves 25 Bytes/Atom
+   for weak pointers.
+-- Using bare pointers instead of std::set saves 31 Bytes/Atom
+-- sparse_hash_set is exactly the same for bare and weak pointers.
+-
