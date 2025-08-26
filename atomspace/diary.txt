@@ -2145,6 +2145,8 @@ Bare pointers:
  7162172 4454812 1:46   0.80327  822.55 sparse_hash_set<Atom*>
  7162152 4457068 1:47   0.80368  822.97 sparse_hash_set<Atom*>
  7162152 4456172 1:46   0.80352  822.80 sparse_hash_set<Atom*>
+ 9464396 6757504 1:38   1.21849 1247.73 dense_hash_set<AtomPtr*>
+ 9398852 6777328 1:38   1.22206 1251.39 dense_hash_set<AtomPtr*>
 
 The situation is curious:
 -- Using sparse_hash_set instead of std::set saves 25 Bytes/Atom
