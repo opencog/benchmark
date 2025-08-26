@@ -2155,6 +2155,7 @@ The situation is curious:
 -- sparse_hash_set is exactly the same for bare and weak pointers.
 -- dense_hash_set is not interesting
 
+---------------------
 The below use sparse_hash_set<WinkPtr> plus also sparse_hash_map
 for the KVPMap; the baseline is just std::map<Handle,ValuePtr>
 
@@ -2170,3 +2171,19 @@ Situation is a fail:
    (or is it FloatValue, now??) and for just one entry, the bare
    std::map will beat out the hash array overhead.  There's no way
    to amortize.
+
+---------------------
+What is we use a MutexPool? The baseline to compare against here
+is sparse_hash_set<WinkPtr>, where the atoms are 822 bytes in size.
+
+     VSZ     RSS TIME   RSS/#atoms Size  what
+ 6815724 4110320 1:48   0.74116  758.94 MutexPool w/sparse_hash_set<WinkPtr>
+ 6815696 4109884 1:49   0.74108  758.86 MutexPool
+ 6815720 4110328 1:51   0.74116  758.95 MutexPool
+
+Wow!
+-- Savings of 822 - 759 = 63 bytes. Cool. This is a bit more than the
+   size to std::mutex, so some of the bytes could be alignment.
+
+The only prpblem here is the MutexPool design is currently broken,
+because Atom deletion fails. So we can't use it as-is.
