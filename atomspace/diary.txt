@@ -2153,4 +2153,20 @@ The situation is curious:
    for weak pointers.
 -- Using bare pointers instead of std::set saves 31 Bytes/Atom
 -- sparse_hash_set is exactly the same for bare and weak pointers.
--
+-- dense_hash_set is not interesting
+
+The below use sparse_hash_set<WinkPtr> plus also sparse_hash_map
+for the KVPMap; the baseline is just std::map<Handle,ValuePtr>
+
+     VSZ     RSS TIME   RSS/#atoms Size  what
+ 7184172 4548272 1:51   0.82013  839.81 sparse_hash_map<Handle,ValuePtr>
+ 7261884 4580908 1:54   0.82601  845.84 sparse_hash_map<Handle,ValuePtr>
+ 7247284 4540896 1:53   0.81880  838.45 sparse_hash_map<Handle,ValuePtr>
+
+Situation is a fail:
+-- Using sparse_hash_map for KVP consumes 16 bytes *more* than the
+   baseline. Disappointing. But it makes sense: almost all KVP's
+   contain just one Value in this dataset, the CountTruthValue
+   (or is it FloatValue, now??) and for just one entry, the bare
+   std::map will beat out the hash array overhead.  There's no way
+   to amortize.
