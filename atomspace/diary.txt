@@ -2175,15 +2175,14 @@ Situation is a fail:
 ---------------------
 What is we use a MutexPool? The baseline to compare against here
 is sparse_hash_set<WinkPtr>, where the atoms are 822 bytes in size.
+Also, TIME for sparse_hash_set<WinkPtr> comes in at 1:46 to 1:47
 
      VSZ     RSS TIME   RSS/#atoms Size  what
- 6815724 4110320 1:48   0.74116  758.94 MutexPool w/sparse_hash_set<WinkPtr>
- 6815696 4109884 1:49   0.74108  758.86 MutexPool
- 6815720 4110328 1:51   0.74116  758.95 MutexPool
+ 6815696 4109532 1:45   0.74102  758.80 MutexPool w/sparse_hash_set<WinkPtr>
+ 6815724 4111184 1:48   0.74131  759.10 MutexPool
+ 6815724 4109996 1:43   0.74110  758.89 MutexPool
 
 Wow!
 -- Savings of 822 - 759 = 63 bytes. Cool. This is a bit more than the
    size to std::mutex, so some of the bytes could be alignment.
-
-The only prpblem here is the MutexPool design is currently broken,
-because Atom deletion fails. So we can't use it as-is.
+-- CPU usage looks 3% better. Unit tests run about 6% faster!
