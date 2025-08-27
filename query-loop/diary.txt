@@ -696,6 +696,9 @@ The sparse_hash only commit is:
 A recent commit without any of these is:
 e585cf3c45cde2b9eb7c6534c3054e804bf32a72 untruth (pre sparse-hash)
 
+XXX Using ccache causes misleading results!! Below had to be measured
+twice; reported results are w/o using ccache.
+
 Results for sparsehash plus Atom MutexPool: (64)
 Clean build, NOT ccache:
 Triangle relations for 1 threads in 239.65 seconds
@@ -735,30 +738,33 @@ Conclusion:
    All performance gains are reverted. WTF but .. interesting.
 
 Lets try again: current master, enable bare pointers:
-Triangle relations for 1 threads in 228.64 seconds
-Threads: 2  speedup vs 1x = 1.5818
-Threads: 3  speedup vs 1x = 2.0178
-Threads: 4  speedup vs 1x = 2.4120
-Threads: 6  speedup vs 1x = 2.8651
-Threads: 8  speedup vs 1x = 3.1238
-Threads: 12  speedup vs 1x = 3.2986
+Clean build, NOT ccache:
+Triangle relations for 1 threads in 251.90 seconds
+Threads: 2  speedup vs 1x = 1.5692
+Threads: 3  speedup vs 1x = 2.0713
+Threads: 4  speedup vs 1x = 2.4561
+Threads: 6  speedup vs 1x = 3.0862
+Threads: 8  speedup vs 1x = 3.4744
+Threads: 12  speedup vs 1x = 3.6851
 
 Wow. Loss of performance, compared to WinkPtr. This confirms that it's
 some set-associative cache aliasing problem, because the only thing
 that changes here is the size of the Atom.
 
 Lets try again: current master, disable sparshash, enable bare pointers:
-Triangle relations for 1 threads in 223.96 seconds
-Threads: 2  speedup vs 1x = 1.5188
-Threads: 3  speedup vs 1x = 1.9335
-Threads: 4  speedup vs 1x = 2.3285
-Threads: 6  speedup vs 1x = 2.8314
-Threads: 8  speedup vs 1x = 3.1711
-Threads: 12  speedup vs 1x = 3.4096
+Clean build, NOT ccache:
+Triangle relations for 1 threads in 227.44 seconds
+Threads: 2  speedup vs 1x = 1.5941
+Threads: 3  speedup vs 1x = 1.9225
+Threads: 4  speedup vs 1x = 2.2610
+Threads: 6  speedup vs 1x = 2.8270
+Threads: 8  speedup vs 1x = 3.1316
+double free or corruption (out)
 
 So, curiously, sparsehash improves performance slightly over std::set,
 even for bare pointers, where std::set<Atom*> has a size advantage.
 The aliasing effect still sees to be at play.
+And one memory corruption for bare pointers. So ...
 
 Validate the above results: retest on pure master:
 Triangle relations for 1 threads in 242.08 seconds
