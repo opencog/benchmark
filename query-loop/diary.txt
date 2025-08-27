@@ -688,7 +688,7 @@ Lets see: Current git, above, has three significant changes:
 * Use of pool in AtomSpace TypeIndex.
 
 Commit with mutex-pool and sparse_hash but NOT TypeIndex:
-c048fc468651a0c80c0522358134d25b342e02f0 muttex-pool (pre typeindex)
+c048fc468651a0c80c0522358134d25b342e02f0 mutex-pool (pre typeindex)
 
 The sparse_hash only commit is:
 9baf1bf04ce857dbf1cad5f2c1b95b8d1d077b4f spareshash (pre mutex-pool)
@@ -697,22 +697,27 @@ A recent commit without any of these is:
 e585cf3c45cde2b9eb7c6534c3054e804bf32a72 untruth (pre sparse-hash)
 
 Results for sparsehash plus Atom MutexPool: (64)
-Triangle relations for 1 threads in 225.67 seconds
-Threads: 2  speedup vs 1x = 1.5103
-Threads: 3  speedup vs 1x = 1.8841
-Threads: 4  speedup vs 1x = 2.3098
-Threads: 6  speedup vs 1x = 2.7827
-Threads: 8  speedup vs 1x = 3.1286
-Threads: 12  speedup vs 1x = 3.3678
+Clean build, NOT ccache:
+Triangle relations for 1 threads in 239.65 seconds
+Threads: 2  speedup vs 1x = 1.4669
+Threads: 3  speedup vs 1x = 1.9203
+Threads: 4  speedup vs 1x = 2.0638
+Threads: 6  speedup vs 1x = 2.7616
+Threads: 8  speedup vs 1x = 3.3458
+Threads: 12  speedup vs 1x = 3.5655
 
-Results for sparsehash only:
-Triangle relations for 1 threads in 231.50 seconds
-Threads: 2  speedup vs 1x = 1.6216
-Threads: 3  speedup vs 1x = 1.9997
-Threads: 4  speedup vs 1x = 2.4616
-Threads: 6  speedup vs 1x = 3.0140
-Threads: 8  speedup vs 1x = 3.3422
-Threads: 12  speedup vs 1x = 3.4661
+-- Conclude: The pool in the TypeIndex has a significant impact.
+   Assuming, that is, the above is not some cache aliasing effect.
+
+Results for sparsehash only: (no Atom MutexPool)
+Clean build, NOT ccache:
+Triangle relations for 1 threads in 240.87 seconds
+Threads: 2  speedup vs 1x = 1.5863
+Threads: 3  speedup vs 1x = 2.0475
+Threads: 4  speedup vs 1x = 2.4617
+Threads: 6  speedup vs 1x = 3.1035
+Threads: 8  speedup vs 1x = 3.4842
+Threads: 12  speedup vs 1x = 3.6639
 
 Results without any of these:
 Triangle relations for 1 threads in 220.13 seconds
