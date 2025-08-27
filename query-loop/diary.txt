@@ -637,4 +637,56 @@ The problem is the above is measuring single-process AtomSpace threaded
 performance; it is not comparing multi-process dispatching. Also, its
 not stressing the RAM/memory bandwidth all that much... That would be
 a more interesting evaluation.
+
+====================================================================
+26 Aug 2025
+
+Fanny -- with Atom MutexPool, sparse_hash_set<WinkPtr> and TypeIndex
+AtomPtr Pool
+Debian Stable from 2022 aka Bookworm
+
+w/o HugeTLB or any other tuning; just the stock default:
+$ guile -l bio-loop.scm
+Triangle relations for 681 genes in 237.13 seconds
+Triangle relations for 681 genes in 244.77 seconds
+Triangle relations for 681 genes in 245.88 seconds
+Protein expression for 12 pathways in 138.46 seconds
+Protein expression for 12 pathways in 134.80 seconds
+Protein expression for 12 pathways in 140.34 seconds
+skip long pentagaon
+
+-- Ouch Triangle is twice as slow as Jan 2020 a bit worse than Nov 2021
+
+$ guile -l bio-loop2.scm
+Crashes with  (LinkValue
+  (GeneNode "MAVS")
+  (GeneNode "MAVS"))
+Probably because MeetLink QueueValue blah blah, bad port. Ignore this
+test. It needs fixing though. Per README, there's no measureable
+difference from plain bio-loop
+
+$ guile -l bio-loop3.scm
+Triangle relations for 1 threads in 248.69 seconds
+Rate 2.7384 genes/sec Rate per thread: 2.7384 genes/sec
+Threads: 2  speedup vs 1x = 1.6387
+Threads: 3  speedup vs 1x = 2.1904
+Threads: 4  speedup vs 1x = 2.5456
+Threads: 6  speedup vs 1x = 3.1094
+Threads: 8  speedup vs 1x = 3.5178
+Threads: 12  speedup vs 1x = 3.7197
+Threads: 16  speedup vs 1x = 3.6943
+
+So that is better than before. Comparing to Nov 2021, the 3-thread
+speedup is finally larger than 2. But reviewing the diary entries from
+that era, it seems that removing the Incoming and TypeSet locks back
+then did not improve performance, suggesting bottleneck was elsewhere.
+Yet here, things got better.
+
+9baf1bf04ce857dbf1cad5f2c1b95b8d1d077b4f spareshash (pre ppol)
+e585cf3c45cde2b9eb7c6534c3054e804bf32a72 untruth (pre sparse)
+
+
+
+
+
 --------------------------
