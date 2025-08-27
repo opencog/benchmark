@@ -2186,3 +2186,39 @@ Wow!
 -- Savings of 822 - 759 = 63 bytes. Cool. This is a bit more than the
    size to std::mutex, so some of the bytes could be alignment.
 -- CPU usage looks 3% better. Unit tests run about 6% faster!
+
+26 August 2025
+--------------
+Measurements. AtomSpaaComparative for different CPUs.
+
+./atomspace_bm -A -n 8000000
+
+                     -A          -A            -A
+   test            Jan fanny   Aug fanny     xxxxxxxx
+   name            K-ops/sec   K-ops/sec     K-ops/sec
+   ----            ---------   ---------     ---------
+  noop           1.68e6        1.41e6        7.89e6
+  getType           70K           65K          227K
+  getTV              4639          4633         24.9K
+  setTV              1106          1101          3105
+  pointerCast       11.3K          9.3K         31.4K
+  getIncomingSet     3892          3904         15.0K
+  getOutgoingSet    45.4K         41.9K        115.5K
+  addNode             680           588          1868
+  addLink -A          127           105           365
+  addLink -m          175           ...           516
+  removeAtom         1708          1527          4949
+
+-- Aug fanny is for the Atom MutexPool and the TypeIndex AtomSet pool.
+   Those fixes are meant to improve multi-threaded performance, but
+   apparently impact single-threaded performance "slightly". Notable
+   are the AtomSpace operations: addNode addLink removeAtom.
+-- This uses sparse_hash_set<WinkPtr> for the Incoming set.
+-- No reason for getType to be slower... but it is !?
+-- No reason for pointerCast to be slower ... but it is !?
+-- No reason for getOutgoingSet to be slower ... but it is !?
+
+The lst three suggest compiler or library changes.
+gcc (Debian 12.2.0-14+deb12u1) 12.2.0
+GNU ld (GNU Binutils for Debian) 2.40
+ldd (Debian GLIBC 2.36-9+deb12u10) 2.36
