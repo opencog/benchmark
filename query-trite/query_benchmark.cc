@@ -27,6 +27,7 @@
 #include <iostream>
 
 #include <opencog/util/Config.h>
+#include <opencog/util/oc_omp.h>
 #include <opencog/guile/SchemeEval.h>
 #include <opencog/atomspace/AtomSpace.h>
 
