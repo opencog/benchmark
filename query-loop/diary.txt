@@ -682,8 +682,99 @@ that era, it seems that removing the Incoming and TypeSet locks back
 then did not improve performance, suggesting bottleneck was elsewhere.
 Yet here, things got better.
 
-9baf1bf04ce857dbf1cad5f2c1b95b8d1d077b4f spareshash (pre ppol)
-e585cf3c45cde2b9eb7c6534c3054e804bf32a72 untruth (pre sparse)
+Lets see: Current git, above, has three significant changes:
+* Use of sparse_has_set<WinkPtr> for IncomingSet
+* Use of MutexPool for Atom mutexes.
+* Use of pool in AtomSpace TypeIndex.
+
+Commit with mutex-pool and sparse_hash but NOT TypeIndex:
+c048fc468651a0c80c0522358134d25b342e02f0 muttex-pool (pre typeindex)
+
+The sparse_hash only commit is:
+9baf1bf04ce857dbf1cad5f2c1b95b8d1d077b4f spareshash (pre mutex-pool)
+
+A recent commit without any of these is:
+e585cf3c45cde2b9eb7c6534c3054e804bf32a72 untruth (pre sparse-hash)
+
+Results for sparsehash plus Atom MutexPool: (64)
+Triangle relations for 1 threads in 225.67 seconds
+Threads: 2  speedup vs 1x = 1.5103
+Threads: 3  speedup vs 1x = 1.8841
+Threads: 4  speedup vs 1x = 2.3098
+Threads: 6  speedup vs 1x = 2.7827
+Threads: 8  speedup vs 1x = 3.1286
+Threads: 12  speedup vs 1x = 3.3678
+
+Results for sparsehash only:
+Triangle relations for 1 threads in 231.50 seconds
+Threads: 2  speedup vs 1x = 1.6216
+Threads: 3  speedup vs 1x = 1.9997
+Threads: 4  speedup vs 1x = 2.4616
+Threads: 6  speedup vs 1x = 3.0140
+Threads: 8  speedup vs 1x = 3.3422
+Threads: 12  speedup vs 1x = 3.4661
+
+Results without any of these:
+Triangle relations for 1 threads in 220.13 seconds
+Threads: 2  speedup vs 1x = 1.5470
+Threads: 3  speedup vs 1x = 1.8680
+Threads: 4  speedup vs 1x = 2.2145
+Threads: 6  speedup vs 1x = 2.7239
+Threads: 8  speedup vs 1x = 2.9669
+Threads: 12  speedup vs 1x = 3.1519
+
+Conclusion:
+-- sparsehash on the IncomingSet improves parallelism.
+   But does not account for all improvemenets.
+-- Adding the MutexPool causes some set-associative caching collision.
+   All performance gains are reverted. WTF but .. interesting.
+
+Lets try again: current master, enable bare pointers:
+Triangle relations for 1 threads in 228.64 seconds
+Threads: 2  speedup vs 1x = 1.5818
+Threads: 3  speedup vs 1x = 2.0178
+Threads: 4  speedup vs 1x = 2.4120
+Threads: 6  speedup vs 1x = 2.8651
+Threads: 8  speedup vs 1x = 3.1238
+Threads: 12  speedup vs 1x = 3.2986
+
+Wow. Loss of performance, compared to WinkPtr. This confirms that it's
+some set-associative cache aliasing problem, because the only thing
+that changes here is the size of the Atom.
+
+Lets try again: current master, disable sparshash, enable bare pointers:
+Triangle relations for 1 threads in 223.96 seconds
+Threads: 2  speedup vs 1x = 1.5188
+Threads: 3  speedup vs 1x = 1.9335
+Threads: 4  speedup vs 1x = 2.3285
+Threads: 6  speedup vs 1x = 2.8314
+Threads: 8  speedup vs 1x = 3.1711
+Threads: 12  speedup vs 1x = 3.4096
+
+So, curiously, sparsehash improves performance slightly over std::set,
+even for bare pointers, where std::set<Atom*> has a size advantage.
+The aliasing effect still sees to be at play.
+
+Validate the above results: retest on pure master:
+Triangle relations for 1 threads in 242.08 seconds
+Threads: 2  speedup vs 1x = 1.4676
+Threads: 3  speedup vs 1x = 1.9398
+Threads: 4  speedup vs 1x = 2.3905
+Threads: 6  speedup vs 1x = 2.9801
+Threads: 8  speedup vs 1x = 3.1971
+Threads: 12  speedup vs 1x = 3.4494
+
+WTF ... cannot reproduce the original results! Arghhh, this is so
+confusing. Is ccache interfering? rm -r and rebuild:
+
+Triangle relations for 1 threads in 245.14 seconds
+Threads: 2  speedup vs 1x = 1.6556
+Threads: 3  speedup vs 1x = 2.1622
+Threads: 4  speedup vs 1x = 2.6445
+Threads: 6  speedup vs 1x = 3.1359
+Threads: 8  speedup vs 1x = 3.4929
+
+And we're back. So ccache fucked us up.
 
 
 
