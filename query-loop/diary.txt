@@ -766,17 +766,34 @@ even for bare pointers, where std::set<Atom*> has a size advantage.
 The aliasing effect still sees to be at play.
 And one memory corruption for bare pointers. So ...
 
-Validate the above results: retest on pure master:
-Triangle relations for 1 threads in 242.08 seconds
-Threads: 2  speedup vs 1x = 1.4676
-Threads: 3  speedup vs 1x = 1.9398
-Threads: 4  speedup vs 1x = 2.3905
-Threads: 6  speedup vs 1x = 2.9801
-Threads: 8  speedup vs 1x = 3.1971
-Threads: 12  speedup vs 1x = 3.4494
+Lets try again: current master, disable sparshash, keep smart WinkPtrs
+Clean build, NOT ccache:
+Triangle relations for 1 threads in 232.66 seconds
+Threads: 2  speedup vs 1x = 1.4368
+Threads: 3  speedup vs 1x = 1.8510
+Threads: 4  speedup vs 1x = 2.2372
+Threads: 6  speedup vs 1x = 2.7923
+Threads: 8  speedup vs 1x = 3.1236
+Threads: 12  speedup vs 1x = 3.3076
 
-WTF ... cannot reproduce the original results! Arghhh, this is so
-confusing. Is ccache interfering? rm -r and rebuild:
+-- Result: Slightly slower than bare pointers.
+-- A LOT slower than sparsehash.
+   I doubt this is spareshash itself; I think its a cache aliasing
+   effect.
+
+Validate the above results: retest on pure master:
+Triangle relations for 1 threads in 237.14 seconds
+Threads: 2  speedup vs 1x = 1.6166
+Threads: 3  speedup vs 1x = 2.0998
+Threads: 4  speedup vs 1x = 2.4543
+Threads: 6  speedup vs 1x = 2.9742
+Threads: 8  speedup vs 1x = 3.3629
+Threads: 12  speedup vs 1x = 3.5927
+
+OK, so results reproduce. Earlier runs had ccache insanity in them.
+(Erased from this diary; I won't memorialize the insane results.)
+(Look at earlier git commits if its important.)
+rm -r and rebuild:
 
 Triangle relations for 1 threads in 245.14 seconds
 Threads: 2  speedup vs 1x = 1.6556
@@ -785,7 +802,13 @@ Threads: 4  speedup vs 1x = 2.6445
 Threads: 6  speedup vs 1x = 3.1359
 Threads: 8  speedup vs 1x = 3.4929
 
-And we're back. So ccache fucked us up.
+So, this looks like natural variability.
+Conclude:
+-- cache-line aliasing is a huge issue.
+-- sparasehash for incoming set makes a big difference,
+   but this might be a cache-line aliasing issue.
+-- The other optimizations help.
+   But the true effects are swamped by aliasing.
 
 
 
