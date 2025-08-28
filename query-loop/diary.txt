@@ -810,8 +810,20 @@ Conclude:
 -- The other optimizations help.
    But the true effects are swamped by aliasing.
 
+--------------------------
+How about sparsehash used in the TypeIndex? This decreases per-Atom
+RAM use by 24 Bytes. Slows Atom insert by 10%
 
+Triangle relations for 1 threads in 244.49 seconds
+Threads: 2  speedup vs 1x = 1.6279
+Threads: 3  speedup vs 1x = 2.1285
+Threads: 4  speedup vs 1x = 2.4566
+Threads: 6  speedup vs 1x = 3.1817
+Threads: 8  speedup vs 1x = 3.5761
+Threads: 12  speedup vs 1x = 3.8390
 
+-- No significant change for 2,3,4 threads.
+-- Sets an all-time record for 6,8 and 12 threads.
 
 
 --------------------------

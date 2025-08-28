@@ -2173,7 +2173,7 @@ Situation is a fail:
    to amortize.
 
 ---------------------
-What is we use a MutexPool? The baseline to compare against here
+What if we use a MutexPool? The baseline to compare against here
 is sparse_hash_set<WinkPtr>, where the atoms are 822 bytes in size.
 Also, TIME for sparse_hash_set<WinkPtr> comes in at 1:46 to 1:47
 
@@ -2186,6 +2186,21 @@ Wow!
 -- Savings of 822 - 759 = 63 bytes. Cool. This is a bit more than the
    size to std::mutex, so some of the bytes could be alignment.
 -- CPU usage looks 3% better. Unit tests run about 6% faster!
+
+---------------------
+What if we use sparsehash for the TypeIndex in the AtomSpace?
+ThSince this stores millions of Atoms, the impact should be large.
+
+     VSZ     RSS TIME   RSS/#atoms Size  what
+ 6627292 4006952 1:56   0.72252  739.86 sparsehash TypeIndex
+ 6627264 3985160 1:54   0.71859  735.84 sparsehash TypeIndex
+ 6692828 3986840 1:53   0.71889  736.15 sparsehash TypeIndex
+
+Well, indeed
+-- About 10% slower to add Atoms. This is as advertised:
+   sparsehash is slower to insert.
+-- Savings of 759 - 736 = 23 bytes/Atom which I guess is the size of
+   the std::smart_ptr<> in Handle. So that sounds right.
 
 26 August 2025
 --------------
