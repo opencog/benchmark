@@ -2189,7 +2189,7 @@ Wow!
 
 ---------------------
 What if we use sparsehash for the TypeIndex in the AtomSpace?
-ThSince this stores millions of Atoms, the impact should be large.
+Since this stores millions of Atoms, the impact should be large.
 
      VSZ     RSS TIME   RSS/#atoms Size  what
  6627292 4006952 1:56   0.72252  739.86 sparsehash TypeIndex
@@ -2201,6 +2201,22 @@ Well, indeed
    sparsehash is slower to insert.
 -- Savings of 759 - 736 = 23 bytes/Atom which I guess is the size of
    the std::smart_ptr<> in Handle. So that sounds right.
+
+---------------------
+What if we move the Incoming set out of the Atom and into the AtomSpace?
+
+     VSZ     RSS TIME   RSS/#atoms Size  what
+ 6737960 4032612 2:07   0.72715  744.60 IncomingIndex
+ 6672272 4032420 2:07   0.72711  744.56 IncomingIndex
+ 6737864 4030464 2:06   0.72676  744.20 IncomingIndex
+
+Well, that is thoroughly disappointing!
+-- Half the atoms don't have an Incoming index, and so this should
+   have saved the size of one <std::map<Type, WincomingSet> each,
+   but somehow, it dosn't. I don't get it. Oh, wait...
+   that's because of this:
+   struct InSet : std::map<Handle, InSetMap>
+   Lets try again with a sparse version of that.
 
 26 August 2025
 --------------

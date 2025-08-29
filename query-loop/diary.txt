@@ -825,5 +825,18 @@ Threads: 12  speedup vs 1x = 3.8390
 -- No significant change for 2,3,4 threads.
 -- Sets an all-time record for 6,8 and 12 threads.
 
+--------------------------
+How about an IncomingIndex with
+struct InSet : std::map<Handle, InSetMap>
+
+Triangle relations for 1 threads in 250.54 seconds
+Threads: 2  speedup vs 1x = 1.6570
+Threads: 3  speedup vs 1x = 1.9774
+Threads: 4  speedup vs 1x = 2.3217
+Threads: 6  speedup vs 1x = 2.9759
+Threads: 8  speedup vs 1x = 3.4174
+Threads: 12  speedup vs 1x = 3.8679
+
+This is mediocre, surprisingly so.
 
 --------------------------
