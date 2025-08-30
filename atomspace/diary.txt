@@ -2212,11 +2212,10 @@ What if we move the Incoming set out of the Atom and into the AtomSpace?
 
 Well, that is thoroughly disappointing!
 -- Half the atoms don't have an Incoming index, and so this should
-   have saved the size of one <std::map<Type, WincomingSet> each,
-   but somehow, it dosn't. I don't get it. Oh, wait...
-   that's because of this:
-   struct InSet : std::map<Handle, InSetMap>
-   Lets try again with a sparse version of that.
+   have saved the size of one <std::map<Type, WincomingSet> each.
+   And it does. But it uses twice as much storage to say it: it
+   needs a handle for each, and an RB_tree entry (or a hashmap entry).
+   Grand total, no savings, added indirection, slower.
 
 26 August 2025
 --------------

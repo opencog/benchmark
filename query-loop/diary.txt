@@ -837,6 +837,8 @@ Threads: 6  speedup vs 1x = 2.9759
 Threads: 8  speedup vs 1x = 3.4174
 Threads: 12  speedup vs 1x = 3.8679
 
-This is mediocre, surprisingly so.
+This is mediocre, surprisingly so. ... Well, in retrospect, no. Turns
+out this "improvement" saves no space, due to extra required pointers.
+See notes in IncomeIndex.h for details.
 
 --------------------------
